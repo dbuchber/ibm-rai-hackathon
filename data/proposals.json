@@ -28,20 +28,6 @@
     "status": "proposed"
   },
   {
-    "id": "46830dd39bd4",
-    "triple": {
-      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2",
-      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
-      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1"
-    },
-    "rationale": "The SOP sets a low alarm at 3.3 bar and a high alarm at 3.8 bar relative to a nominal of 3.0 bar, giving threshold separations of 0.30 bar and 0.80 bar respectively; the 3.3 bar threshold is only 0.30 bar from the 3.0 bar nominal, exactly at the datasheet's minimum not-recommended margin of 0.30 bar (and well below the recommended 0.50 bar minimum), conflicting with the datasheet's recommendation.",
-    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1",
-    "quote": "Thresholds closer than 3× accuracy (0.30 bar) are not recommended for process control.",
-    "confidence": 0.82,
-    "proposed_by": "llm:openai/claude-sonnet-4-6",
-    "status": "proposed"
-  },
-  {
     "id": "1599dd1d776f",
     "triple": {
       "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4",

@@ -14,7 +14,7 @@ from contracts.store import GraphStore
 
 PROPOSALS_PATH = Path("data/proposals.json")
 MAX_PROPOSALS = 5
-MIN_CONFIDENCE = 0.6
+MIN_CONFIDENCE = 0.9
 
 PROMPT = """You are an industrial-quality analyst. Compare an SOP passage with a sensor datasheet passage.
 Decide whether the SOP sets an operating value or instruction that CONFLICTS with a limit or recommendation in the
