@@ -76,6 +76,15 @@ Before going on stage: open the app in replay mode (see Backup plan, level 0), p
 
 > "Next, labelled as not running today: right-sized models on-premises. Small ones for step verdicts, a large one for strategy and answers, escalation on contradictions, and Granite through the same gateway. Plus guardrails, chat feedback into curation, source links, node-level access. The model proposes, people approve, the graph is the anchor."
 
+### Optional: live chat moment (only if time is left, never instead of a screen)
+**Click:** open the hosted site, "Ask the twin", live mode, type a short free question (e.g. *"Who supplies the humidity sensor HUM-2250?"*). The first events (strategy, seeds) appear within seconds; the full run takes **1 to 3 minutes** with Mistral Large 4 and can be slower when the gateway is busy (one measurement today: about 9 minutes).
+
+> "This is not a recording: a free question, live, against the same approved graph. While it walks, you can already see its plan."
+
+**Fallback, decide within 15 seconds:** if the run has not reached the answer, say "this is the same engine, here is its recorded run" and switch to the replay of `demo-po1003`. Do not wait for it. Never start the live question before the Curate screen; its time budget is fixed.
+
+*Honest note:* live latency is dominated by the reasoning model (about 30 to 240 s per LLM call), not by our code. Answers on a live run can be degraded (e.g. the supplier missed in one of today's runs); that is why the pitch runs on replays.
+
 ## What is real, what is mock
 
 | Part | Status |
