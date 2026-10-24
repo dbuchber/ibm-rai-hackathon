@@ -6,6 +6,12 @@
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> a ns1:SensorModel ;
+        rdfs:label "Series 2400" ;
+        rdfs:comment "ThermoSense Pt100 RTD sensor model rated to 250°C continuous operation, recommended for sustained use above 200°C." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> .
 }
 
 <urn:g:approved> {
@@ -2726,12 +2732,6 @@
         rdfs:comment "Vendor of thermal sensors, datasheet DS-THERM-2200." ;
         ns1:party_to <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
-        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
-        ns1:page 1 ;
-        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
-
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.9 CAF01_CAFETERIA" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-CAF01-01>,
@@ -2819,6 +2819,12 @@
         rdfs:comment "Inductive speed encoder." ;
         ns1:sensorType "SPD" ;
         ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
+        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:page 1 ;
+        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.1 ST01_FILLING" ;

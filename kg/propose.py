@@ -7,14 +7,18 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from contracts.ids import edge_id, local_name, node_iri, pred_iri
-from contracts.models import Node, Proposal, Triple
+from contracts.ids import edge_id, local_name, node_iri, pred_iri, proposal_id
+from contracts.models import NodeSpec, Node, PredicateSpec, Proposal, Triple
 from contracts.rdf_store import RdfGraphStore
 from contracts.store import GraphStore
 
 PROPOSALS_PATH = Path("data/proposals.json")
-MAX_PROPOSALS = 5
-MIN_CONFIDENCE = 0.9
+MAX_EDGES = 3
+MAX_NODES = 3
+MAX_PREDICATES = 2
+MIN_CONFIDENCE = 0.9        # edges: a wrong edge in the graph is worse than a missing one
+MIN_CONFIDENCE_OTHER = 0.75  # node and predicate proposals
+NODE_CLASSES = ["SensorModel", "Supplier", "Customer", "Company", "Role"]  # real-world entities only
 
 PROMPT = """You are an industrial-quality analyst. Compare an SOP passage with a sensor datasheet passage.
 Decide whether the SOP sets an operating value or instruction that CONFLICTS with a limit or recommendation in the
@@ -123,7 +127,7 @@ def propose(store: GraphStore, chunks: list[Node] | None = None, model: str | No
     with ThreadPoolExecutor(8) as ex:
         found = [p for p in ex.map(judge, pairs) if p]
     found.sort(key=lambda p: -p.confidence)
-    return found[:MAX_PROPOSALS]
+    return found[:MAX_EDGES]
 
 
 def seed_contradiction(store: GraphStore, proposals: list[Proposal]) -> list[Proposal]:
@@ -148,18 +152,131 @@ def seed_contradiction(store: GraphStore, proposals: list[Proposal]) -> list[Pro
         if not any(x.id == eid for x in out):
             out.append(Proposal(id=eid, triple=Triple(s=sop.id, p=p, o=ds.id), evidence_chunk_id=ds.id, quote=quote,
                                 rationale=rationale, confidence=0.9, proposed_by="analyst-seed"))
-    return out[:MAX_PROPOSALS]
+    return out[:MAX_EDGES]
+
+
+EXTRACT = """You are a knowledge-graph analyst. Read this passage from a company document and propose additions to
+the knowledge graph. The graph already has these classes: {classes}. New nodes may only use: {node_classes}.
+It already has these predicates: {predicates}.
+
+1. "nodes": real entities named in the passage that are NOT in the graph yet (for example a successor or alternative
+   product model, a vendor, a standard). Use one of the existing classes. local_id has no spaces.
+2. "predicates": a relationship stated in the passage that none of the existing predicates can express.
+   name is snake_case, description reads "Domain verb Range.", domain and range are existing classes.
+Only propose what the passage states. quote must be copied verbatim from the passage. Propose at most 2 of each.
+Entities that already exist in the graph (listed below) must not be proposed again.
+
+Existing entities: {existing}
+
+Answer with JSON only:
+{{"nodes": [{{"cls": "...", "local_id": "...", "label": "...", "description": "...", "quote": "...", "rationale": "...", "confidence": 0.0}}],
+"predicates": [{{"name": "...", "description": "...", "domain": "...", "range": "...", "quote": "...", "rationale": "...", "confidence": 0.0}}]}}
+
+Passage ({chunk_id}):
+{text}
+"""
+
+
+def _ontology_classes() -> list[str]:
+    from rdflib import OWL, RDF, Graph
+
+    g = Graph().parse("data/graph/ontology.ttl", format="turtle")
+    return sorted(local_name(str(s)) for s in g.subjects(RDF.type, OWL.Class))
+
+
+def propose_new_kinds(store: GraphStore, model: str | None = None) -> tuple[list[Proposal], list[Proposal]]:
+    """LLM proposals for missing nodes and missing predicates, read from datasheets and company documents."""
+    model = model or _env()["RAI_MODEL"]
+    classes = _ontology_classes()
+    preds = [local_name(i) for i, _ in store.predicates()]
+    export = store.export({"approved"})
+    existing = sorted({local_name(n.id) for n in export.nodes if n.cls != "Chunk"} |
+                      {n.label for n in export.nodes if n.cls in ("SensorModel", "Supplier", "Customer", "Company")})
+    chunks = [n for n in export.nodes if n.cls == "Chunk" and n.text and
+              any(f"/chunk/{d}" in n.id for d in ("DS-", "SQA-", "MC-"))]
+
+    def read(chunk: Node) -> list[Proposal]:
+        out = _llm_json(EXTRACT.format(classes=", ".join(classes), node_classes=", ".join(NODE_CLASSES), predicates=", ".join(preds),
+                                       existing=", ".join(existing), chunk_id=local_name(chunk.id), text=chunk.text), model)
+        found: list[Proposal] = []
+        for n in (out or {}).get("nodes", []):
+            quote, conf = str(n.get("quote", "")).strip(), float(n.get("confidence", 0))
+            lid = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(n.get("local_id", "")))
+            if (n.get("cls") not in NODE_CLASSES or not lid or lid in existing or quote not in chunk.text
+                    or conf < MIN_CONFIDENCE_OTHER):
+                continue
+            iri = node_iri(n["cls"], lid)
+            found.append(Proposal(id=proposal_id("node", iri=iri), kind="node",
+                                  node=NodeSpec(cls=n["cls"], local_id=lid, label=str(n.get("label") or lid),
+                                                description=n.get("description")),
+                                  rationale=str(n.get("rationale", "")), evidence_chunk_id=chunk.id, quote=quote,
+                                  confidence=conf, proposed_by=f"llm:{model}"))
+        for q in (out or {}).get("predicates", []):
+            quote, conf = str(q.get("quote", "")).strip(), float(q.get("confidence", 0))
+            name = str(q.get("name", ""))
+            if (not re.fullmatch(r"[a-z][a-z0-9_]*", name) or name in preds or quote not in chunk.text
+                    or conf < MIN_CONFIDENCE_OTHER or q.get("domain") not in classes or q.get("range") not in classes):
+                continue
+            found.append(Proposal(id=proposal_id("predicate", iri=pred_iri(name)), kind="predicate",
+                                  predicate=PredicateSpec(name=name, description=str(q.get("description", "")),
+                                                          domain=q["domain"], range=q["range"]),
+                                  rationale=str(q.get("rationale", "")), evidence_chunk_id=chunk.id, quote=quote,
+                                  confidence=conf, proposed_by=f"llm:{model}"))
+        return found
+
+    with ThreadPoolExecutor(8) as ex:
+        allp = [p for ps in ex.map(read, chunks) for p in ps]
+    uniq: dict[str, Proposal] = {}
+    for p in sorted(allp, key=lambda p: -(p.confidence or 0)):
+        uniq.setdefault(p.id, p)
+    ranked = list(uniq.values())
+    return ([p for p in ranked if p.kind == "node"][:MAX_NODES],
+            [p for p in ranked if p.kind == "predicate"][:MAX_PREDICATES])
+
+
+def seed_new_kinds(store: GraphStore, nodes: list[Proposal], preds: list[Proposal]) -> tuple[list[Proposal], list[Proposal]]:
+    """Guarantee one node and one predicate proposal from the TMP-2210 datasheet (successor model Series 2400)."""
+    ds = store.node(node_iri("Chunk", "DS-THERM-2200-s1"))
+    quote = ("For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 "
+             "(Pt100 RTD, rated to 250°C continuous).")
+    assert quote in ds.text
+    if not nodes:
+        iri = node_iri("SensorModel", "RTD-2400")
+        nodes = [Proposal(id=proposal_id("node", iri=iri), kind="node",
+                          node=NodeSpec(cls="SensorModel", local_id="RTD-2400", label="RTD-2400 (Series 2400 Pt100)",
+                                        description="Pt100 RTD temperature sensor, rated to 250 °C continuous."),
+                          rationale="The datasheet names a successor model that is not yet in the graph.",
+                          evidence_chunk_id=ds.id, quote=quote, confidence=0.9, proposed_by="analyst-seed")]
+    if not preds:
+        preds = [Proposal(id=proposal_id("predicate", iri=pred_iri("recommended_replacement")), kind="predicate",
+                          predicate=PredicateSpec(name="recommended_replacement", domain="SensorModel", range="SensorModel",
+                                                  description="SensorModel recommended_replacement SensorModel."),
+                          rationale="Vendors name successor models; no predicate can express that today.",
+                          evidence_chunk_id=ds.id, quote=quote, confidence=0.8, proposed_by="analyst-seed")]
+    return nodes, preds
 
 
 def write(proposals: list[Proposal], path: Path = PROPOSALS_PATH) -> None:
-    path.write_text(json.dumps([p.model_dump() for p in proposals], indent=2, ensure_ascii=False) + "\n")
+    path.write_text(json.dumps([p.model_dump(mode="json") for p in proposals], indent=2, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":
-    store = RdfGraphStore("data/graph/kg.trig")
     import sys
 
-    props = seed_contradiction(store, propose(store, model=sys.argv[1] if len(sys.argv) > 1 else None))
+    model = sys.argv[1] if len(sys.argv) > 1 else None
+    store = RdfGraphStore("data/graph/kg.trig")
+    # Statuses already decided by the analyst survive a re-run.
+    decided = {x["id"]: x["status"] for x in json.loads(PROPOSALS_PATH.read_text())} if PROPOSALS_PATH.exists() else {}
+    edges = seed_contradiction(store, propose(store, model=model))
+    nodes, preds = seed_new_kinds(store, *propose_new_kinds(store, model))
+    props = edges + nodes + preds
+    for p in props:
+        p.status = decided.get(p.id, p.status)
     write(props)
     for p in props:
-        print(p.proposed_by, p.confidence, local_name(p.triple.s), "->", local_name(p.triple.o), "|", p.rationale)
+        what = p.kind if p.kind != "edge" else f"edge {local_name(p.triple.s)} -> {local_name(p.triple.o)}"
+        if p.kind == "node":
+            what = f"node {p.node.cls}:{p.node.local_id}"
+        if p.kind == "predicate":
+            what = f"predicate {p.predicate.name}"
+        print(p.proposed_by, p.confidence, p.status, what, "|", p.rationale[:90])
