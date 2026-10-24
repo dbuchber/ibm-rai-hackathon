@@ -10,7 +10,7 @@ from typing import TypeVar
 
 from pydantic import BaseModel, ValidationError
 
-from engine.models import route
+from engine.models import route, temperature
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -43,7 +43,7 @@ def _raw(messages: list[dict], model: str, json_mode: bool = True) -> str:
         model=model,
         messages=messages,
         **route(model),
-        temperature=0,
+        temperature=temperature(model),
         max_tokens=8000,   # reasoning models spend tokens before the JSON; a low cap yields empty content
     )
     if json_mode:
