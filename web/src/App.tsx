@@ -1,23 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data, HttpError, type Ontology } from "./data";
+import { data, type Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
+import TraversalGuide from "./TraversalGuide";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
-import { Picker, RunPanel } from "./RunPanel";
+import { RunPanel } from "./RunPanel";
 import Contrast from "./Contrast";
 import Curate, { kindOf } from "./Curate";
 import Roadmap from "./Roadmap";
-import Compare from "./Compare";
-import { runSeconds } from "./models";
-import type { RunMeta } from "./RunPanel";
 import Inspector from "./Inspector";
 import { fold, foldClasses } from "./fold";
 import { AlertDialog, AuditDrawer, Toast, type OversightAlert } from "./Oversight";
 import { audit, SUPERVISOR } from "./canary";
 import type { AuditEntry } from "./contracts";
 import type { Decision } from "./data";
-import { Icon, Mark } from "./bits";
+import { Icon } from "./bits";
 
 type View = "twin" | "ask" | "contrast" | "curate" | "roadmap";
 const VIEWS: [View, string][] = [["twin", "Twin"], ["ask", "Ask"], ["contrast", "Contrast"], ["curate", "Curate"], ["roadmap", "Roadmap"]];
@@ -25,20 +23,19 @@ const VIEWS: [View, string][] = [["twin", "Twin"], ["ask", "Ask"], ["contrast", 
 const HOLD: Record<FrameKind, number> = {
   question: 1400, strategy: 3200, seeds: 2200, frontier: 2000, verdicts: 3000, answer: 3400, evidence: 0,
 };
-const FRAME_LABEL: Record<FrameKind, string> = {
-  question: "Question", strategy: "Strategy", seeds: "Entry points", frontier: "Candidates",
-  verdicts: "Verdicts", answer: "Answer", evidence: "Evidence graph",
-};
+
 
 const EMPTY = new Map<string, string>();
 
-export default function App() {
+export default function App({ active = true }: { active?: boolean }) {
+  const [demoPlaying, setDemoPlaying] = useState(false);
+  const [showGraph, setShowGraph] = useState(true);
+  const [draft, setDraft] = useState("");
+  const [invite, setInvite] = useState("");
+  const [questionError, setQuestionError] = useState("");
   const [view, setView] = useState<View>("twin");
   const [graph, setGraph] = useState<GraphExport>({ nodes: [], edges: [] });
   const [runs, setRuns] = useState<RunSummary[]>([]);
-  // all recorded runs are small: load them once for model names, durations and the comparison
-  const [runCache, setRunCache] = useState<Map<string, Event[]>>(new Map());
-  const [compareOpen, setCompareOpen] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [pos, setPos] = useState(-1);
@@ -63,11 +60,7 @@ export default function App() {
 
   useEffect(() => {
     data.getGraph().then(setGraph);
-    data.listRuns().then(async (rs) => {
-      setRuns(rs);
-      const all = await Promise.all(rs.map(async (r) => [r.run_id, await data.getRun(r.run_id).catch(() => [])] as const));
-      setRunCache(new Map(all));
-    });
+    data.listRuns().then(setRuns);
     data.listProposals().then((p) => setProposals(p.map((x) => ({ ...x, kind: kindOf(x) }))));
     data.getOntology().then(setOntology).catch(() => {});
   }, []);
@@ -107,14 +100,13 @@ export default function App() {
 
   const { nodes, edges } = useMemo(() => {
     const n = new Map<string, Node>();
-    // people (badge holders) only add a hairball of zone access edges; no run walks them
-    graph.nodes.forEach((x) => { if (x.cls !== "Person") n.set(x.id, x); });
+    graph.nodes.forEach((x) => n.set(x.id, x));
     prop.nodes.forEach((x) => { if (!n.has(x.id)) n.set(x.id, x); });
     // run events embed nodes in full; they win so the run shows exactly what the model was given
     runEls.nodes.forEach((x) => n.set(x.id, x));
     const e = new Map<string, Edge>();
     for (const x of [...prop.edges, ...graph.edges, ...runEls.edges]) e.set(x.id, { ...x, graph: status.get(x.id) ?? x.graph });
-    return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected" && n.has(x.s) && n.has(x.o)) };
+    return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected") };
   }, [graph, runEls, status, prop]);
   const idx = useMemo(() => labelIndex(nodes), [nodes]);
   // chunks are drawn one level down: hidden in the graph, lifted onto their documents (fold.ts)
@@ -123,14 +115,14 @@ export default function App() {
 
   // ---- playback ----
   useEffect(() => {
-    if (!playing || view !== "ask") return;
+    if (!playing || view !== "ask" || !active) return;
     if (pos >= fs.length - 1) {
       if (!liveRun || full.finished) setPlaying(false);
       return;
     }
     const t = setTimeout(() => setPos((p) => p + 1), pos < 0 ? 200 : HOLD[fs[pos].kind]);
     return () => clearTimeout(t);
-  }, [playing, pos, fs, view, liveRun, full.finished]);
+  }, [playing, pos, fs, view, liveRun, full.finished, active]);
 
   // Chat canary (click mock): leaving a planted false answer without reporting it raises the alert.
   const moveOn = useCallback(() => {
@@ -141,41 +133,60 @@ export default function App() {
     audit("supervisor_notified", `${SUPERVISOR} notified.`);
     setAlertBox({ kind: "chat", canary: c.canary, question: c.question, supervisor: SUPERVISOR });
   }, []);
-  const go = (v: View) => { if (v !== view) { moveOn(); setAuditOpen(false); setCompareOpen(false); } setView(v); };
+  const go = (v: View) => { if (v !== view) { moveOn(); setAuditOpen(false); } setView(v); };
 
   const pick = useCallback(async (id: string) => {
     moveOn();
     stopStream.current();
-    setCompareOpen(false);
     const ev = await data.getRun(id);
     setLiveRun(false); setLost(false);
     setRunId(id); setEvents(ev); setPos(0); setPlaying(true); setView("ask"); setSelected(null);
   }, []);
 
-  const ask = useCallback(async (q: string, invite: string): Promise<string | null> => {
+  const demoRuns = useMemo(() => runs.filter(run => !run.mock), [runs]);
+  const scenarioIndex = demoRuns.findIndex(run => run.run_id === runId);
+  useEffect(() => {
+    if (!active || !demoPlaying || !runId || pos < fs.length - 1 || !fs.length || (liveRun && !full.finished)) return;
+    const timer = window.setTimeout(() => {
+      const next = demoRuns[scenarioIndex + 1];
+      if (next) void pick(next.run_id);
+      else { setDemoPlaying(false); setPlaying(false); }
+    }, 4000);
+    return () => window.clearTimeout(timer);
+  }, [active, demoPlaying, runId, pos, fs.length, liveRun, full.finished, demoRuns, scenarioIndex, pick]);
+
+  const playDemo = () => {
+    if (demoPlaying || playing) { setDemoPlaying(false); setPlaying(false); return; }
+    setDemoPlaying(true);
+    if (scenarioIndex < 0 || (scenarioIndex === demoRuns.length - 1 && pos >= fs.length - 1)) {
+      if (demoRuns[0]) void pick(demoRuns[0].run_id);
+    } else setPlaying(true);
+  };
+  const changeScenario = async (index: number) => {
+    const next = demoRuns[Math.max(0, Math.min(demoRuns.length - 1, index))];
+    if (!next) return;
+    await pick(next.run_id);
+    if (!demoPlaying) setPlaying(false);
+  };
+
+  const ask = useCallback(async (q: string) => {
     moveOn();
+    stopStream.current();
     try {
-      const { run_id } = await data.startRun(q, invite);
-      stopStream.current();
+      setDemoPlaying(false);
+      setQuestionError("");
+      const { run_id } = await data.startRun(q, invite || undefined);
+      setView("ask"); setDraft("");
       setLiveRun(true); setLost(false); setRunId(run_id); setEvents([]); setPos(-1); setPlaying(true);
       stopStream.current = data.streamRun(
         run_id,
         (e) => setEvents((xs) => (xs.some((x) => x.seq === e.seq) ? xs : [...xs, e])),
         () => setLost(true),
       );
-      return null;
     } catch (err) {
-      if (err instanceof HttpError) {
-        if (err.status === 403) return "Invite code needed. Ask the presenter for one.";
-        if (err.status === 429) {
-          const s = err.retryAfter ?? 5;
-          return `Busy, try again in ${s < 90 ? `${s} s` : `${Math.ceil(s / 60)} min`}.`;
-        }
-        if (err.status === 422) return "That question is too long. Shorten it a little.";
-      }
-      return "The live engine is not reachable. Replay a recorded run instead.";
+      setQuestionError(err instanceof Error ? err.message : "The engine could not answer. Please try again.");
     }
-  }, []);
+  }, [invite]);
 
   // Contrast needs a run; default to the first recorded one.
   useEffect(() => {
@@ -189,12 +200,11 @@ export default function App() {
   // keyboard: space play/pause, arrows step, 1-4 views
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).tagName === "INPUT") return;
+      if (!active || (e.target as HTMLElement).closest("input, textarea, select, button, [contenteditable]")) return;
       if (e.key >= "1" && e.key <= "5") go(VIEWS[+e.key - 1][0]);
-      if (view !== "ask" || !runId) return;
-      if (e.key === " ") { e.preventDefault(); setPlaying((p) => !p); }
-      if (e.key === "ArrowRight") { setPlaying(false); setPos((p) => Math.min(fs.length - 1, p + 1)); }
-      if (e.key === "ArrowLeft") { setPlaying(false); setPos((p) => Math.max(0, p - 1)); }
+      if (e.key === " ") { e.preventDefault(); playDemo(); }
+      if (e.key === "ArrowRight") { e.preventDefault(); void changeScenario(scenarioIndex + 1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); void changeScenario(scenarioIndex - 1); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -277,37 +287,8 @@ export default function App() {
     }
   }, [rv, view, runId, reported]);
 
-  // ---- model comparison: recorded runs of the same question ----
-  const runMeta = useMemo(() => {
-    const m = new Map<string, RunMeta>();
-    for (const [id, ev] of runCache) {
-      const st = ev.find((e) => e.type === "run.started");
-      m.set(id, { model: st?.type === "run.started" ? st.payload.model : "", secs: runSeconds(ev) });
-    }
-    return m;
-  }, [runCache]);
-  const siblings = useMemo(() => {
-    const q = runs.find((r) => r.run_id === runId)?.question;
-    return q ? runs.filter((r) => r.question === q && !r.mock) : [];
-  }, [runs, runId]);
-  const contradictionRun = useMemo(() => runs.find((r) => {
-    const ev = runCache.get(r.run_id) ?? [];
-    return !r.mock && ev.some((e) => e.type === "answer" && (e.payload.contradictions ?? []).length > 0)
-      && ev.some((e) => e.type === "strategy" && e.payload.allowed_predicates.some((p) => /#(mentions|defined_in)$/.test(p)));
-  }), [runs, runCache]);
-  const switchModel = (id: string) => {
-    if (id === runId) return;
-    const ev = runCache.get(id);
-    if (!ev) return;
-    const atEnd = pos >= fs.length - 1;
-    setRunId(id); setEvents(ev);
-    setPos(atEnd ? frames(ev).length - 1 : 0);
-    setPlaying(!atEnd);
-  };
-
   // ---- what the graph shows ----
   const showRun = (view === "ask" || view === "contrast") && runId;
-  const panelOpen = view === "ask" || view === "curate";
   let mode: GraphMode = "twin";
   let classes = EMPTY;
   let focus: string[] = [];
@@ -341,7 +322,7 @@ export default function App() {
     focusKey = "curate:" + curFocus.join();
   }
   const sel = selected && !auditOpen ? idx.get(selected) : undefined;
-  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: sel || auditOpen ? 412 : 16 };
+  const inset = { top: 30, right: 24, bottom: view === "ask" && runId ? 100 : 65, left: 24 };
   const shownClasses = useMemo(() => foldClasses(classes, folded), [classes, folded]);
   const shownFocus = [...new Set(focus.map(folded.mapId))];
   const shownAnchors = useMemo(
@@ -355,20 +336,12 @@ export default function App() {
     return ids;
   }, [view, full, rv, showRun]);
 
-  const stats = useMemo(() => {
-    const approved = graph.edges.filter((e) => (status.get(e.id) ?? e.graph) === "approved").length;
-    const docs = graph.nodes.filter((n) => n.cls === "Document").length;
-    const chunks = graph.nodes.filter((n) => n.cls === "Chunk").length;
-    const people = graph.nodes.filter((n) => n.cls === "Person").length;
-    return { nodes: graph.nodes.length - chunks, approved, docs, chunks, people };
-  }, [graph, status]);
-
-  const current = pos >= 0 ? fs[pos] : undefined;
-
   return (
-    <>
+    <div className={"demo-workspace" + (showGraph ? "" : " graph-collapsed")}>
+      <div className="graph-pane">
       <Graph nodes={folded.nodes} edges={folded.edges} classes={shownClasses} mode={mode} focus={shownFocus} focusKey={focusKey}
         inset={inset} flash={flash} onSelect={(id) => { setAuditOpen(false); setSelected(id); setFocusChunk(null); }} anchors={shownAnchors} />
+      <Legend mode={mode} view={view} />
       {auditOpen && (
         <AuditDrawer entries={auditLog} proposals={[...proposals, ...ghosts]} idx={idx} onClose={() => setAuditOpen(false)} />
       )}
@@ -377,42 +350,28 @@ export default function App() {
           onClose={() => { setSelected(null); setFocusChunk(null); }} />
       )}
 
-      <header className="topbar">
-        <div className="brand glass">
-          <Mark />
-          <span className="brand-name">Graph Anchor</span>
-          <span className="brand-sub">Kelvara Packaging · digital twin</span>
-        </div>
-        <nav className="segmented glass" aria-label="Views">
-          {VIEWS.map(([k, label]) => (
-            <button key={k} aria-pressed={view === k} onClick={() => go(k)}>{label}</button>
-          ))}
-        </nav>
-        <div className="top-right">
-          {showRun && full.started?.mock && <span className="tag mock glass">Mock run</span>}
-          <span className={"tag glass " + (data.live ? "live" : "neutral")}>
-            <span className="dot" />{data.live ? "Live engine" : "Offline replay"}
-          </span>
-        </div>
-      </header>
+      </div>
+      <aside className="guide-pane">
+        <button className="graph-toggle" aria-label="Toggle knowledge graph" aria-pressed={showGraph} onClick={() => setShowGraph(value => !value)}>{showGraph ? "‹" : "›"}</button>
+        <div className="workspace-heading"><div className="eyebrow">Connected knowledge</div><h2>Evidence trail</h2></div>
+        <TraversalGuide runs={runs} runId={runId} events={events} frames={fs} position={pos} idx={idx}
+          contextNode={sel} contextEdges={selected ? folded.edges.filter(edge => edge.s === selected || edge.o === selected) : []}
+          onPick={id => { setDemoPlaying(!runs.find(run => run.run_id === id)?.mock); void pick(id); }} onStep={index => { setDemoPlaying(false); setPlaying(false); setPos(index); setView("ask"); }} onCite={cite} />
 
-      {view === "ask" && !runId && <Picker runs={runs} meta={runMeta} live={data.live} onPick={pick} onAsk={ask} />}
-      {view === "ask" && runId && compareOpen && siblings.length > 1 && (
-        <Compare
-          a={{ summary: siblings[0], events: runCache.get(siblings[0].run_id) ?? [] }}
-          b={{ summary: siblings[1], events: runCache.get(siblings[1].run_id) ?? [] }}
-          idx={idx} current={runId}
-          onShow={(id) => { switchModel(id); setCompareOpen(false); }}
-          onOpenRun={(id) => pick(id)}
-          contradictionRun={contradictionRun} />
-      )}
-      {view === "ask" && runId && !compareOpen && (
-        <RunPanel view={rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
-          onBack={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
-          onCite={cite} reported={!!runId && reported.has(runId)} onReport={report}
-          models={siblings.map((r) => ({ run_id: r.run_id, ...(runMeta.get(r.run_id) ?? { model: "", secs: null }) }))}
-          current={runId} onSwitch={switchModel} onCompare={() => setCompareOpen(true)} />
-      )}
+      </aside>
+      <section className="chat-pane" aria-label="Ask the twin">
+        <div className="workspace-heading"><div><div className="eyebrow">Ask the twin</div><h2>Open chat</h2></div><button className="clear-chat" onClick={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); setDemoPlaying(false); setDraft(""); setQuestionError(""); setSelected(null); setFocusChunk(null); setView("twin"); }}>Clear</button></div>
+        {!runId && <div className="chat-empty"><strong>No questions yet</strong><span>Explore a question from the evidence trail.</span></div>}
+        {runId && <RunPanel answerOnly view={rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
+          onBack={() => { setDemoPlaying(false); moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
+          onCite={cite} reported={reported.has(runId)} onReport={report} />}
+        <form className="chat-form" onSubmit={event => { event.preventDefault(); if (draft.trim() && data.live) ask(draft.trim()); }}>
+          {data.live && <input className="invite-field" aria-label="Invitation code" placeholder="Invitation code" value={invite} onChange={event => setInvite(event.target.value)} />}
+          {questionError && <div className="chat-error" role="alert">{questionError}</div>}
+          <div className="chat-compose"><input aria-label="Your question" value={draft} onChange={event => setDraft(event.target.value)} disabled={!data.live} placeholder="Ask about stations, sensors, suppliers…" /><button type="submit" disabled={!data.live || !draft.trim() || playing}>Send</button></div>
+          {!data.live && <div className="offline-note">Offline replay · Live questions need the engine API.</div>}
+        </form>
+      </section>
       {view === "contrast" && runId && <Contrast v={full} idx={idx} edges={edgeIdx} />}
       {view === "curate" && (
         <Curate proposals={proposals} idx={idx} ontology={ontology} mock={data.kind === "static"}
@@ -421,48 +380,18 @@ export default function App() {
 
       {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
 
-      {view === "ask" && runId && !compareOpen && (
-        <div className="player glass" style={{ left: `calc(${inset.left}px + (100% - ${inset.left + inset.right}px) / 2)` }} role="toolbar" aria-label="Playback">
-          <button className="icon-btn" aria-label="Restart" onClick={() => { setPos(0); setPlaying(true); }}><Icon name="restart" /></button>
-          <button className="icon-btn" aria-label="Previous step" disabled={pos <= 0}
-            onClick={() => { setPlaying(false); setPos((p) => Math.max(0, p - 1)); }}><Icon name="prev" /></button>
-          <button className="icon-btn primary" aria-label={playing ? "Pause" : "Play"}
-            onClick={() => { if (pos >= fs.length - 1 && !liveRun) setPos(0); setPlaying((p) => !p); }}>
-            <Icon name={playing ? "pause" : "play"} />
-          </button>
-          <button className="icon-btn" aria-label="Next step" disabled={pos >= fs.length - 1}
-            onClick={() => { setPlaying(false); setPos((p) => Math.min(fs.length - 1, p + 1)); }}><Icon name="next" /></button>
-          <button className="icon-btn" aria-label="Jump to evidence graph" disabled={pos >= fs.length - 1}
-            onClick={() => { setPlaying(false); setPos(fs.length - 1); }}><Icon name="end" /></button>
-          <div className="track">
-            {fs.map((f, i) => (
-              <button key={i} aria-label={FRAME_LABEL[f.kind] + (f.step ? " " + f.step : "")}
-                className={"seg" + (i <= pos ? " on" : "") + (i === pos ? " current" : "") + (f.kind === "evidence" ? " evidence" : "")}
-                onClick={() => { setPlaying(false); setPos(i); }} />
-            ))}
-          </div>
-          <div className="frame-label" aria-live="polite">
-            {current ? FRAME_LABEL[current.kind] + (current.step ? ` ${current.step}` : "") : liveRun ? "Waiting…" : ""}
-          </div>
-        </div>
-      )}
 
-      <div className="corner" style={{ bottom: view === "ask" && runId ? 92 : 16 }}>
-        {view === "twin" && !sel && (
-          <div className="intro glass">
-            <div className="eyebrow">The anchor</div>
-            <h1>One curated graph grounds every answer.</h1>
-            <p>Company, plant and documents in one knowledge graph. Every relation here is approved. Models only propose.</p>
-            <div className="stats">
-              <div className="stat"><b>{stats.nodes}</b><span>entities</span></div>
-              <div className="stat"><b>{stats.approved}</b><span>approved relations</span></div>
-              <div className="stat"><b>{stats.docs}</b><span>documents</span></div>
-              <div className="stat"><b>{stats.chunks}</b><span>passages</span></div>
-            </div>
-          </div>
-        )}
-        {!sel && !auditOpen && !compareOpen && <Legend mode={mode} view={view} people={stats.people} />}
+      <div className="demo-controller glass" role="toolbar" aria-label="Demo playback">
+        <button className="icon-btn" aria-label="Restart demo" disabled={!demoRuns.length} onClick={() => { setDemoPlaying(true); if (demoRuns[0]) void pick(demoRuns[0].run_id); }}><Icon name="restart" /></button>
+        <button className="icon-btn" aria-label="Previous scenario" disabled={scenarioIndex <= 0} onClick={() => void changeScenario(scenarioIndex - 1)}><Icon name="prev" /></button>
+        <button className="icon-btn primary" aria-label={demoPlaying || playing ? "Pause demo" : "Play demo"} disabled={!demoRuns.length} onClick={playDemo}><Icon name={demoPlaying || playing ? "pause" : "play"} /></button>
+        <button className="icon-btn" aria-label="Next scenario" disabled={!demoRuns.length || scenarioIndex >= demoRuns.length - 1} onClick={() => void changeScenario(scenarioIndex + 1)}><Icon name="next" /></button>
+        <div className="demo-scenarios" aria-label="Demo scenarios">
+          {demoRuns.map((run, index) => <button key={run.run_id} aria-label={`Scenario ${index + 1}: ${run.question}`} aria-current={runId === run.run_id ? "step" : undefined} onClick={() => void changeScenario(index)}><span style={{ transform: `scaleX(${runId === run.run_id ? (pos + 1) / Math.max(fs.length, 1) : scenarioIndex > index ? 1 : 0})` }} /></button>)}
+        </div>
+        <span className="demo-progress" aria-live="polite">{scenarioIndex >= 0 ? `${scenarioIndex + 1} / ${demoRuns.length}` : "Recorded demo"}</span>
       </div>
+
       {toast && <Toast text={toast} onDone={() => setToast(null)} />}
       {alertBox && (
         <AlertDialog a={alertBox} idx={idx}
@@ -470,11 +399,11 @@ export default function App() {
           onAudit={() => { setAlertBox(null); openAudit(); }}
           onReview={() => { setAlertBox(null); setView("curate"); }} />
       )}
-    </>
+    </div>
   );
 }
 
-function Legend({ mode, view, people }: { mode: GraphMode; view: View; people: number }) {
+function Legend({ mode, view }: { mode: GraphMode; view: View }) {
   if (view === "contrast" || view === "roadmap") return null;
   if (mode === "twin" || view === "curate") {
     return (
@@ -483,7 +412,6 @@ function Legend({ mode, view, people }: { mode: GraphMode; view: View; people: n
         <span><i className="sw" style={{ background: "var(--plant)" }} />Plant</span>
         <span><i className="sw sq" style={{ background: "var(--docs)" }} />Documents</span>
         <span><i className="ln" style={{ borderColor: "var(--ink2)", borderTopStyle: "dashed" }} />Proposed</span>
-        {people > 0 && <span className="muted">{people} people not drawn</span>}
       </div>
     );
   }

@@ -40,7 +40,7 @@ const DARK: Palette = {
   company: "#9D8CE0", plant: "#5DB8A3", docs: "#D6AE6A", accent: "#0A84FF", accentSoft: "#0A84FF", contra: "#FF453A",
 };
 
-const prefersDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+const prefersDark = () => document.documentElement.dataset.presentationTheme === "dark" || window.matchMedia("(prefers-color-scheme: dark)").matches;
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function stylesheet(c: Palette): StylesheetStyle[] {
@@ -180,6 +180,8 @@ export default function Graph(p: Props) {
   const box = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
   const known = useRef<Set<string>>(new Set());
+  const latest = useRef(p);
+  latest.current = p;
   const onSelect = useRef(p.onSelect);
   onSelect.current = p.onSelect;
 
@@ -187,7 +189,7 @@ export default function Graph(p: Props) {
   useEffect(() => {
     const cy = cytoscape({
       container: box.current!, elements: [], style: stylesheet(prefersDark() ? DARK : LIGHT),
-      minZoom: 0.15, maxZoom: 3, wheelSensitivity: 0.25, boxSelectionEnabled: false,
+      minZoom: 0.025, maxZoom: 3, wheelSensitivity: 0.25, boxSelectionEnabled: false,
     });
     cyRef.current = cy;
     if (import.meta.env.DEV) (window as unknown as { __cy: Core }).__cy = cy; // for headless UI checks
@@ -196,9 +198,19 @@ export default function Graph(p: Props) {
     cy.on("tap", "node", (e) => onSelect.current(e.target.id()));
     cy.on("tap", (e) => { if (e.target === cy) onSelect.current(null); });
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const restyle = () => cy.style(stylesheet(mq.matches ? DARK : LIGHT));
+    const restyle = () => cy.style(stylesheet(prefersDark() ? DARK : LIGHT));
     mq.addEventListener("change", restyle);
-    return () => { mq.removeEventListener("change", restyle); cy.destroy(); };
+    const resize = new ResizeObserver(() => {
+      if (!box.current?.clientWidth || !box.current.clientHeight) return;
+      cy.resize();
+      const current = latest.current;
+      const focused = current.focus.length
+        ? cy.collection(current.focus.map(id => cy.getElementById(id)).filter(el => el.nonempty()))
+        : cy.elements();
+      if (focused.nonempty()) fitTo(cy, focused, current.inset, false);
+    });
+    resize.observe(box.current!);
+    return () => { resize.disconnect(); mq.removeEventListener("change", restyle); cy.destroy(); };
   }, []);
 
   // elements: add what is new, keep positions of what exists, lay out once (and again when new nodes arrive)
@@ -289,11 +301,11 @@ export default function Graph(p: Props) {
 
 /** Like cy.fit, but frames the area not covered by floating panels. */
 function fitTo(cy: Core, eles: cytoscape.Collection, inset: Props["inset"], animate: boolean, maxZoom = 1.8) {
-  const bb = eles.boundingBox({});
+  const bb = eles.boundingBox({ includeLabels: eles.length < 30, includeOverlays: false });
   const w = cy.width() - inset.left - inset.right;
   const h = cy.height() - inset.top - inset.bottom;
-  const pad = 56;
-  const zoom = Math.max(0.2, Math.min(maxZoom, (w - 2 * pad) / Math.max(bb.w, 1), (h - 2 * pad) / Math.max(bb.h, 1)));
+  const pad = 20;
+  const zoom = Math.max(0.025, Math.min(maxZoom, (w - 2 * pad) / Math.max(bb.w, 1), (h - 2 * pad) / Math.max(bb.h, 1)));
   const cx = inset.left + w / 2;
   const cyy = inset.top + h / 2;
   const pan = { x: cx - zoom * (bb.x1 + bb.w / 2), y: cyy - zoom * (bb.y1 + bb.h / 2) };

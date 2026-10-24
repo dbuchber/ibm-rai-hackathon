@@ -16,6 +16,22 @@ npm run dev            # http://127.0.0.1:5180, offline replay of the recorded r
 
 Against the real API (backend running on port 17080): `VITE_DATA=api npm run dev`.
 
+## Presentation UI
+
+The frontend opens with the logo, a use-case slide, and the interactive workspace from
+`demo.html` / `demo.app.html`. Click, use the presentation dots, or use arrow keys to move
+through the first two screens. Auto-play advances every four seconds; Escape returns from
+the workspace to the use-case slide.
+
+The workspace has a collapsible graph, an evidence trail, and the answer chat.
+The trail groups discovered entities, relevant relationships, excluded evidence, source
+conflicts and supporting passages. Selecting a graph entity shows its connected facts.
+It uses the existing `frames()` / `viewAt()` state: selecting a step pauses replay
+and updates the graph to that frame. Node and relation buttons focus the graph; citations
+still open source passages. The trail comes from the selected run rather than a fixed tutorial. The controller sits at the bottom of the full screen. Play sequences the real recorded
+scenarios; Previous/Next select scenarios, and Restart begins the demo again. Mock canary
+runs remain available for manual exploration. Static mode uses the recorded runs; live questions use the existing API and invitation-code field.
+
 ## What to build
 
 **1. Animated demo.** Plays a recorded run. Used on the projector during the pitch (presenter steps through it)
