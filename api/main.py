@@ -12,12 +12,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
-from fastapi import FastAPI, HTTPException
+import hmac
+
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
 
 from api.canary import CanaryGuard
+from api.limits import RateLimiter, client_ip
 from api.store import CurationStore
 from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
 from contracts.models import (CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
@@ -73,7 +76,9 @@ class LiveRun:
 def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                proposals_path: Path | None = None, proposals_seed: Path | None = None,
                web_dist: Path | None = None, stub_delay: float = 0.4,
-               clock: Callable[[], float] | None = None) -> FastAPI:
+               clock: Callable[[], float] | None = None,
+               limit_clock: Callable[[], float] = time.monotonic,
+               run_limit: int = 15, write_limit: int = 120, max_question: int = 500) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
     graph_path = Path(graph_path or env("RAI_GRAPH") or kg)
@@ -88,10 +93,10 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     runs_dir.mkdir(parents=True, exist_ok=True)
 
     app = FastAPI(title="Graph Anchor API")
-    store = CurationStore(graph_path)
-    state_ok = proposals_path.exists() and json.loads(proposals_path.read_text() or "[]")
-    src = proposals_path if state_ok else proposals_seed
-    proposals = {p.id: p for p in (Proposal.model_validate(x) for x in json.loads(src.read_text()))}
+    proposals: dict[str, Proposal] = {}
+    store: CurationStore
+    guard: CanaryGuard
+
     def apply(p: Proposal, status: str) -> None:
         """Mirror a proposal's status into the in-memory graph/ontology."""
         if p.kind == "edge":
@@ -103,15 +108,38 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         elif status == "approved" and p.kind == "predicate":
             store.add_predicate(p.predicate)
 
-    for p in proposals.values():  # replay persisted decisions after a restart
-        if p.status == "approved" or p.kind == "edge":
-            apply(p, p.status)
+    def load_state() -> None:
+        """(Re)build graph, proposals and canary guard from data/state, falling back to the seed."""
+        nonlocal store, guard
+        store = CurationStore(graph_path)
+        state_ok = proposals_path.exists() and json.loads(proposals_path.read_text() or "[]")
+        src = proposals_path if state_ok else proposals_seed
+        proposals.clear()
+        proposals.update({p.id: p for p in (Proposal.model_validate(x) for x in json.loads(src.read_text()))})
+        for p in proposals.values():  # replay persisted decisions after a restart
+            if p.status == "approved" or p.kind == "edge":
+                apply(p, p.status)
+        guard = CanaryGuard(store, env("RAI_MODEL", "stub"), audit_path=proposals_path.parent / "audit.jsonl",
+                            streak=int(env("RAI_CANARY_STREAK", "4")), clock=clock)
+        app.state.store = store
+
+    load_state()
     live: dict[str, LiveRun] = {}
-    guard = CanaryGuard(store, env("RAI_MODEL", "stub"), audit_path=proposals_path.parent / "audit.jsonl", streak=int(env("RAI_CANARY_STREAK", "4")), clock=clock)
+    run_rl = RateLimiter(run_limit, clock=limit_clock)
+    write_rl = RateLimiter(write_limit, clock=limit_clock)
+
+    def too_many(retry: int, what: str) -> HTTPException:
+        return HTTPException(429, what, headers={"Retry-After": str(retry)})
+
+    def write_limited(request: Request) -> None:
+        ip = client_ip(request)
+        if (retry := write_rl.retry_after(ip)) is not None:
+            raise too_many(retry, "too many changes, slow down")
+        write_rl.record(ip)
     runner = _real_runner() or _stub_runner(stub_delay)
     model = env("RAI_MODEL", "stub")
 
-    app.state.store, app.state.proposals_path = store, proposals_path
+    app.state.proposals_path = proposals_path
 
     def read_run(run_id: str) -> list[dict]:
         if run_id in live:
@@ -147,7 +175,15 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         return read_run(run_id)
 
     @app.post("/api/runs")
-    async def create_run(body: CreateRun) -> CreateRunResponse:
+    async def create_run(body: CreateRun, request: Request) -> CreateRunResponse:
+        if len(body.question) > max_question:
+            raise HTTPException(422, f"question longer than {max_question} characters")
+        ip = client_ip(request)
+        if (retry := run_rl.retry_after(ip)) is not None:
+            raise too_many(retry, "run limit reached for this client")
+        if any(not r.done for r in live.values()):
+            raise too_many(5, "another live run is in progress")
+        run_rl.record(ip)
         run_id = "live-" + uuid.uuid4().hex[:8]
         lr = LiveRun(run_id, runs_dir / f"{run_id}.jsonl")
         live[run_id] = lr
@@ -203,7 +239,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         proposals_path.parent.mkdir(parents=True, exist_ok=True)
         proposals_path.write_text(json.dumps([x.model_dump() for x in proposals.values()], indent=2))
 
-    @app.post("/api/proposals")
+    @app.post("/api/proposals", dependencies=[Depends(write_limited)])
     def create_proposal(body: CreateProposal) -> Proposal:
         if body.kind == "edge":
             t = body.triple
@@ -232,7 +268,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         save()
         return p
 
-    @app.post("/api/proposals/{pid}")
+    @app.post("/api/proposals/{pid}", dependencies=[Depends(write_limited)])
     def decide(pid: str, body: ProposalDecision) -> Proposal:
         if guard.is_canary(pid):
             return guard.decide_canary(body.decision, revert)
@@ -246,6 +282,16 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         apply(p, status)
         save()
         return p
+
+    @app.post("/api/admin/reset")
+    def admin_reset(x_admin_token: str | None = Header(default=None)) -> dict:
+        expected = env("ADMIN_TOKEN", "")
+        if not expected or not x_admin_token or not hmac.compare_digest(x_admin_token, expected):
+            raise HTTPException(403, "forbidden")
+        for f in (proposals_path, proposals_path.parent / "audit.jsonl"):
+            f.unlink(missing_ok=True)
+        load_state()
+        return {"ok": True, "proposals": len(proposals)}
 
     if web_dist.is_dir():
         app.mount("/", StaticFiles(directory=web_dist, html=True), name="web")

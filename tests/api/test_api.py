@@ -323,3 +323,92 @@ def test_state_initialised_from_seed_and_seed_untouched(tmp_path):
         assert [p["status"] for p in (await c.get("/api/proposals")).json()][0] == "approved"
         assert len((await c.get("/api/audit")).json()) == 1
     asyncio.run(go2())
+
+
+# --- hardening ---------------------------------------------------------------------
+
+def _app(tmp_path, **kw):
+    base = dict(graph_path=FIX / "mini_graph.trig", runs_dir=tmp_path / "runs",
+                proposals_path=tmp_path / "state" / "proposals.json", proposals_seed=FIX / "proposals.json",
+                web_dist=tmp_path / "x", stub_delay=0.0, clock=Clock())
+    return create_app(**{**base, **kw})
+
+
+def _client(app):
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t")
+
+
+async def _wait_idle(app, c, rid):
+    async with c.stream("GET", f"/api/runs/{rid}/stream") as r:
+        async for _ in r.aiter_lines():
+            pass
+    await asyncio.sleep(0.1)
+
+
+async def test_question_length_limit(tmp_path):
+    c = _client(_app(tmp_path))
+    assert (await c.post("/api/runs", json={"question": "x" * 501})).status_code == 422
+    assert (await c.post("/api/runs", json={"question": "x" * 500})).status_code == 200
+
+
+async def test_only_one_live_run_at_a_time(tmp_path):
+    c = _client(_app(tmp_path, stub_delay=0.05))
+    first = await c.post("/api/runs", json={"question": "a"})
+    assert first.status_code == 200
+    second = await c.post("/api/runs", json={"question": "b"})
+    assert second.status_code == 429 and "retry-after" in second.headers
+    await _wait_idle(None, c, first.json()["run_id"])
+    assert (await c.post("/api/runs", json={"question": "c"})).status_code == 200
+
+
+async def test_run_rate_limit_per_ip_with_retry_after(tmp_path):
+    t = [0.0]
+    c = _client(_app(tmp_path, run_limit=2, limit_clock=lambda: t[0]))
+    h = {"CF-Connecting-IP": "1.1.1.1"}
+    for _ in range(2):
+        r = await c.post("/api/runs", json={"question": "a"}, headers=h)
+        assert r.status_code == 200
+        await _wait_idle(None, c, r.json()["run_id"])
+    r = await c.post("/api/runs", json={"question": "a"}, headers=h)
+    assert r.status_code == 429 and int(r.headers["retry-after"]) == 3600
+    # another client is unaffected (first X-Forwarded-For entry is used without CF header)
+    r = await c.post("/api/runs", json={"question": "a"}, headers={"X-Forwarded-For": "2.2.2.2, 10.0.0.1"})
+    assert r.status_code == 200
+    await _wait_idle(None, c, r.json()["run_id"])
+    t[0] = 3601.0   # window passed
+    assert (await c.post("/api/runs", json={"question": "a"}, headers=h)).status_code == 200
+
+
+async def test_write_rate_limit(tmp_path):
+    app = _app(tmp_path, write_limit=3)
+    c = _client(app)
+    pid = (await c.get("/api/proposals")).json()[0]["id"]
+    codes = [(await c.post(f"/api/proposals/{pid}", json={"decision": "reject"})).status_code for _ in range(4)]
+    assert codes == [200, 200, 200, 429]
+    assert (await c.get("/api/proposals")).status_code == 200   # reads stay free
+
+
+async def test_admin_reset(tmp_path, monkeypatch):
+    seed = tmp_path / "seed.json"
+    shutil.copy(FIX / "proposals.json", seed)
+    app = _app(tmp_path, proposals_seed=seed)
+    c = _client(app)
+    pid = next(p for p in (await c.get("/api/proposals")).json() if p["kind"] == "node")["id"]
+    await c.post(f"/api/proposals/{pid}", json={"decision": "approve"})
+    assert (tmp_path / "state" / "proposals.json").exists()
+    node = "https://rai-hackathon.bbger.at/kg/sensormodel/RTD-2400"
+    assert node in app.state.store._nodes
+
+    monkeypatch.delenv("ADMIN_TOKEN", raising=False)
+    assert (await c.post("/api/admin/reset", headers={"X-Admin-Token": "s3"})).status_code == 403  # disabled
+    monkeypatch.setenv("ADMIN_TOKEN", "s3")
+    assert (await c.post("/api/admin/reset")).status_code == 403
+    assert (await c.post("/api/admin/reset", headers={"X-Admin-Token": "nope"})).status_code == 403
+    assert node in app.state.store._nodes
+
+    assert (await c.post("/api/admin/reset", headers={"X-Admin-Token": "s3"})).json()["ok"] is True
+    assert node not in app.state.store._nodes
+    assert all(p["status"] == "proposed" for p in (await c.get("/api/proposals")).json())
+    assert (await c.get("/api/audit")).json() == []
+    assert not (tmp_path / "state" / "proposals.json").exists()
+    assert json.loads(seed.read_text())[1]["status"] == "proposed"   # seed untouched
