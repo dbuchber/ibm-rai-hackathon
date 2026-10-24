@@ -12,6 +12,7 @@ export type Event =
   | AnswerEvent
   | EvidenceEvent
   | BaselineEvent
+  | BeatEvent
   | RunFinishedEvent;
 
 export interface Contracts {
@@ -26,6 +27,8 @@ export interface Contracts {
   AnswerPayload?: AnswerPayload;
   BaselineEvent?: BaselineEvent;
   BaselinePayload?: BaselinePayload;
+  BeatEvent?: BeatEvent;
+  BeatPayload?: BeatPayload;
   Canary?: Canary;
   Citation?: Citation;
   Contradiction?: Contradiction;
@@ -107,6 +110,8 @@ export interface CreateProposal {
   quote?: string | null;
 }
 /**
+ * POST /api/runs body. The request also needs the header X-Invite-Code (403 without a valid one).
+ *
  * This interface was referenced by `Contracts`'s JSON-Schema
  * via the `definition` "CreateRun".
  */
@@ -203,6 +208,30 @@ export interface ScoredNode {
     [k: string]: string | number;
   };
   score: number;
+}
+/**
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "BeatEvent".
+ */
+export interface BeatEvent {
+  run_id: string;
+  seq: number;
+  ts: string;
+  type?: "beat";
+  payload: BeatPayload;
+}
+/**
+ * Stage direction for the animated demo. Sent right before the event it introduces; carries no new facts.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "BeatPayload".
+ */
+export interface BeatPayload {
+  act: "question" | "strategy" | "seeds" | "traverse" | "answer" | "evidence" | "contrast";
+  focus: string[];
+  caption: string;
+  emphasis?: ("follow" | "prune" | "enough" | "contradiction" | "canary") | null;
+  step?: number | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema

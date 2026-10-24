@@ -19,6 +19,7 @@ services:
       RAI_MODEL: ${RAI_MODEL:?set in .env}
       RAI_GRAPH: ${RAI_GRAPH:-data/graph/kg.trig}
       ADMIN_TOKEN: ${ADMIN_TOKEN:?set in .env}
+      RAI_INVITE_CODES: ${RAI_INVITE_CODES:-}   # empty = live mode closed
     read_only: true
     tmpfs:
       - /tmp

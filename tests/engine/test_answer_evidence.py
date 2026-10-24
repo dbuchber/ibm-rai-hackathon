@@ -52,6 +52,10 @@ def test_no_seeds_answers_insufficient(store, monkeypatch):
     monkeypatch.setattr(run.baseline, "rag", lambda *a, **k: __import__("contracts.models", fromlist=["x"]).BaselinePayload(chunks=[], answer="-"))
     events = []
     run.run_question("zzz", store, model="m", mode="live", emit=events.append, run_id="t")
+    beats = [e.payload for e in events if e.type == "beat"]
+    events = [e for e in events if e.type != "beat"]
     types = [e.type for e in events]
     assert types == ["run.started", "strategy", "seeds", "answer", "evidence", "baseline", "run.finished"]
+    assert [b.act for b in beats] == ["question", "strategy", "seeds", "answer", "evidence", "contrast"]
+    assert beats[0].caption == "zzz" and "No entry point" in beats[2].caption
     assert events[3].payload.text == ans_mod.INSUFFICIENT and events[4].payload.nodes == []
