@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import random
 from collections import deque
+from pathlib import Path
 from datetime import datetime, timezone
 from typing import Callable
 
@@ -21,14 +22,17 @@ def _now() -> str:
 
 
 class CanaryGuard:
-    def __init__(self, store: CurationStore, model: str, streak: int = 4, fast_secs: float = 3.0,
+    def __init__(self, store: CurationStore, model: str, audit_path: Path | None = None, streak: int = 4, fast_secs: float = 3.0,
                  clock: Callable[[], float] = None, rng: random.Random | None = None):
         import time
         self.store, self.model = store, model
         self.streak_limit, self.fast_secs = streak, fast_secs
         self.clock = clock or time.monotonic
         self.rng = rng or random.Random()
+        self.audit_path = audit_path
         self.audit: list[AuditEntry] = []
+        if audit_path is not None and audit_path.exists():
+            self.audit = [AuditEntry.model_validate_json(l) for l in audit_path.read_text().splitlines() if l.strip()]
         self.canary: Proposal | None = None
         self._streak = 0
         self._durations: deque[float] = deque(maxlen=4)
@@ -36,7 +40,12 @@ class CanaryGuard:
         self._mark = self.clock()             # last time the user was shown or decided something
 
     def log(self, kind: str, detail: str, pid: str | None = None) -> None:
-        self.audit.append(AuditEntry(ts=_now(), kind=kind, proposal_id=pid, detail=detail))
+        e = AuditEntry(ts=_now(), kind=kind, proposal_id=pid, detail=detail)
+        self.audit.append(e)
+        if self.audit_path is not None:
+            self.audit_path.parent.mkdir(parents=True, exist_ok=True)
+            with self.audit_path.open("a") as f:
+                f.write(e.model_dump_json() + "\n")
 
     # --- triggering -------------------------------------------------------
     def _triggered(self) -> bool:

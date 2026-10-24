@@ -1,3 +1,4 @@
+import asyncio
 import json
 import shutil
 from pathlib import Path
@@ -291,3 +292,34 @@ async def test_approving_canary_fails_reverts_and_notifies(app, client):
     for k in ("canary_planted", "canary_failed", "supervisor_notified", "decision"):
         assert k in kinds
     assert (await client.get("/api/audit")).json()[0].keys() >= {"ts", "kind", "proposal_id", "detail"}
+
+
+# --- runtime state outside the tracked files ------------------------------------
+
+def test_state_initialised_from_seed_and_seed_untouched(tmp_path):
+    seed = tmp_path / "proposals.json"
+    shutil.copy(FIX / "proposals.json", seed)
+    before = seed.read_bytes()
+    state = tmp_path / "state" / "proposals.json"
+    (tmp_path / "state").mkdir()
+    state.write_text("")  # empty state falls back to the seed
+    kw = dict(graph_path=FIX / "mini_graph.trig", runs_dir=tmp_path / "runs", web_dist=tmp_path / "x",
+              proposals_path=state, proposals_seed=seed, clock=Clock())
+    app = create_app(**kw)
+
+    async def go():
+        c = httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t")
+        items = (await c.get("/api/proposals")).json()
+        assert len(items) == 4
+        await c.post(f"/api/proposals/{items[0]['id']}", json={"decision": "approve"})
+    asyncio.run(go())
+    assert seed.read_bytes() == before                      # tracked file never written
+    assert json.loads(state.read_text())[0]["status"] == "approved"
+    assert (tmp_path / "state" / "audit.jsonl").read_text().count("\n") == 1
+    app2 = create_app(**kw)                                 # restart: state wins over seed, audit reloads
+    assert app2.state.proposals_path == state
+    async def go2():
+        c = httpx.AsyncClient(transport=httpx.ASGITransport(app=app2), base_url="http://t")
+        assert [p["status"] for p in (await c.get("/api/proposals")).json()][0] == "approved"
+        assert len((await c.get("/api/audit")).json()) == 1
+    asyncio.run(go2())

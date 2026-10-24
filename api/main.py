@@ -80,14 +80,17 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     if not graph_path.exists():  # stream A's kg.trig not landed yet
         graph_path = FIXTURES / "mini_graph.trig"
     runs_dir = Path(runs_dir or env("RAI_RUNS") or ROOT / "runs")
-    proposals_path = Path(proposals_path or env("RAI_PROPOSALS") or ROOT / "data" / "proposals.json")
-    proposals_seed = Path(proposals_seed or FIXTURES / "proposals.json")
+    # Runtime state lives in data/state/ (gitignored); data/proposals.json stays the versioned starting point.
+    proposals_path = Path(proposals_path or env("RAI_PROPOSALS") or ROOT / "data" / "state" / "proposals.json")
+    tracked = ROOT / "data" / "proposals.json"
+    proposals_seed = Path(proposals_seed or (tracked if tracked.exists() else FIXTURES / "proposals.json"))
     web_dist = Path(web_dist or ROOT / "web" / "dist")
     runs_dir.mkdir(parents=True, exist_ok=True)
 
     app = FastAPI(title="Graph Anchor API")
     store = CurationStore(graph_path)
-    src = proposals_path if proposals_path.exists() else proposals_seed
+    state_ok = proposals_path.exists() and json.loads(proposals_path.read_text() or "[]")
+    src = proposals_path if state_ok else proposals_seed
     proposals = {p.id: p for p in (Proposal.model_validate(x) for x in json.loads(src.read_text()))}
     def apply(p: Proposal, status: str) -> None:
         """Mirror a proposal's status into the in-memory graph/ontology."""
@@ -104,7 +107,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         if p.status == "approved" or p.kind == "edge":
             apply(p, p.status)
     live: dict[str, LiveRun] = {}
-    guard = CanaryGuard(store, env("RAI_MODEL", "stub"), streak=int(env("RAI_CANARY_STREAK", "4")), clock=clock)
+    guard = CanaryGuard(store, env("RAI_MODEL", "stub"), audit_path=proposals_path.parent / "audit.jsonl", streak=int(env("RAI_CANARY_STREAK", "4")), clock=clock)
     runner = _real_runner() or _stub_runner(stub_delay)
     model = env("RAI_MODEL", "stub")
 
