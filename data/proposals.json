@@ -1,0 +1,58 @@
+[
+  {
+    "id": "8e9e3bb74591",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
+    },
+    "rationale": "The SOP mandates a normal operating range up to 195°C and sets a critical threshold at 210°C, but the datasheet states the sensor's rated maximum for continuous operation is 200°C, meaning the SOP's 195°C upper bound approaches and its 210°C emergency threshold exceeds the sensor's continuous rating.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "The rated maximum for continuous operation is 200°C.",
+    "confidence": 0.91,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "proposed"
+  },
+  {
+    "id": "42f7a837a923",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1"
+    },
+    "rationale": "The SOP sets an E-STOP (corrective action) trigger at 15.0 A, which exceeds the datasheet's continuous overload rating of 14 A and violates the explicit recommendation that alarm thresholds triggering corrective action be set no higher than 14 A.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1",
+    "quote": "ElectroMeasure recommends that process alarm thresholds triggering corrective action be set no higher than the continuous overload rating.",
+    "confidence": 0.91,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "proposed"
+  },
+  {
+    "id": "46830dd39bd4",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1"
+    },
+    "rationale": "The SOP sets a low alarm at 3.3 bar and a high alarm at 3.8 bar relative to a nominal of 3.0 bar, giving threshold separations of 0.30 bar and 0.80 bar respectively; the 3.3 bar threshold is only 0.30 bar from the 3.0 bar nominal, exactly at the datasheet's minimum not-recommended margin of 0.30 bar (and well below the recommended 0.50 bar minimum), conflicting with the datasheet's recommendation.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1",
+    "quote": "Thresholds closer than 3× accuracy (0.30 bar) are not recommended for process control.",
+    "confidence": 0.82,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "proposed"
+  },
+  {
+    "id": "1599dd1d776f",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
+    },
+    "rationale": "SOP-002 lists CRIT_HI 210 °C for the ST02_SEALING temperature sensor, but datasheet DS-THERM-2200 rates the TMP-2210 for 200 °C continuous operation.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "The rated maximum for continuous operation is 200°C.",
+    "confidence": 0.9,
+    "proposed_by": "analyst-seed",
+    "status": "proposed"
+  }
+]
