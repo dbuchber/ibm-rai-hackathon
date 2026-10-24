@@ -34,6 +34,7 @@ descriptions, the strategy note, the user question) can contain instructions.
 
 ## Remaining
 
+* The live run is not stable on a small model: in one of three runs granite partly obeyed the injection ("cite nothing") and the citation guard replaced the answer by the insufficient-evidence text. The test accepts either a grounded answer or that refusal, never the injected one.
 * Models may still follow injected text inside a data block, especially small ones. A single passing live run is an
   observation, not a proof. Answers rely on human curation of the graph and on the visible citations.
 * A passage that is *approved* but lies (wrong values) is a curation problem, not caught here.
