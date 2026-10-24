@@ -290,7 +290,7 @@ button.chip:hover { background: var(--fill2); }
 
 /* ---------- roadmap ---------- */
 .ladder { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.ladder li { display: flex; flex-direction: column; gap: 3px; }
+.ladder li { display: flex; align-items: center; gap: 12px; }
 .rung {
   height: 34px; border-radius: 10px; display: flex; align-items: center; padding: 0 12px;
   background: var(--fill); animation: grow 0.7s var(--ease) both;
@@ -303,7 +303,7 @@ button.chip:hover { background: var(--fill2); }
 .rung.t-M { background: var(--fill2); }
 .rung.t-L { background: var(--ink); color: var(--bg); }
 .rung-name { font-size: 14px; font-weight: 600; white-space: nowrap; }
-.rung-note { font-size: 12px; color: var(--ink2); padding-left: 2px; }
+.rung-note { font-size: 12px; color: var(--ink2); line-height: 1.25; }
 .route { margin-top: 16px; display: flex; flex-direction: column; }
 .route-row {
   display: grid; grid-template-columns: 1fr 56px 56px 56px; align-items: center; height: 34px;
@@ -317,9 +317,26 @@ button.chip:hover { background: var(--fill2); }
 .route .dot.from { background: transparent; border: 2px dashed var(--contra); }
 .rules { margin: 16px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--ink2); }
 .rules b { color: var(--ink); font-weight: 600; }
-.benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
-.benefit { background: var(--solid); border: 0.5px solid var(--hair); border-radius: 22px; padding: 18px 20px; }
-.benefit h4 { margin: 0 0 6px; font-size: 16px; letter-spacing: -0.01em; }
-.benefit p { margin: 0; font-size: 13.5px; color: var(--ink2); }
-.benefit code { display: inline-block; margin-top: 10px; font-family: var(--mono); font-size: 12px; background: var(--fill); padding: 4px 8px; border-radius: 6px; }
-@media (max-width: 900px) { .benefits { grid-template-columns: 1fr; } }
+.roadmap h5.group { margin: 4px 0 10px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink2); }
+.roadmap .cols + h5.group { margin-top: 16px; }
+.roadmap .col { padding: 18px 20px; }
+.roadmap .ladder { margin-top: 14px; gap: 6px; }
+.roadmap .rung { flex: none; min-width: 120px; }
+.roadmap .rung { height: 28px; }
+.perks { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 0.5px solid var(--hair); display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--ink2); }
+.perks b { color: var(--ink); font-weight: 600; }
+.perks code { font-family: var(--mono); font-size: 11.5px; background: var(--fill); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+.roadmap .route-row { height: 30px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.tile { background: var(--solid); border: 0.5px solid var(--hair); border-radius: 20px; padding: 16px 18px; animation: card-in 0.55s var(--ease) both; }
+.tile:nth-child(2) { animation-delay: 0.06s; } .tile:nth-child(3) { animation-delay: 0.12s; } .tile:nth-child(4) { animation-delay: 0.18s; }
+.tile h4 { margin: 0 0 4px; font-size: 15px; letter-spacing: -0.01em; }
+.tile p { margin: 0; font-size: 13px; color: var(--ink2); line-height: 1.4; }
+.tile .chips { margin-top: 10px; gap: 4px; }
+.tile .chip { font-size: 11.5px; padding: 3px 7px; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; margin-top: 10px; }
+.chain .arrow { color: var(--ink3); margin: 0 5px; font-size: 12px; }
+.acl { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; margin: 10px 0 0; font-size: 12.5px; }
+.acl dt { font-weight: 600; }
+.acl dd { margin: 0; color: var(--ink2); }
+@media (max-width: 1100px) { .tiles { grid-template-columns: 1fr 1fr; } }

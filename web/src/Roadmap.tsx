@@ -23,15 +23,16 @@ export default function Roadmap({ steps }: { steps: number }) {
   ];
   return (
     <div className="sheet-wrap">
-      <section className="sheet glass roadmap" aria-label="Roadmap: local models with routing">
+      <section className="sheet glass roadmap" aria-label="Roadmap">
         <div className="sheet-head">
           <div>
             <div className="eyebrow">Next · not running today</div>
-            <h2>The smallest model that is good enough, for every step. All on-prem.</h2>
+            <h2>Right-sized models, guarded and access-aware.</h2>
           </div>
           <span className="tag mock">Roadmap</span>
         </div>
 
+        <h5 className="group">Models and routing · all on-prem</h5>
         <div className="cols">
           <div className="col">
             <h3>Model ladder</h3>
@@ -39,13 +40,18 @@ export default function Roadmap({ steps }: { steps: number }) {
             <ol className="ladder">
               {LADDER.map((r) => (
                 <li key={r.name}>
-                  <div className={"rung t-" + r.tier} style={{ width: `${r.width}%` }}>
+                  <div className={"rung t-" + r.tier} style={{ width: `${r.width * 0.58}%` }}>
                     <span className="rung-name">{r.name}</span>
                   </div>
                   <span className="rung-note">{r.note}</span>
                 </li>
               ))}
             </ol>
+            <ul className="perks">
+              <li><b>Sovereignty.</b> Data and graph stay in the plant network.</li>
+              <li><b>Cost and latency.</b> Most calls are step verdicts on small models.</li>
+              <li><b>One config switch.</b> LiteLLM makes IBM watsonx / Granite a config change: <code>model: watsonx/&lt;granite-model&gt;</code></li>
+            </ul>
           </div>
 
           <div className="col">
@@ -76,23 +82,46 @@ export default function Roadmap({ steps }: { steps: number }) {
           </div>
         </div>
 
-        <div className="benefits">
-          <div className="benefit">
-            <h4>Sovereignty</h4>
-            <p>Company data and the graph never leave the plant network.</p>
+        <h5 className="group">Trust and reach</h5>
+        <div className="tiles">
+          <div className="tile">
+            <h4>Guardrails</h4>
+            <p>Checks on input and output, e.g. IBM Granite Guardian.</p>
+            <div className="chips">
+              <span className="chip">Prompt injection</span><span className="chip">PII</span><span className="chip">Ungrounded claims</span>
+            </div>
           </div>
-          <div className="benefit">
-            <h4>Cost and latency</h4>
-            <p>Most calls are step verdicts, and those run on the smallest models.</p>
+          <div className="tile">
+            <h4>Feedback loop</h4>
+            <p>Thumbs and corrections in the chat flow back as proposals.</p>
+            <Chain items={["Correction", "Proposal", "Analyst review"]} />
           </div>
-          <div className="benefit">
-            <h4>One config switch</h4>
-            <p>Every call goes through LiteLLM, so IBM watsonx / Granite is a config change.</p>
-            <code>model: watsonx/&lt;granite-model&gt;</code>
+          <div className="tile">
+            <h4>Forward navigation</h4>
+            <p>From a citation to the passage to the record in DMS, ERP or SharePoint.</p>
+            <Chain items={["Citation", "Chunk", "Source system"]} />
+          </div>
+          <div className="tile">
+            <h4>Access control</h4>
+            <p>Seed search and traversal only see what the user may see.</p>
+            <dl className="acl">
+              <dt>Vectors</dt><dd>payload filter on chunks</dd>
+              <dt>Graph</dt><dd>node and graph ACLs</dd>
+            </dl>
           </div>
         </div>
-        <div className="foot">Today every call runs on one model (gemma-4-31b) through a LiteLLM gateway.</div>
+        <div className="foot">Today: one model (gemma-4-31b) through a LiteLLM gateway, no guardrails, no ACLs.</div>
       </section>
+    </div>
+  );
+}
+
+function Chain({ items }: { items: string[] }) {
+  return (
+    <div className="chain">
+      {items.map((x, i) => (
+        <span key={x}>{i > 0 && <span className="arrow" aria-hidden="true">→</span>}<span className="chip">{x}</span></span>
+      ))}
     </div>
   );
 }
