@@ -455,3 +455,42 @@ async def test_hung_run_is_closed_after_timeout(tmp_path):
     evs = (await c.get(f"/api/runs/{first}")).json()
     assert evs[-1]["type"] == "run.finished" and evs[-1]["payload"]["status"] == "error"
     assert "timed out" in evs[-1]["payload"]["error"]
+
+
+# --- model choice ----------------------------------------------------------------
+
+async def test_models_allowlist(tmp_path, monkeypatch):
+    monkeypatch.setenv("RAI_MODEL", "openai/mistral-large-4-openrouter")
+    c = _client(_app(tmp_path))
+    ms = (await c.get("/api/models")).json()
+    assert ms[0] == {"id": "openai/mistral-large-4-openrouter", "label": "Mistral Large 4", "provider": "gateway"}
+    assert {m["id"] for m in ms[1:]} == {"openai/ibm/granite-4-h-small", "openai/watsonx/mistralai/mistral-medium-2505",
+                                         "openai/meta-llama/llama-3-3-70b-instruct"}
+    assert all(m["provider"] == "ibm-ica" for m in ms[1:])
+
+
+async def test_run_model_choice(tmp_path, monkeypatch):
+    monkeypatch.setenv("RAI_MODEL", "openai/mistral-large-4-openrouter")
+    c = _client(_app(tmp_path))
+    bad = await c.post("/api/runs", json={"question": "q", "model": "openai/evil-model"})
+    assert bad.status_code == 422
+    rid = (await c.post("/api/runs", json={"question": "q", "model": "openai/ibm/granite-4-h-small"})).json()["run_id"]
+    await _wait_idle(None, c, rid)
+    started = next(e for e in (await c.get(f"/api/runs/{rid}")).json() if e["type"] == "run.started")
+    assert started["payload"]["model"] == "openai/ibm/granite-4-h-small"
+    rid2 = (await c.post("/api/runs", json={"question": "q"})).json()["run_id"]   # default stays RAI_MODEL
+    await _wait_idle(None, c, rid2)
+    started2 = next(e for e in (await c.get(f"/api/runs/{rid2}")).json() if e["type"] == "run.started")
+    assert started2["payload"]["model"] == "openai/mistral-large-4-openrouter"
+    # invite still required
+    assert (await c.post("/api/runs", json={"question": "q", "model": "openai/ibm/granite-4-h-small"},
+                         headers={"X-Invite-Code": "no"})).status_code == 403
+
+
+def test_route_ica_vs_gateway(monkeypatch):
+    from engine.models import ICA_BASE, route
+    monkeypatch.setenv("ICA_API_KEY", "ica-k")
+    monkeypatch.setenv("LITELLM_API_KEY", "gw-k")
+    monkeypatch.setenv("LITELLM_BASE_URL", "http://gw/v1")
+    assert route("openai/ibm/granite-4-h-small") == {"api_base": ICA_BASE, "api_key": "ica-k"}
+    assert route("openai/mistral-large-4-openrouter") == {"api_base": "http://gw/v1", "api_key": "gw-k"}

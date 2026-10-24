@@ -10,6 +10,8 @@ from typing import TypeVar
 
 from pydantic import BaseModel, ValidationError
 
+from engine.models import route
+
 T = TypeVar("T", bound=BaseModel)
 
 
@@ -40,8 +42,7 @@ def _raw(messages: list[dict], model: str, json_mode: bool = True) -> str:
     kwargs = dict(
         model=model,
         messages=messages,
-        api_base=os.environ.get("LITELLM_BASE_URL"),
-        api_key=os.environ.get("LITELLM_API_KEY"),
+        **route(model),
         temperature=0,
         max_tokens=8000,   # reasoning models spend tokens before the JSON; a low cap yields empty content
     )

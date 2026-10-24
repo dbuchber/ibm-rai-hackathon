@@ -17,11 +17,13 @@ import hmac
 import secrets
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
 
 from api.canary import CanaryGuard
+from engine.models import allowed_models
 from api.limits import RateLimiter, client_ip
 from api.store import CurationStore
 from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
@@ -45,7 +47,7 @@ def _stub_runner(delay: float):
             ev = EventAdapter.validate_json(line)
             if ev.type == "run.started":
                 ev = ev.model_copy(update={"payload": ev.payload.model_copy(
-                    update={"question": question, "mode": "live", "mock": True})})
+                    update={"question": question, "mode": "live", "mock": True, "model": model})})
             elif ev.type == "beat" and ev.payload.act == "question":
                 ev = ev.model_copy(update={"payload": ev.payload.model_copy(update={"caption": question})})
             emit(ev)
@@ -59,6 +61,17 @@ def _real_runner():
         return run_question
     except Exception:
         return None
+
+
+class CreateLiveRun(CreateRun):
+    """CreateRun plus an optional model from the allowlist (superset of the contract body)."""
+    model: str | None = None
+
+
+class ModelOut(BaseModel):
+    id: str
+    label: str
+    provider: str
 
 
 class LiveRun:
@@ -171,6 +184,10 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     def graph() -> GraphExport:
         return store.export({"approved", "proposed"})
 
+    @app.get("/api/models")
+    def models() -> list[ModelOut]:
+        return [ModelOut(id=m.id, label=m.label, provider=m.provider) for m in allowed_models()]
+
     @app.get("/api/runs")
     def runs() -> list[RunSummary]:
         out = []
@@ -188,10 +205,13 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         return read_run(run_id)
 
     @app.post("/api/runs")
-    async def create_run(body: CreateRun, request: Request, x_invite_code: str = Header("")) -> CreateRunResponse:
+    async def create_run(body: CreateLiveRun, request: Request, x_invite_code: str = Header("")) -> CreateRunResponse:
         # order: invite code, then input size, then one run at a time, then per-IP hourly budget
         if not any(secrets.compare_digest(x_invite_code.encode(), c.encode()) for c in invite_codes):
             raise HTTPException(403, "invite code required")
+        run_model = body.model or model
+        if body.model and body.model not in {m.id for m in allowed_models()}:
+            raise HTTPException(422, "model not allowed")
         if len(body.question) > max_question:
             raise HTTPException(422, f"question longer than {max_question} characters")
         for r in live.values():  # a hung LLM call must not block live mode for everyone
@@ -210,7 +230,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
         def work():
             try:
-                runner(body.question, store, model=model, mode="live", emit=lr.add)
+                runner(body.question, store, model=run_model, mode="live", emit=lr.add)
             except Exception as e:  # keep the stream well-formed
                 lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
                                         payload=RunFinished(status="error", error=str(e))))

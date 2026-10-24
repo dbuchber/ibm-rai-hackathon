@@ -1,6 +1,6 @@
 # Run from the repo root:
 #   docker compose --env-file .env -f deploy/compose.yml up -d --build
-# Only the variables listed below reach the container (ICA_API_KEY and the rest of .env stay out).
+# Only the variables listed below reach the container (the rest of .env stays out).
 # Host prerequisites: data/state/ and runs/ must be writable by uid 10001 (chown 10001 data/state runs).
 services:
   rai:
@@ -19,6 +19,7 @@ services:
       RAI_MODEL: ${RAI_MODEL:?set in .env}
       RAI_GRAPH: ${RAI_GRAPH:-data/graph/kg.trig}
       ADMIN_TOKEN: ${ADMIN_TOKEN:?set in .env}
+      ICA_API_KEY: ${ICA_API_KEY:?set in .env}   # IBM ICA models for live runs (approved by the user)
       RAI_INVITE_CODES: ${RAI_INVITE_CODES:-}   # empty = live mode closed
     read_only: true
     tmpfs:
