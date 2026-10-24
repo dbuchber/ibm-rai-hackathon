@@ -3,6 +3,7 @@ import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSumma
 import { data, type Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
 import TraversalGuide from "./TraversalGuide";
+import TryIt, { loadInvite, saveInvite } from "./TryIt";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
 import { RunPanel } from "./RunPanel";
@@ -32,7 +33,7 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   const previousChatBox = useRef<DOMRect | null>(null);
   const [showGraph, setShowGraph] = useState(true);
   const [draft, setDraft] = useState("");
-  const [invite, setInvite] = useState("");
+  const [invite, setInvite] = useState(loadInvite);
   const [questionError, setQuestionError] = useState("");
   const [view, setView] = useState<View>("twin");
   const [graph, setGraph] = useState<GraphExport>({ nodes: [], edges: [] });
@@ -405,13 +406,13 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
       </aside>
       <section ref={chatBox} className="chat-pane" aria-label="Ask the twin">
         <div className="workspace-heading"><div><div className="eyebrow">Ask the twin</div><h2>Open chat</h2></div><button className="clear-chat" onClick={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); setDraft(""); setQuestionError(""); setSelected(null); setFocusChunk(null); setView("twin"); }}>Clear</button></div>
-        {!runId && <div className="chat-empty"><strong>No questions yet</strong><span>{"Ask about stations, sensors, suppliers and source documents."}</span></div>}
+        {!runId && <div className="chat-empty"><strong>No questions yet</strong><span>{"Ask about stations, sensors, suppliers and source documents."}</span>{!isWalkthrough && <TryIt invite={invite} className="tryit-inline" />}</div>}
         {runId && <RunPanel answerOnly view={panelsVisible ? { ...rv, answer: full.answer } : rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
           onBack={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
           onCite={cite} reported={reported.has(runId)} onReport={report} />}
         {!runId && <details className="chat-recordings" open={!data.live}><summary>Explore a recorded question</summary><div className="guide-questions">{runs.map(run => <button key={run.run_id} onClick={() => { void pick(run.run_id); }}>{run.question}{run.mock && <span className="tag mock">Mock canary</span>}</button>)}</div></details>}
         <form className="chat-form" onSubmit={event => { event.preventDefault(); if (draft.trim() && data.live) ask(draft.trim()); }}>
-          {data.live && <input className="invite-field" aria-label="Invitation code" placeholder="Invitation code" value={invite} onChange={event => setInvite(event.target.value)} />}
+          {data.live && <input className="invite-field" aria-label="Invitation code" placeholder="Invitation code" value={invite} onChange={event => { setInvite(event.target.value); saveInvite(event.target.value.trim()); }} />}
           {questionError && <div className="chat-error" role="alert">{questionError}</div>}
           <div className="chat-compose"><input aria-label="Your question" value={draft} onChange={event => setDraft(event.target.value)} disabled={!data.live} placeholder="Ask about stations, sensors, suppliers…" /><button type="submit" disabled={!data.live || !draft.trim() || playing}>Send</button></div>
           {!data.live && <div className="offline-note">Offline replay · Live questions need the engine API.</div>}
