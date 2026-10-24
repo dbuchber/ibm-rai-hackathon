@@ -50,6 +50,7 @@ export interface Contracts {
   StrategyPayload?: StrategyPayload;
   Event?: Event;
   GraphExport?: GraphExport;
+  ModelInfo?: ModelInfo;
   CanaryAlert?: CanaryAlert;
   Proposal?: Proposal;
   ProposalDecision?: ProposalDecision;
@@ -117,6 +118,7 @@ export interface CreateProposal {
  */
 export interface CreateRun {
   question: string;
+  model?: string | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -397,6 +399,17 @@ export interface StrategyPayload {
 export interface GraphExport {
   nodes: Node[];
   edges: Edge[];
+}
+/**
+ * GET /api/models item: a live model the server allows.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "ModelInfo".
+ */
+export interface ModelInfo {
+  id: string;
+  label: string;
+  provider: string;
 }
 /**
  * Returned with the decision that approved a planted canary.

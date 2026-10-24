@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Edge, RunSummary } from "./contracts";
-import type { LiveModel } from "./data";
+import type { Edge, ModelInfo, RunSummary } from "./contracts";
 import { labelOf, readable, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 import { pretty } from "./run";
@@ -17,12 +16,13 @@ interface PickerProps {
   /** resolves to an error message for the visitor, or null once the run started */
   onAsk: (q: string, invite: string, model?: string) => Promise<string | null>;
   /** live models to choose from; fewer than two means no choice is shown and the server default runs */
-  models: LiveModel[];
+  models: ModelInfo[];
 }
 
 const INVITE_KEY = "graph-anchor.invite";
 const loadInvite = () => { try { return localStorage.getItem(INVITE_KEY) ?? ""; } catch { return ""; } };
 const saveInvite = (v: string) => { try { localStorage.setItem(INVITE_KEY, v); } catch { /* private window */ } };
+const PROVIDER: Record<string, string> = { gateway: "gateway", "ibm-ica": "IBM ICA" };
 const MODEL_KEY = "graph-anchor.model";
 const loadModel = () => { try { return localStorage.getItem(MODEL_KEY) ?? ""; } catch { return ""; } };
 const saveModel = (v: string) => { try { localStorage.setItem(MODEL_KEY, v); } catch { /* private window */ } };
@@ -59,7 +59,7 @@ export function Picker({ runs, meta, live, models, onPick, onAsk }: PickerProps)
         <label className="field model">
           <span>Model</span>
           <select value={model} onChange={(e) => { setPicked(e.target.value); saveModel(e.target.value); }}>
-            {models.map((m) => <option key={m.id} value={m.id}>{m.label}{m.provider ? ` · ${m.provider}` : ""}</option>)}
+            {models.map((m) => <option key={m.id} value={m.id}>{m.label} · {PROVIDER[m.provider] ?? m.provider}</option>)}
           </select>
           <em>Granite ~30 s · Mistral Large via gateway: several minutes today</em>
         </label>

@@ -1,6 +1,6 @@
 // Data source abstraction (plan, stream C). VITE_DATA=static reads public/data; api talks to C4.
 // The api source falls back to static files for reads, so a dead API never breaks replay.
-import type { AuditEntry, CreateProposal, Event, GraphExport, Proposal, RunSummary } from "./contracts";
+import type { AuditEntry, CreateProposal, CreateRun, Event, GraphExport, ModelInfo, Proposal, RunSummary } from "./contracts";
 import { CanaryEngine, localAudit } from "./canary";
 import { nodeIri, predIri, proposalId } from "./ids";
 
@@ -20,7 +20,7 @@ export interface DataSource {
   /** Live questions need an invitation code; the API answers 403 "invite code required" without a valid one. */
   startRun(question: string, invite?: string, model?: string): Promise<{ run_id: string }>;
   /** Models offered for live questions (GET /api/models); empty when the API does not offer a choice. */
-  listModels(): Promise<LiveModel[]>;
+  listModels(): Promise<ModelInfo[]>;
   streamRun(id: string, onEvent: (e: Event) => void, onLost: () => void): () => void;
   listProposals(): Promise<Proposal[]>;
   /** On a failed canary the result carries `alert`; its `reverted` ids are back to "proposed". */
@@ -47,9 +47,6 @@ const BASE = import.meta.env.BASE_URL + "data/";
 export class HttpError extends Error {
   constructor(message: string, readonly status: number, readonly retryAfter: number | null) { super(message); }
 }
-
-/** GET /api/models entry. Not in contracts/ yet (stream D adds the endpoint); kept local until it is. */
-export interface LiveModel { id: string; label: string; provider: string }
 
 async function json<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
@@ -128,10 +125,10 @@ function apiSource(): DataSource {
       json("/api/runs", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Invite-Code": invite },
-        body: JSON.stringify(model ? { question, model } : { question }),
+        body: JSON.stringify({ question, model: model ?? null } satisfies CreateRun),
       }),
     listModels: () =>
-      json<LiveModel[]>("/api/models").then((xs) => (Array.isArray(xs) ? xs : [])).catch(() => []),
+      json<ModelInfo[]>("/api/models").then((xs) => (Array.isArray(xs) ? xs : [])).catch(() => []),
     streamRun: (id, onEvent, onLost) => {
       const es = new EventSource(`/api/runs/${id}/stream`);
       let done = false;

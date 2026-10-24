@@ -8,7 +8,8 @@ const dir = new URL("../../contracts/schema/", import.meta.url).pathname;
 const defs = {};
 for (const f of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
   const { $defs = {}, ...top } = JSON.parse(readFileSync(join(dir, f), "utf8"));
-  Object.assign(defs, $defs, { [top.title]: top });
+  // a list schema titled like its item (ModelInfo.json = ModelInfo[]) keeps the item under that name
+  Object.assign(defs, $defs, top.title in $defs ? {} : { [top.title]: top });
 }
 // Property-level titles would become noisy type aliases (Status, Status1, ...); keep only def titles.
 const strip = (s, isDef) => {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data, HttpError, type LiveModel, type Ontology } from "./data";
+import { data, HttpError, type Ontology } from "./data";
+import type { ModelInfo } from "./contracts";
 import { nodeIri, predIri } from "./ids";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
@@ -44,8 +45,8 @@ export default function App() {
   const [pos, setPos] = useState(-1);
   const [playing, setPlaying] = useState(false);
   const [liveRun, setLiveRun] = useState(false);
-  const [liveModels, setLiveModels] = useState<LiveModel[]>([]);
-  useEffect(() => { if (data.live) data.listModels().then(setLiveModels); }, []);
+  const [liveModels, setModelInfos] = useState<ModelInfo[]>([]);
+  useEffect(() => { if (data.live) data.listModels().then(setModelInfos); }, []);
   const [lost, setLost] = useState(false);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
