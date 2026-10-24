@@ -1,48 +1,44 @@
-Das Feedback eures Professors ist Gold wert – und es rettet euch davor, morgen in die typische „Studenten-Falle“ zu tappen (zu viel Technik-Jargon, zu wenig Business-Relevanz).
+## 1. Das korrigierte Pitch-Skript (Nahtloser Übergang in die Demo)
 
-Wenn ihr auf C-Level (Vorstand / Geschäftsführung) argumentiert, interessiert niemanden, wie ein „Multi-Hop-Traversal“ funktioniert. Einen CEO oder COO interessieren drei Dinge: Risiko, Haftung (Liability) und Entscheidungsfähigkeit.
+### Teil A: Das Problem (C-Level Framing & Gartner-Folie)
 
-Hier ist die Übersetzung eures technischen Projekts in genau die C-Level-Sprache, die euer Professor hören will – inklusive neuem Pitch-Einstieg.
-1. Das neue Narrativ (Die 4 Punkte des Professors übersetzt)
-Was der Prof sagt	Was das für euren Pitch bedeutet (C-Level Framing)	Wie eure Technik das löst (ohne Tech-Blabla)
-„Jede Organisation sammelt blind Daten. Zu viele Daten = unverständlich.“	Von der Datenflut zur Wissenslähmung: Unternehmen ersticken in PDFs, ERP-Tabellen und SharePoint-Ordnern. Mehr Daten führen heute nicht zu besseren Entscheidungen, sondern zu Chaos.	Der Digital Twin als Ordnungsstruktur: Euer Knowledge Graph speichert nicht einfach noch mehr Text, sondern bringt Ordnung und Kontext in das bestehende Chaos.
-„Ein LLM für alles zu verwenden verschlimmert das (mehrere Versionen von Handbüchern).“	Standard-KI verstärkt das Chaos: Wenn man ein normales LLM (oder Standard-RAG) auf einen unaufgeräumten Datenberg wirft, zieht es sich blind Sätze aus veralteten Handbüchern (Version 1.0 statt 3.0) oder wirft Richtlinien verschiedener Werke durcheinander. Es gibt eine wohlklingende, aber brandgefährliche Antwort.	Kuratierter Grounding-Anker: Bevor die KI überhaupt sprechen darf, prüft der Graph deterministisch: Welches Dokument ist für genau diese Anlage aktuell gültig und freigegeben?
-„Responsible AI heißt: belastbare Entscheidungen treffen können.“	Accountability statt Blackbox: Ein Manager oder Schichtleiter kann vor Gericht oder vor dem Vorstand nicht sagen: „Der Chatbot hat das halt so gesagt.“ Er braucht eine prüfbare Entscheidungsgrundlage (Audit Trail).	Langfuse + Graph-Pfad als Beweiskette: Jede Antwort liefert ihre eigene Aktennotiz mit: Welcher Datenpunkt, welche Vorschrift, welche Version.
-„Wissen worum es geht – sich auf nichts verlassen, was halluziniert ist.“	Ehrlichkeit bei Widersprüchen: Wenn Handbuch A (2022) etwas anderes sagt als Hersteller-Blatt B (2024), darf die KI das nicht heimlich glattbügeln. Sie muss den Finger in die Wunde legen.	Conflict Detection & Human-in-the-Loop: Euer System deckt Widersprüche in den Unternehmensdaten aktiv auf und gibt die Entscheidung an den Menschen zurück.
-2. Der neue Pitch-Einstieg: Kombination aus deiner „Sonntagmorgen-Story“ + C-Level-Sicht
+> *"Every company today is obsessed with collecting more data—more sensor logs, more PDFs, more guidelines. Have you ever looked into an industrial company’s SharePoint? There are multiple versions of safety manuals, conflicting manufacturer datasheets, and nobody knows which one actually applies.*
+> *Now, companies throw a standard LLM on top of this mess and hope for magic. **That doesn't solve the chaos—it amplifies it.** Gartner predicts that 60% of AI projects will be abandoned specifically because they lack AI-ready data. Why? Because a standard AI will happily pull a paragraph from an internal SOP, ignore a hardware limit in a sensor datasheet, and give you a confident, completely unreliable answer."*
 
-Du musst deine gute Geschichte vom Sonntagmorgen gar nicht wegwerfen! Du musst sie nur aus der Perspektive des Unternehmensrisikos (Datenchaos & Versionen) erzählen, statt aus der Sicht eines fehlenden Suchworts.
+### Teil B: Die Szene (Exakt euer iMAKS-Szenario: Siegelstation 210 °C vs. 200 °C)
 
-Hier ist das angepasste Skript (Englisch, präzise, C-Level-tauglich):
+> *"Imagine it’s Sunday morning at a bottling plant. You are the shift supervisor on duty. Suddenly, a temperature warning triggers at the **sealing station**. The lead process engineer is at home with her family. You have minutes to decide: stop the entire bottling line, or keep running?*
+> *You check the internal Standard Operating Procedure (SOP)—it clearly states the sealing station should run at up to **210 °C**. A standard RAG chatbot reads this SOP and tells you: 'Everything is fine, keep running up to 210 degrees.'*
+> *What the chatbot missed: The temperature sensor installed on that exact station is only rated up to **200 °C** according to the manufacturer's datasheet. Running at 210 °C blinds the sensor and risks hardware failure.*
+> *In that moment, **Responsible AI doesn't mean having a polite chatbot.** Responsible AI means making a **defensible, auditable decision** without betting the production line on a blind spot."*
 
-    "Every company today is obsessed with collecting more data. More sensor logs, more PDFs, more guidelines. Have you ever looked into a company’s SharePoint? There are five different versions of the same safety manual, three conflicting supplier sheets, and nobody knows which one actually applies.
+### Teil C: Eure Lösung (Echte Architektur ohne Langfuse)
 
-    Now, companies throw a standard LLM on top of this mess and hope for magic. That doesn't solve the chaos—it amplifies it. Because a standard AI will happily pull a paragraph from an outdated 2019 manual, mix it with a wrong spec sheet, and give you a confident, completely unreliable answer.
+> *"Let me show you how our system handles this exact bottling line:*
+> 1. **Structure before Generation:** *Instead of letting an LLM guess across isolated PDFs, we use a curated Enterprise Digital Twin as a central grounding anchor. It explicitly links the sealing station, its physical sensors, the internal SOPs, and the manufacturer datasheets.*
+> 2. **Conflict Escalation, Not Hallucination:** *When our agent traverses the graph for the sealing station, it retrieves both the SOP (210 °C) and the linked sensor datasheet (200 °C). Instead of smoothing over the contradiction, it explicitly flags the conflict to the supervisor. The human stays in control.*
+> 3. **Built-in Auditability (No Heavy External Stack):** *We deliberately avoided bloated third-party observability clouds. Every answer directly exposes its **graph traversal path** in the UI—showing each step, reasoning, cited triples, and text passages. And our internal **Audit Log (`/api/audit`)** records every human curation decision, canary test, and operator feedback. Every step is lightweight, local, and 100% traceable."*
+> 
+> 
 
-    Imagine it’s Sunday morning at an industrial plant. A warning light flashes on the main gas pipeline. The experts are at home. The operator on duty needs to make a high-stakes decision right now. In that moment, Responsible AI doesn't mean having a polite chatbot. Responsible AI means being able to make a defensible, auditable decision without betting the company on a hallucination."
+---
 
-3. Wie ihr dann eure Lösung vorstellt (Ohne Tech-Overload)
+## 2. Dein Spickzettel für die Jury-Fragerunde (Q&A Backup)
 
-Nach diesem Einstieg erklärt ihr euer System in drei einfachen C-Level-Sätzen:
+Wenn die Jury nach dem Pitch bohrt, hast du jetzt wasserdichte, verifizierte Antworten parat, die exakt zu eurem Code passen:
 
-    Structure before Generation (Der Graph): "Instead of letting an AI guess across thousands of messy documents, we build a curated Digital Twin—a map that explicitly connects machines, suppliers, and the one officially approved manual version."
+* **Jury-Frage zu Haftung & Business-Relevanz:** *„Warum ist das für das Management so kritisch? Reicht nicht ein kleiner Disclaimer unter dem Chatbot: ‚KI kann Fehler machen‘?“*
+* **Deine Antwort:** *„Nein, rechtlich und operativ reicht das nicht mehr. Im Fall **Moffatt v. Air Canada (2024 BCCRT 149)** wurde gerichtlich entschieden, dass ein Unternehmen voll für die Falschauskünfte seines eigenen Chatbots haftet – man kann sich nicht hinter der KI verstecken. Gleichzeitig zeigt die **KPMG / University of Melbourne Studie (2025, 48.000 Befragte)**, dass **66 %** der Nutzer KI-Outputs ungeprüft übernehmen und **56 %** dadurch bereits Fehler im Job gemacht haben. Deshalb zwingt unser System den Nutzer bei Widersprüchen – wie den 210 °C vs. 200 °C an der Siegelstation – aktiv in die Entscheidung, statt ihm eine falsche Sicherheit vorzugaukeln.“*
 
-    Right Tool for the Job (LiteLLM / Effizienz): "We don't use a massive, expensive AI for everything. The graph finds the exact facts deterministically. The LLM is only used at the very end to summarize those verified facts. That means even small, local, cost-efficient models work reliably."
 
-    Auditability & Conflict Escalation (Langfuse / Human Control): "If two documents in the company contradict each other—like an internal SOP and a manufacturer datasheet—our system doesn't hide it. It flags the conflict to the human operator and logs the exact evidence trail in Langfuse. The human stays in control, and every decision is 100% auditable."
+* **Jury-Frage zur Technik / Observability:** *„Nutzt ihr Tools wie LangSmith oder Langfuse für das Tracing?“*
+* **Deine Antwort:** *„Wir haben uns bewusst dagegen entschieden, einen schweren externen Observability-Stack einzubauen – auch aus Gründen der Datensparsamkeit und Architektur-Kontrolle. Bei uns ist Traceability kein nachträgliches Logging-Tool, sondern Kern der Datenstruktur: Jede Antwort speichert ihren exakten **Graph-Pfad** (Strategie, Einzelschritte mit Begründung, zitierte Triples und Textpassagen) direkt im System und macht ihn im UI für den Werksleiter sichtbar. Zusätzlich führt unser Backend unter `/api/audit` ein eigenes Audit-Log über alle Kurationsentscheidungen, **Canaries** (eingebaute Testfallen zur Qualitätsprüfung) und Nutzer-Feedback.“*
 
-4. Konkrete Anpassung für eure Demo / Website morgen
 
-Wenn ihr den Input des Professors ernst nehmt, ändert sich ein kleines, aber entscheidendes Detail in eurem Beispiel-Szenario:
 
-    Vorher (zu technisch): „Das Wort NordTech steht nicht im PDF, deshalb brauchen wir Multi-Hop.“
+---
 
-    Jetzt (C-Level / Prof-Stil): Baut in eure Demo das Problem „Mehrere Versionen / Widersprüchliche Handbücher“ ein!
+## Kurzer Check zu den „Canaries“ im Audit-Log:
 
-        Zeigt: Im Unternehmen liegen zwei Dokumente zur Gasleitung: Altes Handbuch v1 (oder allgemeines Handbuch) und Spezifische Sicherheits-SOP v2 (oder Hersteller-Blatt).
-
-        Klassisches RAG wirft beide in einen Topf, weil beide ähnlich klingen.
-
-        Euer Graph weiß exakt, welches Dokument an die aktuelle Anlage gekoppelt ist – oder warnt den Manager explizit: „Achtung: In eurer Datenbasis widersprechen sich Vorschrift A und Datenblatt B. Hier sind beide Quellen, entscheide du.“
-
-Sitzt dieser Wechsel von der „Technik-Brille“ zur „Entscheidungs- und Risiko-Brille“ für dich, oder gibt es einen Punkt in eurem aktuellen Prototyp, der sich damit beißt?
+Ihr erwähnt im `/api/audit`-Endpunkt **Canaries**. Das ist für die Jury beim Punkt *Safeguards & Responsible AI* ein echtes Highlight, das kaum ein anderes Team haben wird.
+Was genau machen eure Canaries im Code? Sind das bewusst eingebaute Falschinformationen/Widersprüche im Graphen, um zu prüfen, ob der Analyst bzw. das System aufpasst? Wenn du mir das in einem Satz sagst, gebe ich dir noch den exakten One-Liner, wie du dieses Feature bei einer Technik-Frage fallen lässt.
