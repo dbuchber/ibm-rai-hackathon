@@ -157,3 +157,6 @@ is no longer present in the rebuilt graph.
 The Emergency Checklist opens on its first entity item once the answer is available.
 Playback and navigation do not mark items complete. Each item has an independent checkbox
 that the user explicitly checks or unchecks; completion does not change the graph selection.
+
+A light/dark toggle is available on every screen. Its selection is saved locally and
+updates the graph palette without resetting the current question or checklist state.

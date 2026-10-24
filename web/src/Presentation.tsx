@@ -2,7 +2,11 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 import "./presentation.css";
 
 const App = lazy(() => import("./App"));
-document.documentElement.dataset.presentationTheme = "dark";
+const initialTheme = (() => {
+  try { return localStorage.getItem("graph-anchor-theme") === "light" ? "light" : "dark"; }
+  catch { return "dark"; }
+})();
+document.documentElement.dataset.presentationTheme = initialTheme;
 const labels = ["Logo", "Walkthrough", "Demo"];
 const captions = [
   ["Start in chat", "An alarm starts the question. Evidence guides the response."],
@@ -44,6 +48,11 @@ function WalkthroughPreview({ stage }: { stage: number }) {
 }
 
 export default function Presentation() {
+  const [theme, setTheme] = useState(initialTheme);
+  useEffect(() => {
+    document.documentElement.dataset.presentationTheme = theme;
+    try { localStorage.setItem("graph-anchor-theme", theme); } catch { /* Private storage can be unavailable. */ }
+  }, [theme]);
   const [screen, setScreen] = useState(0);
   const [sub, setSub] = useState(0);
   const [auto, setAuto] = useState(false);
@@ -97,6 +106,12 @@ export default function Presentation() {
   }, [screen, go, next, previous]);
 
   return <main className={`presentation screen-${screen}`}>
+    <button className="theme-toggle" aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} aria-pressed={theme === "light"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} onClick={() => setTheme(value => value === "dark" ? "light" : "dark")}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {theme === "dark" ? <><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></> : <path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z" />}
+      </svg>
+      <span className="theme-label">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+    </button>
     <section className={`slide logo-slide ${screen === 0 ? "active" : ""}`} aria-label="Logo" aria-hidden={screen !== 0} {...(screen !== 0 ? { inert: "" } : {})} onClick={next}>
       <button className="autoplay" role="switch" aria-checked={auto} onClick={event => { event.stopPropagation(); setAuto(value => !value); }}>
         Auto-play <span className={`toggle ${auto ? "on" : ""}`}><span /></span>

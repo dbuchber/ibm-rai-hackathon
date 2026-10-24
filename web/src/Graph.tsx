@@ -40,7 +40,10 @@ const DARK: Palette = {
   company: "#9D8CE0", plant: "#5DB8A3", docs: "#D6AE6A", accent: "#0A84FF", accentSoft: "#0A84FF", contra: "#FF453A",
 };
 
-const prefersDark = () => document.documentElement.dataset.presentationTheme === "dark" || window.matchMedia("(prefers-color-scheme: dark)").matches;
+const prefersDark = () => {
+  const theme = document.documentElement.dataset.presentationTheme;
+  return theme ? theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+};
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function stylesheet(c: Palette): StylesheetStyle[] {
@@ -200,6 +203,8 @@ export default function Graph(p: Props) {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const restyle = () => cy.style(stylesheet(prefersDark() ? DARK : LIGHT));
     mq.addEventListener("change", restyle);
+    const themeObserver = new MutationObserver(restyle);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-presentation-theme"] });
     const resize = new ResizeObserver(() => {
       if (!box.current?.clientWidth || !box.current.clientHeight) return;
       cy.resize();
@@ -210,7 +215,7 @@ export default function Graph(p: Props) {
       if (focused.nonempty()) fitTo(cy, focused, current.inset, false);
     });
     resize.observe(box.current!);
-    return () => { resize.disconnect(); mq.removeEventListener("change", restyle); cy.destroy(); };
+    return () => { resize.disconnect(); themeObserver.disconnect(); mq.removeEventListener("change", restyle); cy.destroy(); };
   }, []);
 
   // elements: add what is new, keep positions of what exists, lay out once (and again when new nodes arrive)
