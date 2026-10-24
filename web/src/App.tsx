@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
 import { data, HttpError, type Ontology } from "./data";
+import type { ModelInfo } from "./contracts";
 import { nodeIri, predIri } from "./ids";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
@@ -44,6 +45,8 @@ export default function App() {
   const [pos, setPos] = useState(-1);
   const [playing, setPlaying] = useState(false);
   const [liveRun, setLiveRun] = useState(false);
+  const [liveModels, setModelInfos] = useState<ModelInfo[]>([]);
+  useEffect(() => { if (data.live) data.listModels().then(setModelInfos); }, []);
   const [lost, setLost] = useState(false);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -152,10 +155,10 @@ export default function App() {
     setRunId(id); setEvents(ev); setPos(0); setPlaying(true); setView("ask"); setSelected(null);
   }, []);
 
-  const ask = useCallback(async (q: string, invite: string): Promise<string | null> => {
+  const ask = useCallback(async (q: string, invite: string, model?: string): Promise<string | null> => {
     moveOn();
     try {
-      const { run_id } = await data.startRun(q, invite);
+      const { run_id } = await data.startRun(q, invite, model);
       stopStream.current();
       setLiveRun(true); setLost(false); setRunId(run_id); setEvents([]); setPos(-1); setPlaying(true);
       stopStream.current = data.streamRun(
@@ -396,7 +399,7 @@ export default function App() {
         </div>
       </header>
 
-      {view === "ask" && !runId && <Picker runs={runs} meta={runMeta} live={data.live} onPick={pick} onAsk={ask} />}
+      {view === "ask" && !runId && <Picker runs={runs} meta={runMeta} live={data.live} models={liveModels} onPick={pick} onAsk={ask} />}
       {view === "ask" && runId && compareOpen && siblings.length > 1 && (
         <Compare
           a={{ summary: siblings[0], events: runCache.get(siblings[0].run_id) ?? [] }}

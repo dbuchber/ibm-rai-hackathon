@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Edge, RunSummary } from "./contracts";
+import type { Edge, ModelInfo, RunSummary } from "./contracts";
 import { labelOf, readable, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 import { pretty } from "./run";
@@ -14,18 +14,27 @@ interface PickerProps {
   live: boolean;
   onPick: (id: string) => void;
   /** resolves to an error message for the visitor, or null once the run started */
-  onAsk: (q: string, invite: string) => Promise<string | null>;
+  onAsk: (q: string, invite: string, model?: string) => Promise<string | null>;
+  /** live models to choose from; fewer than two means no choice is shown and the server default runs */
+  models: ModelInfo[];
 }
 
 const INVITE_KEY = "graph-anchor.invite";
 const loadInvite = () => { try { return localStorage.getItem(INVITE_KEY) ?? ""; } catch { return ""; } };
 const saveInvite = (v: string) => { try { localStorage.setItem(INVITE_KEY, v); } catch { /* private window */ } };
+const PROVIDER: Record<string, string> = { gateway: "gateway", "ibm-ica": "IBM ICA" };
+const MODEL_KEY = "graph-anchor.model";
+const loadModel = () => { try { return localStorage.getItem(MODEL_KEY) ?? ""; } catch { return ""; } };
+const saveModel = (v: string) => { try { localStorage.setItem(MODEL_KEY, v); } catch { /* private window */ } };
 
-export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
+export function Picker({ runs, meta, live, models, onPick, onAsk }: PickerProps) {
   const [q, setQ] = useState("");
   const [invite, setInvite] = useState(loadInvite);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [picked, setPicked] = useState(loadModel);
+  const choice = models.length > 1;
+  const model = choice ? (models.find((m) => m.id === picked) ?? models[0]).id : undefined;
   // runs of the same question with different models share one card
   const groups = [...runs.reduce((m, r) => m.set(r.question, [...(m.get(r.question) ?? []), r]), new Map<string, RunSummary[]>()).values()];
   const askForm = (
@@ -36,7 +45,7 @@ export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
         if (!q.trim() || !invite.trim()) return;
         saveInvite(invite.trim());
         setBusy(true); setErr(null);
-        const m = await onAsk(q.trim(), invite.trim());
+        const m = await onAsk(q.trim(), invite.trim(), model);
         setBusy(false); setErr(m);
       }}
     >
@@ -46,6 +55,15 @@ export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
           placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
         <button className="btn" disabled={!live || !q.trim() || !invite.trim() || busy}>{busy ? "Starting…" : "Ask"}</button>
       </div>
+      {live && choice && (
+        <label className="field model">
+          <span>Model</span>
+          <select value={model} onChange={(e) => { setPicked(e.target.value); saveModel(e.target.value); }}>
+            {models.map((m) => <option key={m.id} value={m.id}>{m.label} · {PROVIDER[m.provider] ?? m.provider}</option>)}
+          </select>
+          <em>Granite ~30 s · Mistral Large via gateway: several minutes today</em>
+        </label>
+      )}
       {live && (
         <label className="field invite">
           <span>Invite code</span>
@@ -53,7 +71,7 @@ export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
         </label>
       )}
       {err && <div className="hint error" role="alert">{err}</div>}
-      {live && !err && <div className="hint">A live run takes about a minute. The recorded runs below replay instantly.</div>}
+      {live && !err && <div className="hint">{choice ? "" : "A live run takes a minute or more. "}The recorded runs below replay instantly.</div>}
       {!live && <div className="hint">Offline replay. Live questions need the engine API.</div>}
     </form>
   );

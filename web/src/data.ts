@@ -1,7 +1,8 @@
 // Data source abstraction (plan, stream C). VITE_DATA=static reads public/data; api talks to C4.
 // The api source falls back to static files for reads, so a dead API never breaks replay.
 import type {
-  AuditEntry, CreateProposal, CreateRunResponse, Event, FeedbackResponse, GraphExport, Proposal, RunSummary,
+  AuditEntry, CreateProposal, CreateRun, CreateRunResponse, Event, FeedbackResponse, GraphExport, ModelInfo, Proposal,
+  RunSummary,
 } from "./contracts";
 import { audit, CanaryEngine, localAudit } from "./canary";
 import { nodeIri, predIri, proposalId } from "./ids";
@@ -20,7 +21,9 @@ export interface DataSource {
   listRuns(): Promise<RunSummary[]>;
   getRun(id: string): Promise<Event[]>;
   /** Live questions need an invitation code; the API answers 403 "invite code required" without a valid one. */
-  startRun(question: string, invite?: string): Promise<CreateRunResponse>;
+  startRun(question: string, invite?: string, model?: string): Promise<CreateRunResponse>;
+  /** Models offered for live questions (GET /api/models); empty when the API does not offer a choice. */
+  listModels(): Promise<ModelInfo[]>;
   /** Flag an answer (thumbs down, optional text). `reveal` is set when it was the session's chat canary. */
   feedback(runId: string, text?: string): Promise<FeedbackResponse>;
   /** Tell the server the user looked at a source: an edge id, a chunk IRI or "evidence". */
@@ -98,6 +101,7 @@ function staticSource(): DataSource {
       return { reveal: null };
     },
     opened: async () => {},
+    listModels: async () => [],
     streamRun: (_id, _on, onLost) => {
       onLost();
       return () => {};
@@ -142,12 +146,14 @@ function apiSource(): DataSource {
     getGraph: () => orStatic(json("/api/graph"), fallback.getGraph),
     listRuns: () => orStatic(json("/api/runs"), fallback.listRuns),
     getRun: (id) => orStatic(json(`/api/runs/${id}`), () => fallback.getRun(id)),
-    startRun: (question, invite = "") =>
+    startRun: (question, invite = "", model) =>
       json("/api/runs", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Invite-Code": invite, "X-Chat-Session": chatSession() },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, model: model ?? null } satisfies CreateRun),
       }),
+    listModels: () =>
+      json<ModelInfo[]>("/api/models").then((xs) => (Array.isArray(xs) ? xs : [])).catch(() => []),
     streamRun: (id, onEvent, onLost) => {
       const es = new EventSource(`/api/runs/${id}/stream`);
       let done = false;

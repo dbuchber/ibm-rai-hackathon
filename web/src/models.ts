@@ -4,6 +4,8 @@ import type { Event } from "./contracts";
 const KNOWN: Record<string, { name: string; via: string }> = {
   "openai/ibm/granite-4-h-small": { name: "Granite 4 H Small", via: "IBM ICA" },
   "openai/mistral-large-4-openrouter": { name: "Mistral Large 4", via: "OpenRouter" },
+  "openai/watsonx/mistralai/mistral-medium-2505": { name: "Mistral Medium", via: "IBM ICA" },
+  "openai/meta-llama/llama-3-3-70b-instruct": { name: "Llama 3.3 70B", via: "IBM ICA" },
   "openai/gemma-4-31b-it-openrouter": { name: "Gemma 4 31B", via: "OpenRouter" },
   "openrouter/google/gemma-4-31b-it": { name: "Gemma 4 31B", via: "OpenRouter" },
 };
