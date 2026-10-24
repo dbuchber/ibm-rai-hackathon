@@ -149,7 +149,7 @@ Build order is UI first, so stream C starts immediately on the fixtures.
 - Parallel sub-agents and the parameter study from the thesis. One traversal agent with per-step evaluation is enough. The parallel version is mentioned in the pitch as the thesis' next step.
 - A real curation backend, persistence, auth.
 - A quantitative evaluation over many questions. Accuracy/faithfulness may appear as "how we would measure it" in the pitch only.
-- watsonx/Granite: no credentials. Models go through LiteLLM with existing fallback keys, so switching to Granite is a config change and can be named in the pitch.
+- watsonx/Granite: no credentials, and Granite is not in the BA gateway. Today's runs use `gemma-4-31b-it-openrouter`. **Granite appears only on the roadmap** (pitch + README): because everything goes through LiteLLM, switching to watsonx/Granite is a config change.
 
 ## Anti-goals (failure even if it works)
 
