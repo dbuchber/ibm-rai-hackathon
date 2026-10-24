@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import "./presentation.css";
 import Imprint from "./Imprint";
+import Roadmap from "./Roadmap";
 
 const App = lazy(() => import("./App"));
 const initialTheme = (() => {
@@ -8,7 +9,8 @@ const initialTheme = (() => {
   catch { return "dark"; }
 })();
 document.documentElement.dataset.presentationTheme = initialTheme;
-const labels = ["Logo", "Walkthrough", "Demo"];
+const labels = ["Logo", "Problem", "Walkthrough", "Demo", "Roadmap"];
+const [LOGO, PROBLEM, WALK, DEMO, ROADMAP] = [0, 1, 2, 3, 4];
 const captions = [
   ["Start in chat", "An alarm starts the question. Evidence guides the response."],
   ["Step 1 · Question sent", "Can sealing continue? Check the operating limits."],
@@ -60,27 +62,27 @@ export default function Presentation() {
   const [visited, setVisited] = useState(false);
   const headings = useRef<(HTMLHeadingElement | null)[]>([]);
   const go = useCallback((next: number, back = false) => {
-    const target = Math.max(0, Math.min(2, next));
-    setSub(target === 1 && back ? captions.length - 1 : 0);
+    const target = Math.max(LOGO, Math.min(ROADMAP, next));
+    setSub(target === WALK && back ? captions.length - 1 : 0);
     setScreen(target);
   }, []);
   const next = useCallback(() => {
-    if (screen === 1 && sub < captions.length - 1) setSub(value => value + 1);
+    if (screen === WALK && sub < captions.length - 1) setSub(value => value + 1);
     else go(screen + 1);
   }, [screen, sub, go]);
   const previous = useCallback(() => {
-    if (screen === 1 && sub > 0) setSub(value => value - 1);
+    if (screen === WALK && sub > 0) setSub(value => value - 1);
     else go(screen - 1, true);
   }, [screen, sub, go]);
 
   useEffect(() => {
-    if (screen === 2) { setAuto(false); setVisited(true); }
+    if (screen === DEMO) { setAuto(false); setVisited(true); }
     document.title = `Graph Anchor · ${labels[screen]}`;
     headings.current[screen]?.focus({ preventScroll: true });
   }, [screen]);
 
   useEffect(() => {
-    if (!auto || screen === 2) return;
+    if (!auto || screen >= DEMO) return;
     const timer = window.setTimeout(next, 3500);
     return () => window.clearTimeout(timer);
   }, [auto, screen, next]);
@@ -90,8 +92,8 @@ export default function Presentation() {
       const target = event.target as HTMLElement;
       if (target.closest("input, textarea, select, a, [contenteditable], [role='dialog']")) return;
       // The interactive app owns playback keys; Escape returns to the final walkthrough scene.
-      if (screen === 2) {
-        if (event.key === "Escape") { event.preventDefault(); go(1, true); }
+      if (screen === DEMO) {
+        if (event.key === "Escape") { event.preventDefault(); go(WALK, true); }
         return;
       }
       if (event.key === " " && target.closest("button")) return;
@@ -113,42 +115,62 @@ export default function Presentation() {
       </svg>
       <span className="theme-label">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
     </button>
-    <section className={`slide logo-slide ${screen === 0 ? "active" : ""}`} aria-label="Logo" aria-hidden={screen !== 0} {...(screen !== 0 ? { inert: "" } : {})} onClick={next}>
+    <section className={`slide logo-slide ${screen === LOGO ? "active" : ""}`} aria-label="Logo" aria-hidden={screen !== LOGO} {...(screen !== LOGO ? { inert: "" } : {})} onClick={next}>
       <button className="autoplay" role="switch" aria-checked={auto} onClick={event => { event.stopPropagation(); setAuto(value => !value); }}>
         Auto-play <span className={`toggle ${auto ? "on" : ""}`}><span /></span>
       </button>
       <div className="logo-content">
         <Mark />
-        <h1 ref={element => { headings.current[0] = element; }} tabIndex={-1}>Graph Anchor</h1>
+        <h1 ref={element => { headings.current[LOGO] = element; }} tabIndex={-1}>Graph Anchor</h1>
         <p>Knowledge graphs that ground your AI.</p>
       </div>
       <button className="continue" onClick={event => { event.stopPropagation(); next(); }}>Click to continue <span>↓</span></button>
     </section>
 
-    <section className={`slide walkthrough-slide ${screen === 1 ? "active" : ""}`} aria-label="Walkthrough" aria-hidden={screen !== 1} {...(screen !== 1 ? { inert: "" } : {})} onClick={next}>
+    <section className={`slide problem-slide ${screen === PROBLEM ? "active" : ""}`} aria-label="The problem" aria-hidden={screen !== PROBLEM} {...(screen !== PROBLEM ? { inert: "" } : {})} onClick={next}>
+      <div className="problem-content">
+        <div className="slide-eyebrow">The problem</div>
+        <div className="problem-number" aria-hidden="true">60%</div>
+        <h2 ref={element => { headings.current[PROBLEM] = element; }} tabIndex={-1}>
+          <span className="sr-only">60% </span>of AI projects without AI‑ready data will be abandoned.
+        </h2>
+        <p>On a production line, a wrong answer is not a typo. It is a stopped line, a recalled batch, or an injured worker.</p>
+        <p className="problem-answer">Graph Anchor: the model proposes, <b>people approve</b>, every answer shows its path.</p>
+      </div>
+      <a className="problem-source" href="https://www.gartner.com/en/newsroom/press-releases/2025-02-26-lack-of-ai-ready-data-puts-ai-projects-at-risk" target="_blank" rel="noreferrer" onClick={event => event.stopPropagation()}>
+        Gartner, press release 26 Feb 2025
+      </a>
+      <button className="continue" onClick={event => { event.stopPropagation(); next(); }}>Click to continue <span>↓</span></button>
+    </section>
+
+    <section className={`slide walkthrough-slide ${screen === WALK ? "active" : ""}`} aria-label="Walkthrough" aria-hidden={screen !== WALK} {...(screen !== WALK ? { inert: "" } : {})} onClick={next}>
       <div className="walkthrough-layout">
         <div className="walkthrough-captions" aria-live="polite">
           {captions.map(([eyebrow, title], index) => <div key={eyebrow} className={`walkthrough-caption${index === sub ? " current" : ""}${index < sub ? " before" : ""}`} aria-hidden={index !== sub}>
             <div className="slide-eyebrow">{eyebrow}</div>
-            <h2 ref={element => { if (index === sub) headings.current[1] = element; }} tabIndex={-1}>{title}</h2>
+            <h2 ref={element => { if (index === sub) headings.current[WALK] = element; }} tabIndex={-1}>{title}</h2>
           </div>)}
         </div>
         <p className="walkthrough-context">{sub === 0 ? "Current dataset: filling pressure · sealing temperature · packaging vibration. Synthetic incident replays." : "Earlier recorded sealing example · the rebuilt maintenance graph is available in the interactive app."}</p>
-        {screen === 1 && <WalkthroughPreview stage={sub} />}
+        {screen === WALK && <WalkthroughPreview stage={sub} />}
       </div>
       <button className="walkthrough-back" aria-label="Previous walkthrough scene" onClick={event => { event.stopPropagation(); previous(); }}>← Back</button>
       <button className="continue" onClick={event => { event.stopPropagation(); next(); }}>{sub < captions.length - 1 ? "Click to continue" : "Click to try it yourself"} <span>↓</span></button>
       <span className="walkthrough-progress" aria-label={`Walkthrough scene ${sub + 1} of ${captions.length}`}>{sub + 1} / {captions.length}</span>
     </section>
 
-    <section className={`slide demo-slide ${screen === 2 ? "active" : ""}`} aria-label="Interactive demo" aria-hidden={screen !== 2} {...(screen !== 2 ? { inert: "" } : {})}>
-      {(visited || screen === 2) && <Suspense fallback={<div className="demo-loading" role="status">Opening the knowledge graph…</div>}><App active={screen === 2} /></Suspense>}
+    <section className={`slide demo-slide ${screen === DEMO ? "active" : ""}`} aria-label="Interactive demo" aria-hidden={screen !== DEMO} {...(screen !== DEMO ? { inert: "" } : {})}>
+      {(visited || screen === DEMO) && <Suspense fallback={<div className="demo-loading" role="status">Opening the knowledge graph…</div>}><App active={screen === DEMO} /></Suspense>}
+    </section>
+
+    <section className={`slide roadmap-slide ${screen === ROADMAP ? "active" : ""}`} aria-label="Roadmap" aria-hidden={screen !== ROADMAP} {...(screen !== ROADMAP ? { inert: "" } : {})}>
+      {screen === ROADMAP && <Roadmap steps={3} />}
     </section>
 
     <nav className="presentation-nav" aria-label="Presentation screens">
       {labels.map((label, index) => <button key={label} aria-label={label} aria-current={screen === index ? "step" : undefined} onClick={() => go(index)}><span /></button>)}
     </nav>
     <Imprint className="imprint-corner" />
-    <div className="screen-reader-status" aria-live="polite">Screen {screen + 1} of 3: {labels[screen]}</div>
+    <div className="screen-reader-status" aria-live="polite">Screen {screen + 1} of {labels.length}: {labels[screen]}</div>
   </main>;
 }

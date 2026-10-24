@@ -7,7 +7,8 @@
   transition: opacity 700ms cubic-bezier(.2,.7,.2,1), transform 900ms cubic-bezier(.2,.7,.2,1), filter 700ms ease, visibility 900ms;
 }
 .slide.active { opacity: 1; pointer-events: auto; visibility: visible; transform: none; filter: none; z-index: 2; }
-.logo-slide, .walkthrough-slide { background: var(--bg); color: var(--ink); cursor: pointer; }
+.logo-slide, .problem-slide, .walkthrough-slide { background: var(--bg); color: var(--ink); cursor: pointer; }
+.roadmap-slide { background: var(--bg); color: var(--ink); }
 .logo-content { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; padding: 24px; }
 .presentation-mark { width: 96px; height: 96px; color: var(--accent); }
 .logo-content h1 { margin: 0; font-size: clamp(44px,8vw,96px); font-weight: 600; letter-spacing: -.03em; line-height: 1; }
@@ -33,7 +34,7 @@
 .presentation-nav button span { width: 8px; height: 8px; border-radius: 100px; background: var(--nav-off); transition: width 300ms, background 300ms; }
 .presentation-nav button[aria-current] span { width: 22px; background: var(--accent); }
 .presentation-nav button:hover span { background: #7ab9ff; }
-.screen-2 .presentation-nav { top: 22px; left: 24px; bottom: auto; transform: none; }
+.screen-3 .presentation-nav { top: 22px; left: 24px; bottom: auto; transform: none; }
 .screen-reader-status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .demo-slide { background: var(--bg); }
 .demo-loading { color: var(--ink2); font-size: 14px; }
@@ -107,8 +108,8 @@
 .graph-collapsed { grid-template-columns: minmax(300px,1fr) minmax(240px,.9fr); }
 .graph-collapsed .graph-pane { display: none; }
 .graph-collapsed .graph-toggle { left: -10px; }
-.screen-2 .presentation-nav { left: calc((100% - 48px) / 2.9 + 36px); top: 26px; }
-.screen-2:has(.graph-collapsed) .presentation-nav { left: 32px; }
+.screen-3 .presentation-nav { left: calc((100% - 48px) / 2.9 + 36px); top: 26px; }
+.screen-3:has(.graph-collapsed) .presentation-nav { left: 32px; }
 .clear-chat { height: 28px; padding: 0 12px; border-radius: 100px; border: 1px solid var(--fill2); background: transparent; color: var(--ink2); font-size: 12px; cursor: pointer; }
 .chat-empty { margin: auto; max-width: 260px; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 6px; }
 .chat-empty strong { font-size: 14.5px; font-weight: 600; }
@@ -135,7 +136,7 @@
   .chat-pane { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 0; max-height: calc(100dvh - 24px); }
   .graph-collapsed .guide-pane { grid-row: 1; max-height: none; }
   .graph-collapsed .chat-pane { grid-row: 1; }
-  .screen-2 .presentation-nav { left: 28px; }
+  .screen-3 .presentation-nav { left: 28px; }
   .graph-pane .legend { font-size: 10px; }
 }
 @media (max-width: 600px) {
@@ -144,7 +145,7 @@
   .guide-pane { max-height: none; flex-shrink: 0; }
   .chat-pane { position: static; min-height: 550px; max-height: none; flex-shrink: 0; }
   .chat-pane > .panel { max-height: 650px; }
-  .screen-2 .presentation-nav { position: fixed; top: 26px; left: 28px; }
+  .screen-3 .presentation-nav { position: fixed; top: 26px; left: 28px; }
   .graph-toggle { top: 28px; left: auto; right: 16px; }
   .graph-collapsed .graph-toggle { left: auto; }
 }
@@ -266,8 +267,30 @@
 
 .theme-toggle { position: absolute; top: 20px; left: 20px; z-index: 60; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: 100px; background: var(--raised); color: var(--ink2); font-size: 12px; cursor: pointer; }
 .theme-toggle:hover { color: var(--ink); border-color: var(--ink3); }
-.screen-2 .theme-toggle { top: 24px; left: auto; right: 24px; width: 36px; padding: 0; }
-.screen-2 .theme-toggle .theme-label { display: none; }
-.screen-2 .demo-slide .chat-pane > .workspace-heading { padding-right: 68px; }
+.screen-3 .theme-toggle { top: 24px; left: auto; right: 24px; width: 36px; padding: 0; }
+.screen-3 .theme-toggle .theme-label { display: none; }
+.screen-3 .demo-slide .chat-pane > .workspace-heading { padding-right: 68px; }
 :root[data-presentation-theme="light"] .timeline-step:hover { background: #00000004; }
-@media (max-width: 600px) { .screen-2 .theme-toggle { right: 24px; } }
+@media (max-width: 600px) { .screen-3 .theme-toggle { right: 24px; } }
+
+/* Problem slide: one number, one consequence, one answer (copy in FRONTEND.md, source must stay visible). */
+.problem-content { display: flex; flex-direction: column; align-items: center; text-align: center; width: min(100%, 880px); padding: 24px 32px 120px; }
+.problem-content .slide-eyebrow { margin-bottom: 20px; }
+.problem-number { font-size: clamp(88px,15vw,184px); font-weight: 650; letter-spacing: -.045em; line-height: .9; color: var(--ink); }
+.problem-content h2 { margin: 22px 0 0; font-size: clamp(24px,3.4vw,40px); font-weight: 600; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+.problem-content h2:focus { outline: none; }
+.problem-content > p { max-width: 640px; margin: 22px 0 0; color: var(--ink2); font-size: clamp(15px,1.5vw,19px); line-height: 1.5; text-wrap: pretty; }
+.problem-content > p.problem-answer { margin-top: 28px; color: var(--ink); }
+.problem-answer b { color: var(--accent); font-weight: 600; }
+.problem-source { position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%); color: var(--ink2); opacity: .75; font-size: 11px; letter-spacing: .04em; text-decoration: none; white-space: nowrap; }
+.problem-source:hover { opacity: 1; text-decoration: underline; }
+@media (max-height: 760px) {
+  .problem-number { font-size: clamp(72px,14vh,120px); }
+  .problem-content h2 { margin-top: 14px; }
+  .problem-content > p { margin-top: 14px; }
+  .problem-source { bottom: 128px; }
+}
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Roadmap as the last presentation screen: the sheet scrolls, the dots stay clear of its content. */
+.roadmap-slide .sheet-wrap { position: absolute; inset: 76px 16px 100px; }

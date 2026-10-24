@@ -10,6 +10,16 @@ const LADDER: { tier: Tier; name: string; note: string; width: number }[] = [
   { tier: "S", name: "Ministral 3B", note: "Step verdicts on small frontiers", width: 34 },
 ];
 
+// Systems of record feed the graph directly; AI extractions and links still wait for approval.
+const SYSTEMS: { name: string; text: string }[] = [
+  { name: "MES", text: "Live machine states, alarms and orders from the shop floor instead of a CSV export." },
+  { name: "ERP", text: "Orders, materials and suppliers from the system of record instead of a hand-kept file." },
+  { name: "IBM Maximo / SAP PM", text: "Maintenance plans, work orders and spare parts linked to the stations they belong to." },
+  { name: "Document ingestion", text: "Any PDF, SOP or datasheet: parsed, chunked and linked, with its version and validity." },
+  { name: "SharePoint", text: "Existing document libraries indexed in place, permissions respected." },
+  { name: "Jira", text: "Maintenance tickets and incidents as evidence: what broke, what was done." },
+];
+
 const TIERS: { tier: Tier; label: string }[] = [
   { tier: "S", label: "Small" }, { tier: "M", label: "Mid" }, { tier: "L", label: "Large" },
 ];
@@ -82,8 +92,19 @@ export default function Roadmap({ steps }: { steps: number }) {
           </div>
         </div>
 
+        <h5 className="group">Connected to your systems</h5>
+        <p className="group-note">Systems of record feed the graph directly. Anything an AI extracts or links waits for human approval.</p>
+        <div className="tiles three">
+          {SYSTEMS.map((x) => (
+            <div className="tile" key={x.name}>
+              <h4>{x.name}</h4>
+              <p>{x.text}</p>
+            </div>
+          ))}
+        </div>
+
         <h5 className="group">Trust and reach</h5>
-        <div className="tiles">
+        <div className="tiles three">
           <div className="tile">
             <h4>Guardrails</h4>
             <p>Checks on input and output, e.g. IBM Granite Guardian.</p>
@@ -109,8 +130,16 @@ export default function Roadmap({ steps }: { steps: number }) {
               <dt>Graph</dt><dd>node and graph ACLs</dd>
             </dl>
           </div>
+          <div className="tile">
+            <h4>Versions and validity</h4>
+            <p>Which SOP applies to which station, from when. A new version flags every fact it touches for re-approval.</p>
+          </div>
+          <div className="tile">
+            <h4>Measured quality</h4>
+            <p>A fixed question set runs on every change: correctness, faithfulness to sources, graph vs. plain vector search.</p>
+          </div>
         </div>
-        <div className="foot">Today: one model per run (Mistral Large 4, or Granite 4 H Small via IBM ICA) through a LiteLLM gateway, no guardrails, no ACLs.</div>
+        <div className="foot">Today: one model per run (Mistral Large 4, or Granite 4 H Small via IBM ICA) through a LiteLLM gateway, no guardrails, no ACLs; company data comes from CSV and YAML files.</div>
       </section>
     </div>
   );
