@@ -17,7 +17,6 @@ import hmac
 import secrets
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
@@ -27,7 +26,7 @@ from engine.models import allowed_models
 from api.limits import RateLimiter, client_ip
 from api.store import CurationStore
 from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
-from contracts.models import (RunFinished, RunFinishedEvent, CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
+from contracts.models import (ModelInfo, RunFinished, RunFinishedEvent, CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
                               AuditEntry, Proposal, ProposalDecision, RunSummary)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -61,17 +60,6 @@ def _real_runner():
         return run_question
     except Exception:
         return None
-
-
-class CreateLiveRun(CreateRun):
-    """CreateRun plus an optional model from the allowlist (superset of the contract body)."""
-    model: str | None = None
-
-
-class ModelOut(BaseModel):
-    id: str
-    label: str
-    provider: str
 
 
 class LiveRun:
@@ -185,8 +173,8 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         return store.export({"approved", "proposed"})
 
     @app.get("/api/models")
-    def models() -> list[ModelOut]:
-        return [ModelOut(id=m.id, label=m.label, provider=m.provider) for m in allowed_models()]
+    def models() -> list[ModelInfo]:
+        return [ModelInfo(id=m.id, label=m.label, provider=m.provider) for m in allowed_models()]
 
     @app.get("/api/runs")
     def runs() -> list[RunSummary]:
@@ -205,7 +193,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         return read_run(run_id)
 
     @app.post("/api/runs")
-    async def create_run(body: CreateLiveRun, request: Request, x_invite_code: str = Header("")) -> CreateRunResponse:
+    async def create_run(body: CreateRun, request: Request, x_invite_code: str = Header("")) -> CreateRunResponse:
         # order: invite code, then input size, then one run at a time, then per-IP hourly budget
         if not any(secrets.compare_digest(x_invite_code.encode(), c.encode()) for c in invite_codes):
             raise HTTPException(403, "invite code required")
