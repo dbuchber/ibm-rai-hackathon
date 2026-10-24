@@ -60,3 +60,17 @@ def test_full_build_counts(tmp_path):
 
     store = RdfGraphStore(tmp_path / "kg.trig")
     assert store.node(node_iri("Station", "ST02_SEALING")).cls == "Station"
+
+
+def test_proposal_states():
+    from contracts.rdf_store import RdfGraphStore
+    from contracts.ids import edge_id
+
+    store = RdfGraphStore("data/graph/kg.trig")
+    p = pred_iri("contradicts")
+    elec = edge_id(node_iri("Chunk", "SOP-002-s6"), p, node_iri("Chunk", "DS-ELEC-3300-s1"))
+    therm = edge_id(node_iri("Chunk", "SOP-001-s3"), p, node_iri("Chunk", "DS-THERM-2200-s1"))
+    approved = {e.id for e in store.export({"approved"}).edges}
+    proposed = {e.id for e in store.export({"proposed"}).edges}
+    assert elec in approved and therm in proposed
+    assert any(e for e in store.neighbors(node_iri("Chunk", "SOP-002-s6")) if e.id == elec)

@@ -19,7 +19,7 @@ def add_proposals(ds: KGDataset, path: Path = PROPOSALS) -> list[Proposal]:
     props = [Proposal.model_validate(x) for x in json.loads(path.read_text())]
     for p in props:
         ds.add_edge(p.triple.s, p.triple.p.rsplit("#", 1)[-1], p.triple.o, p.evidence_chunk_id,
-                    creator=p.proposed_by, graph=p.status)
+                    creator="analyst" if p.status != "proposed" else p.proposed_by, graph=p.status)
     return props
 
 

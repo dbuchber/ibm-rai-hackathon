@@ -25,7 +25,7 @@
     "quote": "ElectroMeasure recommends that process alarm thresholds triggering corrective action be set no higher than the continuous overload rating.",
     "confidence": 0.91,
     "proposed_by": "llm:openai/claude-sonnet-4-6",
-    "status": "proposed"
+    "status": "approved"
   },
   {
     "id": "1599dd1d776f",
