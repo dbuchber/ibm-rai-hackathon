@@ -15,6 +15,10 @@ interface Props {
   idx: Index;
   ontology: Ontology;
   mock: boolean;
+  /** false = the server has curation writes closed (no reviewer codes configured) */
+  writable: boolean;
+  reviewer: string;
+  onReviewer: (v: string) => void;
   onDecide: (id: string, d: Decision) => void;
   onAudit: () => void;
   /** set after a failed canary: ids that went back to "proposed" */
@@ -23,7 +27,7 @@ interface Props {
   onShow: (p: Proposal) => void;
 }
 
-export default function Curate({ proposals, idx, ontology, mock, onDecide, onCreate, onShow, onAudit, reverted }: Props) {
+export default function Curate({ proposals, idx, ontology, mock, writable, reviewer, onReviewer, onDecide, onCreate, onShow, onAudit, reverted }: Props) {
   const [filter, setFilter] = useState<Kind | "all">("all");
   const [adding, setAdding] = useState(false);
   // open items first, decided ones below, otherwise in server order
@@ -42,6 +46,7 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div className="eyebrow">Curation</div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {!writable && <span className="tag mock" title="The server has curation writes closed">Read-only</span>}
             {mock && <span className="tag mock" title="Static mode: proposals and decisions stay in this browser">Mock · in memory</span>}
             <button className="link-btn" onClick={onAudit}>Audit log</button>
           </div>
@@ -50,6 +55,13 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
         <p className="small muted" style={{ margin: "8px 0 0" }}>
           Nothing enters the anchor graph until approved. {open} open.
         </p>
+        {writable && !mock && (
+          <label className="field invite">
+            <span>Reviewer code</span>
+            <input value={reviewer} onChange={(e) => onReviewer(e.target.value.trim())} placeholder="From the presenter"
+              spellCheck={false} autoComplete="off" />
+          </label>
+        )}
         <div className="curate-bar">
           <div className="segmented mini" role="group" aria-label="Filter by kind">
             {KINDS.map(([k, label]) => (
@@ -58,7 +70,7 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
               </button>
             ))}
           </div>
-          <button className={"add-btn" + (adding ? " open" : "")} onClick={() => setAdding((a) => !a)}
+          <button className={"add-btn" + (adding ? " open" : "")} disabled={!writable} onClick={() => setAdding((a) => !a)}
             aria-expanded={adding} aria-label={adding ? "Cancel new proposal" : "Add proposal"} title={adding ? "Cancel" : "Add proposal"}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>
           </button>
@@ -87,7 +99,7 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
           <div className="empty">No {filter === "all" ? "" : KIND_LABEL[filter as Kind].toLowerCase() + " "}proposals yet. Add one.</div>
         )}
         {shown.map((p) => (
-          <ProposalCard key={p.id} p={p} idx={idx} onDecide={onDecide} onShow={onShow}
+          <ProposalCard key={p.id} p={p} idx={idx} onDecide={writable ? onDecide : () => {}} onShow={onShow} readOnly={!writable}
             again={reverted.includes(p.id) && p.status === "proposed"} />
         ))}
       </div>
@@ -101,8 +113,8 @@ function origin(p: Proposal) {
   return { label: "LLM · " + p.proposed_by.replace(/^llm:/, "").split("/").pop(), cls: "llm" };
 }
 
-function ProposalCard({ p, idx, onDecide, onShow, again }: {
-  p: Proposal; idx: Index; onDecide: Props["onDecide"]; onShow: Props["onShow"]; again: boolean;
+function ProposalCard({ p, idx, onDecide, onShow, again, readOnly }: {
+  p: Proposal; idx: Index; onDecide: Props["onDecide"]; onShow: Props["onShow"]; again: boolean; readOnly: boolean;
 }) {
   const k = kindOf(p);
   const o = origin(p);
@@ -141,11 +153,11 @@ function ProposalCard({ p, idx, onDecide, onShow, again }: {
       {p.evidence_chunk_id && <div className="small muted" style={{ marginTop: 6 }}>Source: {labelOf(idx, p.evidence_chunk_id)}</div>}
       {p.status === "proposed" ? (
         <div className="actions">
-          <button className="btn secondary" onClick={() => onDecide(p.id, "reject")}>Reject</button>
-          <button className="btn secondary flag" onClick={() => onDecide(p.id, "flag")} title="This is wrong: report it" aria-label="Flag as wrong">
+          <button className="btn secondary" disabled={readOnly} onClick={() => onDecide(p.id, "reject")}>Reject</button>
+          <button className="btn secondary flag" disabled={readOnly} onClick={() => onDecide(p.id, "flag")} title="This is wrong: report it" aria-label="Flag as wrong">
             <FlagIcon />
           </button>
-          <button className="btn approve" onClick={() => onDecide(p.id, "approve")}>Approve</button>
+          <button className="btn approve" disabled={readOnly} onClick={() => onDecide(p.id, "approve")}>Approve</button>
         </div>
       ) : (
         <div className={"status-line " + p.status} role="status">

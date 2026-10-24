@@ -12,6 +12,11 @@ export interface Ontology {
   predicates: { iri: string; name: string; description: string }[];
 }
 
+const REVIEWER_KEY = "graph-anchor.reviewer";
+/** The reviewer code unlocks curation writes (header X-Reviewer-Code); remembered like the invite code. */
+export const getReviewerCode = (): string => { try { return localStorage.getItem(REVIEWER_KEY) ?? ""; } catch { return ""; } };
+export const setReviewerCode = (v: string) => { try { localStorage.setItem(REVIEWER_KEY, v); } catch { /* private window */ } };
+
 export type Decision = "approve" | "reject" | "flag";
 
 export interface DataSource {
@@ -33,6 +38,8 @@ export interface DataSource {
   /** On a failed canary the result carries `alert`; its `reverted` ids are back to "proposed". */
   decide(id: string, decision: Decision): Promise<Proposal>;
   getAudit(): Promise<AuditEntry[]>;
+  /** False when the API has curation writes closed (no reviewer codes configured): the screen is read-only. */
+  curationOpen(): Promise<boolean>;
   createProposal(body: CreateProposal): Promise<Proposal>;
   /** Not part of C4: shipped as a static file next to the graph export in both modes. */
   getOntology(): Promise<Ontology>;
@@ -125,6 +132,7 @@ function staticSource(): DataSource {
       return res;
     },
     getAudit: async () => [...localAudit],
+    curationOpen: async () => true,
     createProposal: async (body) => {
       const p = localProposal(body);
       proposals = [...(proposals ?? []).filter((x) => x.id !== p.id), p];
@@ -176,7 +184,7 @@ function apiSource(): DataSource {
       orOffline(
         json(`/api/proposals/${id}`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "X-Reviewer-Code": getReviewerCode() },
           body: JSON.stringify({ decision }),
         }),
         () => fallback.decide(id, decision),
@@ -199,12 +207,14 @@ function apiSource(): DataSource {
       orOffline(
         json("/api/proposals", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "X-Reviewer-Code": getReviewerCode() },
           body: JSON.stringify(body),
         }),
         () => fallback.createProposal(body),
       ),
     getOntology: fallback.getOntology,
+    // an unreachable API leaves the offline fallback in charge, which is open
+    curationOpen: () => json<{ writable: boolean }>("/api/curation").then((r) => r.writable).catch(() => true),
     // server log plus the browser-side entries of the chat canary click mock
     getAudit: () =>
       json<AuditEntry[]>("/api/audit")

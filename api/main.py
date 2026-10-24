@@ -91,7 +91,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                clock: Callable[[], float] | None = None,
                limit_clock: Callable[[], float] = time.monotonic,
                run_limit: int = 15, write_limit: int = 120, max_question: int = 500, run_timeout: float = 300.0,
-               invite_codes: list[str] | None = None, runner: Callable | None = None,
+               invite_codes: list[str] | None = None, reviewer_codes: list[str] | None = None, runner: Callable | None = None,
                chat_streak: int | None = None) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
@@ -108,6 +108,14 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     # Live runs cost LLM calls, so they need an invitation. No codes configured = live mode closed.
     if invite_codes is None:
         invite_codes = [c.strip() for c in env("RAI_INVITE_CODES", "").split(",") if c.strip()]
+
+    # Curation changes the anchor graph, so it needs a reviewer. No codes configured = writes closed (read-only demo).
+    if reviewer_codes is None:
+        reviewer_codes = [c.strip() for c in env("RAI_REVIEWER_CODES", "").split(",") if c.strip()]
+
+    def reviewer_only(x_reviewer_code: str = Header("")) -> None:
+        if not any(secrets.compare_digest(x_reviewer_code.encode(), c.encode()) for c in reviewer_codes):
+            raise HTTPException(403, "reviewer code required" if reviewer_codes else "curation is read-only")
 
     app = FastAPI(title="Graph Anchor API")
     proposals: dict[str, Proposal] = {}
@@ -305,7 +313,12 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         proposals_path.parent.mkdir(parents=True, exist_ok=True)
         proposals_path.write_text(json.dumps([x.model_dump() for x in proposals.values()], indent=2))
 
-    @app.post("/api/proposals", dependencies=[Depends(write_limited)])
+    @app.get("/api/curation")
+    def curation_status() -> dict:
+        return {"writable": bool(reviewer_codes)}
+
+    # the reviewer check runs first: a refused request neither costs write budget nor touches state
+    @app.post("/api/proposals", dependencies=[Depends(reviewer_only), Depends(write_limited)])
     def create_proposal(body: CreateProposal) -> Proposal:
         if body.kind == "edge":
             t = body.triple
@@ -334,7 +347,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         save()
         return p
 
-    @app.post("/api/proposals/{pid}", dependencies=[Depends(write_limited)])
+    @app.post("/api/proposals/{pid}", dependencies=[Depends(reviewer_only), Depends(write_limited)])
     def decide(pid: str, body: ProposalDecision) -> Proposal:
         if guard.is_canary(pid):
             return guard.decide_canary(body.decision, revert)

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data, HttpError, type Ontology } from "./data";
+import { data, getReviewerCode, HttpError, setReviewerCode, type Ontology } from "./data";
 import type { ModelInfo } from "./contracts";
 import { nodeIri, predIri } from "./ids";
 import Graph, { type GraphMode } from "./Graph";
@@ -52,6 +52,8 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [focusChunk, setFocusChunk] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [writable, setWritable] = useState(true);
+  const [reviewer, setReviewer] = useState(getReviewerCode);
   const [alertBox, setAlertBox] = useState<OversightAlert | null>(null);
   const [auditOpen, setAuditOpen] = useState(false);
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
@@ -71,6 +73,7 @@ export default function App() {
       const all = await Promise.all(rs.map(async (r) => [r.run_id, await data.getRun(r.run_id).catch(() => [])] as const));
       setRunCache(new Map(all));
     });
+    data.curationOpen().then(setWritable);
     data.listProposals().then((p) => setProposals(p.map((x) => ({ ...x, kind: kindOf(x) }))));
     data.getOntology().then(setOntology).catch(() => {});
   }, []);
@@ -203,9 +206,17 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  // a refused write (403) must not look like a silent success
+  const refused = (err: unknown): boolean => {
+    if (!(err instanceof HttpError) || err.status !== 403) return false;
+    setToast(writable ? "Reviewer code missing or wrong." : "Curation is read-only on this server.");
+    return true;
+  };
+
   const decide = async (id: string, d: Decision) => {
     const before = proposals;
-    const p = await data.decide(id, d);
+    let p: Proposal;
+    try { p = await data.decide(id, d); } catch (err) { if (refused(err)) return; throw err; }
     if (p.alert) {
       const rev = p.alert.reverted;
       setReverted(rev);
@@ -244,7 +255,8 @@ export default function App() {
   };
 
   const create = async (body: CreateProposal) => {
-    const p = await data.createProposal(body);
+    let p: Proposal;
+    try { p = await data.createProposal(body); } catch (err) { if (refused(err)) return; throw err; }
     const full = { ...p, kind: kindOf(p) };
     setProposals((xs) => [full, ...xs.filter((x) => x.id !== p.id)]);
     // let the new element land in the graph before the camera moves to it
@@ -419,6 +431,7 @@ export default function App() {
       {view === "contrast" && runId && <Contrast v={full} idx={idx} edges={edgeIdx} />}
       {view === "curate" && (
         <Curate proposals={proposals} idx={idx} ontology={ontology} mock={data.kind === "static"}
+          writable={writable} reviewer={reviewer} onReviewer={(v) => { setReviewer(v); setReviewerCode(v); }}
           onDecide={decide} onCreate={create} onShow={showProposal} onAudit={openAudit} reverted={reverted} />
       )}
 

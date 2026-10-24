@@ -42,6 +42,7 @@ uv run uvicorn api.main:create_app --factory --port 17080               # http:/
 ```
 
 Replay needs no key. Live questions need an invitation code (`RAI_INVITE_CODES`, header `X-Invite-Code`).
+Curation writes (approve/reject/propose) need a reviewer code (`RAI_REVIEWER_CODES`, header `X-Reviewer-Code`); empty = read-only.
 Frontend work: see [web/FRONTEND.md](web/FRONTEND.md). Live mode, `kg.propose` and re-running the engine need an OpenAI-compatible gateway (we use a
 LiteLLM gateway in front of OpenRouter). Docker: `docker compose -f deploy/compose.yml up -d --build`.
 
