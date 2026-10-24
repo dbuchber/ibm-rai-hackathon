@@ -13,8 +13,23 @@ pytestmark = pytest.mark.asyncio
 FIX = Path(__file__).resolve().parents[2] / "contracts" / "fixtures"
 
 
+class Clock:
+    """Manual clock: each reading advances `step` seconds (slow human by default)."""
+    def __init__(self, step=10.0):
+        self.t, self.step = 0.0, step
+
+    def __call__(self):
+        self.t += self.step
+        return self.t
+
+
 @pytest.fixture
-def app(tmp_path):
+def clock():
+    return Clock()
+
+
+@pytest.fixture
+def app(tmp_path, clock):
     runs = tmp_path / "runs"
     runs.mkdir()
     shutil.copy(FIX / "run_demo.jsonl", runs / "demo-po1003.jsonl")
@@ -25,6 +40,7 @@ def app(tmp_path):
         proposals_seed=FIX / "proposals.json",
         web_dist=tmp_path / "nodist",
         stub_delay=0.0,
+        clock=clock,
     )
 
 
@@ -178,3 +194,100 @@ async def test_decisions_survive_restart(client, app, tmp_path):
                       proposals_path=app.state.proposals_path, web_dist=tmp_path / "nodist")
     assert "https://rai-hackathon.bbger.at/kg/sensormodel/RTD-2400" in app2.state.store._nodes
     assert "https://rai-hackathon.bbger.at/ont#recommended_replacement" in dict(app2.state.store.predicates())
+
+
+# --- canaries ----------------------------------------------------------------
+
+async def _make_proposals(client, n, prefix="S"):
+    ids = []
+    for i in range(n):
+        body = {"kind": "node", "node": {"cls": "Supplier", "local_id": f"{prefix}{i}", "label": f"{prefix}{i}"}, "rationale": "x"}
+        ids.append((await client.post("/api/proposals", json=body)).json()["id"])
+    return ids
+
+
+async def _approve(client, pid):
+    return (await client.post(f"/api/proposals/{pid}", json={"decision": "approve"})).json()
+
+
+async def _canary_in(client):
+    items = (await client.get("/api/proposals")).json()
+    c = [p for p in items if p["proposed_by"].startswith("llm:") and p["triple"]
+         and p["triple"]["p"].endswith("supplied_by") and "customer" in p["triple"]["o"]]
+    return items, c
+
+
+async def test_no_canary_before_streak(client):
+    ids = await _make_proposals(client, 3)
+    for pid in ids:
+        await _approve(client, pid)
+    items, c = await _canary_in(client)
+    assert not c and all(p["alert"] is None for p in items)
+
+
+async def test_canary_after_streak_among_first_three(client):
+    for pid in await _make_proposals(client, 4):
+        await _approve(client, pid)
+    items, c = await _canary_in(client)
+    assert len(c) == 1
+    assert [p["id"] for p in items].index(c[0]["id"]) < 3
+    assert c[0]["status"] == "proposed" and "canary" not in json.dumps(c[0]).lower()
+    # stays the same canary on refetch, never duplicated
+    _, c2 = await _canary_in(client)
+    assert [x["id"] for x in c2] == [c[0]["id"]]
+
+
+async def test_canary_after_fast_average(app, client, clock):
+    ids = await _make_proposals(client, 3)
+    clock.step = 1.0  # 1 s per decision, mixed decisions: no streak of 4
+    await client.get("/api/proposals")
+    await client.post(f"/api/proposals/{ids[0]}", json={"decision": "approve"})
+    await client.post(f"/api/proposals/{ids[1]}", json={"decision": "reject"})
+    await client.post(f"/api/proposals/{ids[2]}", json={"decision": "approve"})
+    _, c = await _canary_in(client)
+    assert len(c) == 1
+
+
+async def test_reject_or_flag_canary_passes(app, client):
+    approved = []
+    for rnd, decision in enumerate(("reject", "flag")):
+        ids = await _make_proposals(client, 4, prefix=f"R{rnd}_")
+        for pid in ids:
+            await _approve(client, pid)
+        approved += ids
+        _, c = await _canary_in(client)
+        r = (await client.post(f"/api/proposals/{c[0]['id']}", json={"decision": decision})).json()
+        assert r["alert"] is None and r["status"] == "rejected"
+        assert c[0]["id"] not in app.state.store._edges
+    kinds = [a["kind"] for a in (await client.get("/api/audit")).json()]
+    assert kinds.count("canary_passed") == 2 and "canary_failed" not in kinds
+    # the earlier approvals stand
+    status = {p["id"]: p["status"] for p in (await client.get("/api/proposals")).json()}
+    assert all(status[i] == "approved" for i in approved)
+
+
+async def test_approving_canary_fails_reverts_and_notifies(app, client):
+    ids = await _make_proposals(client, 4)
+    for pid in ids:
+        await _approve(client, pid)
+    assert "https://rai-hackathon.bbger.at/kg/supplier/S0" in app.state.store._nodes
+    _, c = await _canary_in(client)
+    t = c[0]["triple"]
+    r = await _approve(client, c[0]["id"])
+    a = r["alert"]
+    assert a["reverted"] == ids and a["supervisor_notified"] == "Quality lead (mock)"
+    assert r["status"] == "proposed"
+    # canary never written, approvals set back
+    g = GraphExport.model_validate((await client.get("/api/graph")).json())
+    assert all(e.id != c[0]["id"] for e in g.edges)
+    assert not any(n.id.endswith("/supplier/S0") for n in g.nodes)
+    items = (await client.get("/api/proposals")).json()
+    assert all(p["status"] == "proposed" for p in items if p["id"] in ids)
+    assert not any(p["id"] == c[0]["id"] for p in items)  # canary is consumed
+    saved = json.loads(app.state.proposals_path.read_text())
+    assert all(p["status"] == "proposed" for p in saved if p["id"] in ids)
+    kinds = [a["kind"] for a in (await client.get("/api/audit")).json()]
+    assert kinds.count("reverted") == 4
+    for k in ("canary_planted", "canary_failed", "supervisor_notified", "decision"):
+        assert k in kinds
+    assert (await client.get("/api/audit")).json()[0].keys() >= {"ts", "kind", "proposal_id", "detail"}

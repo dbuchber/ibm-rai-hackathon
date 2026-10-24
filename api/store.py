@@ -38,3 +38,9 @@ class CurationStore(RdfGraphStore):
         if spec.range:
             self._ont.add((iri, RDFS.range, URIRef(ONT + spec.range)))
         return str(iri)
+
+    def remove_node(self, iri: str) -> None:
+        self._nodes.pop(iri, None)
+
+    def remove_predicate(self, name: str) -> None:
+        self._ont.remove((URIRef(pred_iri(name)), None, None))
