@@ -17,7 +17,8 @@ export interface DataSource {
   getGraph(): Promise<GraphExport>;
   listRuns(): Promise<RunSummary[]>;
   getRun(id: string): Promise<Event[]>;
-  startRun(question: string): Promise<{ run_id: string }>;
+  /** Live questions need an invitation code; the API answers 403 "invite code required" without a valid one. */
+  startRun(question: string, invite?: string): Promise<{ run_id: string }>;
   streamRun(id: string, onEvent: (e: Event) => void, onLost: () => void): () => void;
   listProposals(): Promise<Proposal[]>;
   /** On a failed canary the result carries `alert`; its `reverted` ids are back to "proposed". */
@@ -110,10 +111,10 @@ function apiSource(): DataSource {
     getGraph: () => orStatic(json("/api/graph"), fallback.getGraph),
     listRuns: () => orStatic(json("/api/runs"), fallback.listRuns),
     getRun: (id) => orStatic(json(`/api/runs/${id}`), () => fallback.getRun(id)),
-    startRun: (question) =>
+    startRun: (question, invite = "") =>
       json("/api/runs", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Invite-Code": invite },
         body: JSON.stringify({ question }),
       }),
     streamRun: (id, onEvent, onLost) => {

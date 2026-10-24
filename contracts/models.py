@@ -120,6 +120,15 @@ class BaselinePayload(BaseModel):
     illustrative: bool = False
 
 
+class BeatPayload(BaseModel):
+    """Stage direction for the animated demo. Sent right before the event it introduces; carries no new facts."""
+    act: Literal["question", "strategy", "seeds", "traverse", "answer", "evidence", "contrast"]
+    focus: list[str]                 # node IRIs the camera should frame (chunks included, fold them like highlights)
+    caption: str                     # one plain sentence for viewers without a presenter
+    emphasis: Literal["follow", "prune", "enough", "contradiction", "canary"] | None = None
+    step: int | None = None          # StepPayload.n for act="traverse"
+
+
 class RunFinished(BaseModel):
     status: Literal["ok", "error"]
     error: str | None = None
@@ -166,6 +175,11 @@ class BaselineEvent(_Envelope):
     payload: BaselinePayload
 
 
+class BeatEvent(_Envelope):
+    type: Literal["beat"] = "beat"
+    payload: BeatPayload
+
+
 class RunFinishedEvent(_Envelope):
     type: Literal["run.finished"] = "run.finished"
     payload: RunFinished
@@ -174,7 +188,7 @@ class RunFinishedEvent(_Envelope):
 Event = Annotated[
     Union[
         RunStartedEvent, StrategyEvent, SeedsEvent, StepEvent,
-        AnswerEvent, EvidenceEvent, BaselineEvent, RunFinishedEvent,
+        AnswerEvent, EvidenceEvent, BaselineEvent, BeatEvent, RunFinishedEvent,
     ],
     Field(discriminator="type"),
 ]
@@ -190,6 +204,7 @@ class RunSummary(BaseModel):
 
 
 class CreateRun(BaseModel):
+    """POST /api/runs body. The request also needs the header X-Invite-Code (403 without a valid one)."""
     question: str
 
 

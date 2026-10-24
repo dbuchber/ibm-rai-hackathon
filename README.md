@@ -37,11 +37,12 @@ uv run pytest -q
 cd web && npm ci && VITE_DATA=static npm run build && npm run preview     # http://127.0.0.1:5180
 
 # full app: API + built UI + live mode
-cp .env.example .env            # set LITELLM_BASE_URL, LITELLM_API_KEY, RAI_MODEL
+cp .env.example .env            # set LITELLM_BASE_URL, LITELLM_API_KEY, RAI_MODEL, RAI_INVITE_CODES
 uv run uvicorn api.main:create_app --factory --port 17080               # http://127.0.0.1:17080
 ```
 
-Replay needs no key. Live mode, `kg.propose` and re-running the engine need an OpenAI-compatible gateway (we use a
+Replay needs no key. Live questions need an invitation code (`RAI_INVITE_CODES`, header `X-Invite-Code`).
+Frontend work: see [web/FRONTEND.md](web/FRONTEND.md). Live mode, `kg.propose` and re-running the engine need an OpenAI-compatible gateway (we use a
 LiteLLM gateway in front of OpenRouter). Docker: `docker compose -f deploy/compose.yml up -d --build`.
 
 Rebuild the graph and the demo runs:

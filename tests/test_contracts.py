@@ -15,7 +15,9 @@ ORDER = ["run.started", "strategy", "seeds", "step", "answer", "evidence", "base
 def _check_run(path: Path) -> None:
     events = [EventAdapter.validate_json(line) for line in path.read_text().splitlines() if line.strip()]
     assert [e.seq for e in events] == list(range(len(events)))
-    kinds = [e.type for e in events]
+    # every event except run.finished is introduced by its beat: beat, run.started, beat, strategy, ...
+    assert [e.type == "beat" for e in events[:-1]] == [i % 2 == 0 for i in range(len(events) - 1)]
+    kinds = [e.type for e in events if e.type != "beat"]
     assert [k for i, k in enumerate(kinds) if i == 0 or k != kinds[i - 1]] == ORDER
     walked = {d.edge_id for e in events if e.type == "step" for d in e.payload.decisions if d.verdict == "follow"}
     evidence = next(e for e in events if e.type == "evidence").payload
@@ -80,6 +82,8 @@ def test_chat_canary_fixture_is_marked():
 
 def test_runs_validate():
     for path in sorted((ROOT / "runs").glob("*.jsonl")):
+        if path.name.startswith("live-"):   # runtime output of live mode, gitignored
+            continue
         _check_run(path)
 
 

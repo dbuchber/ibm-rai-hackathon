@@ -41,6 +41,7 @@ def app(tmp_path, clock):
         web_dist=tmp_path / "nodist",
         stub_delay=0.0,
         clock=clock,
+        invite_codes=["pitch-2026"],
     )
 
 
@@ -72,7 +73,8 @@ async def test_list_and_get_runs(client):
 
 
 async def test_live_run_streams_events_in_order(client):
-    rid = (await client.post("/api/runs", json={"question": "Who supplies the sensor?"})).json()["run_id"]
+    rid = (await client.post("/api/runs", json={"question": "Who supplies the sensor?"},
+                               headers={"X-Invite-Code": "pitch-2026"})).json()["run_id"]
     types, seqs = [], []
     async with client.stream("GET", f"/api/runs/{rid}/stream") as r:
         assert r.headers["content-type"].startswith("text/event-stream")
@@ -83,7 +85,7 @@ async def test_live_run_streams_events_in_order(client):
                 types.append(ev.type)
                 seqs.append(ev.seq)
     assert seqs == list(range(len(seqs)))
-    assert types[0] == "run.started" and types[-1] == "run.finished"
+    assert types[:2] == ["beat", "run.started"] and types[-1] == "run.finished"
     # stored afterwards, retrievable, but not listed as a demo run
     assert len((await client.get(f"/api/runs/{rid}")).json()) == len(seqs)
     assert rid not in [r["run_id"] for r in (await client.get("/api/runs")).json()]
@@ -291,3 +293,16 @@ async def test_approving_canary_fails_reverts_and_notifies(app, client):
     for k in ("canary_planted", "canary_failed", "supervisor_notified", "decision"):
         assert k in kinds
     assert (await client.get("/api/audit")).json()[0].keys() >= {"ts", "kind", "proposal_id", "detail"}
+async def test_live_run_needs_invite_code(client):
+    for headers in ({}, {"X-Invite-Code": "wrong"}):
+        r = await client.post("/api/runs", json={"question": "q"}, headers=headers)
+        assert r.status_code == 403 and r.json()["detail"] == "invite code required"
+    assert (await client.get("/api/runs/demo-po1003")).status_code == 200  # replay stays open
+
+
+async def test_live_closed_without_configured_codes(tmp_path):
+    app = create_app(graph_path=FIX / "mini_graph.trig", runs_dir=tmp_path / "runs", proposals_path=tmp_path / "p.json",
+                     proposals_seed=FIX / "proposals.json", web_dist=tmp_path / "nodist", invite_codes=[])
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t") as c:
+        r = await c.post("/api/runs", json={"question": "q"}, headers={"X-Invite-Code": ""})
+        assert r.status_code == 403

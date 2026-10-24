@@ -137,6 +137,106 @@
       "title": "BaselinePayload",
       "type": "object"
     },
+    "BeatEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "beat",
+          "default": "beat",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/BeatPayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "BeatEvent",
+      "type": "object"
+    },
+    "BeatPayload": {
+      "description": "Stage direction for the animated demo. Sent right before the event it introduces; carries no new facts.",
+      "properties": {
+        "act": {
+          "enum": [
+            "question",
+            "strategy",
+            "seeds",
+            "traverse",
+            "answer",
+            "evidence",
+            "contrast"
+          ],
+          "title": "Act",
+          "type": "string"
+        },
+        "focus": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Focus",
+          "type": "array"
+        },
+        "caption": {
+          "title": "Caption",
+          "type": "string"
+        },
+        "emphasis": {
+          "anyOf": [
+            {
+              "enum": [
+                "follow",
+                "prune",
+                "enough",
+                "contradiction",
+                "canary"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emphasis"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        }
+      },
+      "required": [
+        "act",
+        "focus",
+        "caption"
+      ],
+      "title": "BeatPayload",
+      "type": "object"
+    },
     "Canary": {
       "description": "A deliberately false statement planted to detect automation bias. Never written to the graph.",
       "properties": {
@@ -792,6 +892,7 @@
     "mapping": {
       "answer": "#/$defs/AnswerEvent",
       "baseline": "#/$defs/BaselineEvent",
+      "beat": "#/$defs/BeatEvent",
       "evidence": "#/$defs/EvidenceEvent",
       "run.finished": "#/$defs/RunFinishedEvent",
       "run.started": "#/$defs/RunStartedEvent",
@@ -822,6 +923,9 @@
     },
     {
       "$ref": "#/$defs/BaselineEvent"
+    },
+    {
+      "$ref": "#/$defs/BeatEvent"
     },
     {
       "$ref": "#/$defs/RunFinishedEvent"
