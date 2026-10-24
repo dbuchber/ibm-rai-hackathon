@@ -17,10 +17,11 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
 
+from api.canary import CanaryGuard
 from api.store import CurationStore
 from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
 from contracts.models import (CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
-                              Proposal, ProposalDecision, RunSummary)
+                              AuditEntry, Proposal, ProposalDecision, RunSummary)
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "contracts" / "fixtures"
@@ -71,7 +72,8 @@ class LiveRun:
 
 def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                proposals_path: Path | None = None, proposals_seed: Path | None = None,
-               web_dist: Path | None = None, stub_delay: float = 0.4) -> FastAPI:
+               web_dist: Path | None = None, stub_delay: float = 0.4,
+               clock: Callable[[], float] | None = None) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
     graph_path = Path(graph_path or env("RAI_GRAPH") or kg)
@@ -102,6 +104,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         if p.status == "approved" or p.kind == "edge":
             apply(p, p.status)
     live: dict[str, LiveRun] = {}
+    guard = CanaryGuard(store, env("RAI_MODEL", "stub"), streak=int(env("RAI_CANARY_STREAK", "4")), clock=clock)
     runner = _real_runner() or _stub_runner(stub_delay)
     model = env("RAI_MODEL", "stub")
 
@@ -176,7 +179,22 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
     @app.get("/api/proposals")
     def list_proposals() -> list[Proposal]:
-        return list(proposals.values())
+        return guard.listing(list(proposals.values()))
+
+    def revert(pid: str) -> None:
+        p = proposals[pid].model_copy(update={"status": "proposed"})
+        proposals[pid] = p
+        if p.kind == "edge":
+            store.set_edge_graph(pid, "proposed")
+        elif p.kind == "node":
+            store.remove_node(node_iri(p.node.cls, p.node.local_id))
+        else:
+            store.remove_predicate(p.predicate.name)
+        save()
+
+    @app.get("/api/audit")
+    def audit() -> list[AuditEntry]:
+        return guard.audit
 
     def save() -> None:
         proposals_path.parent.mkdir(parents=True, exist_ok=True)
@@ -213,9 +231,12 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
     @app.post("/api/proposals/{pid}")
     def decide(pid: str, body: ProposalDecision) -> Proposal:
+        if guard.is_canary(pid):
+            return guard.decide_canary(body.decision, revert)
         p = proposals.get(pid)
         if p is None:
             raise HTTPException(404, "unknown proposal")
+        guard.note_decision(pid, body.decision)
         status = "approved" if body.decision == "approve" else "rejected"  # flag = reject
         p = p.model_copy(update={"status": status})
         proposals[pid] = p
