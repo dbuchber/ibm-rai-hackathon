@@ -8,7 +8,8 @@
     "preview": "vite preview --host 127.0.0.1 --port 5180",
     "types": "node scripts/gen-types.mjs",
     "data": "node scripts/copy-fixtures.mjs",
-    "graph": "cd .. && PYTHONPATH=. uv run python web/scripts/export_graph.py"
+    "graph": "cd .. && PYTHONPATH=. uv run python web/scripts/export_graph.py",
+    "pitch": "bash scripts/pitch-bundle.sh"
   },
   "dependencies": {
     "cytoscape": "^3.30.2",
