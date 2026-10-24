@@ -9,5 +9,6 @@ web/dist/
 .DS_Store
 web/tsconfig.tsbuildinfo
 runs/live-*.jsonl
+data/state/
 web/pitch-offline.zip
 web/pitch-offline/

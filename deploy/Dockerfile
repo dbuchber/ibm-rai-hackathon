@@ -12,4 +12,9 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --extra api --extra engine
 COPY . .
 COPY --from=web /out ./web/dist
-CMD ["uv", "run", "--no-sync", "uvicorn", "api.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "17080"]
+# Run as an unprivileged user; HOME and caches go to /tmp (a tmpfs under compose, read-only root fs).
+RUN useradd --system --uid 10001 --no-create-home --home-dir /tmp app \
+ && mkdir -p /app/data/state /app/runs && chown app:app /app/data/state /app/runs
+USER 10001
+ENV HOME=/tmp PATH="/app/.venv/bin:$PATH"
+CMD ["uvicorn", "api.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
