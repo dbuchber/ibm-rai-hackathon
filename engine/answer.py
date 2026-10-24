@@ -67,6 +67,9 @@ def answer(question: str, walk: Walk, store: GraphStore, model: str) -> AnswerPa
         elif c in chunk_ids:
             cites.append(Citation(chunk_id=c))
     cites = list({(c.edge_id, c.chunk_id): c for c in cites}.values())
+    if not cites:  # a substantive answer with no valid support is not shown as if it were grounded
+        return AnswerPayload(text=INSUFFICIENT, justification="The answer cited no fact from the approved graph that was walked, so it is not shown.",
+                             citations=[])
     contras = [Contradiction(a=d["a"].strip("[]{}"), b=d["b"].strip("[]{}"), note=d.get("note", ""))
                for d in out.contradictions
                if isinstance(d, dict) and d.get("a", "").strip("[]{}") in chunk_ids and d.get("b", "").strip("[]{}") in chunk_ids]

@@ -59,3 +59,29 @@ def test_no_seeds_answers_insufficient(store, monkeypatch):
     assert [b.act for b in beats] == ["question", "strategy", "seeds", "answer", "evidence", "contrast"]
     assert beats[0].caption == "zzz" and "No entry point" in beats[2].caption
     assert events[3].payload.text == ans_mod.INSUFFICIENT and events[4].payload.nodes == []
+
+
+def _answer_with(store, monkeypatch, out):
+    w = make_walk(store, monkeypatch)
+    monkeypatch.setattr(ans_mod.llm, "complete_json", lambda *a, **k: out)
+    return ans_mod.answer("q", w, store, "m"), w
+
+
+def test_answer_without_valid_citation_is_insufficient(store, monkeypatch):
+    out = ans_mod._Out(text="The limit is 14 A.", justification="j", citations=["deadbeef0000"])
+    a, _ = _answer_with(store, monkeypatch, out)
+    assert a.text == ans_mod.INSUFFICIENT and a.citations == []
+
+
+def test_answer_with_no_citations_at_all_is_insufficient(store, monkeypatch):
+    a, _ = _answer_with(store, monkeypatch, ans_mod._Out(text="Confident but unsupported.", citations=[]))
+    assert a.text == ans_mod.INSUFFICIENT
+
+
+def test_legit_answer_with_valid_citation_is_kept(store, monkeypatch):
+    w = make_walk(store, monkeypatch)
+    eid = next(iter(w.followed))
+    monkeypatch.setattr(ans_mod.llm, "complete_json",
+                        lambda *a, **k: ans_mod._Out(text="Supported answer.", justification="j", citations=[eid, "deadbeef0000"]))
+    a = ans_mod.answer("q", w, store, "m")
+    assert a.text == "Supported answer." and [c.edge_id for c in a.citations] == [eid]
