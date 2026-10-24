@@ -1,0 +1,16 @@
+[
+  {
+    "id": "bad079674282",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
+    },
+    "rationale": "SOP-001 sets 210 °C as critical for ST02 TMP; the TMP-2210 datasheet rates 200 °C continuous.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "the rated maximum for continuous operation is 200°C",
+    "confidence": 0.86,
+    "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
+    "status": "proposed"
+  }
+]

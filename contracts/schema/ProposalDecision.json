@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "decision": {
+      "enum": [
+        "approve",
+        "reject"
+      ],
+      "title": "Decision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision"
+  ],
+  "title": "ProposalDecision",
+  "type": "object"
+}

@@ -1,0 +1,25 @@
+[project]
+name = "graph-anchor"
+version = "0.1.0"
+description = "Human-curated enterprise knowledge graph as grounding anchor for LLM answers (IBM Responsible AI Hackathon 2026)"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.8",
+    "rdflib>=7.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+kg = ["pypdf>=5.0", "litellm>=1.60"]
+engine = ["litellm>=1.60", "fastembed>=0.4"]
+api = ["fastapi>=0.115", "uvicorn[standard]>=0.30", "sse-starlette>=2.1"]
+
+[dependency-groups]
+dev = ["pytest>=8.0", "httpx>=0.27", "pytest-asyncio>=0.24"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

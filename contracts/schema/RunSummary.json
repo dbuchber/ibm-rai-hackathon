@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "question": {
+      "title": "Question",
+      "type": "string"
+    },
+    "mock": {
+      "title": "Mock",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "question",
+    "mock"
+  ],
+  "title": "RunSummary",
+  "type": "object"
+}

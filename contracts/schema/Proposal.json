@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "Triple": {
+      "properties": {
+        "s": {
+          "title": "S",
+          "type": "string"
+        },
+        "p": {
+          "title": "P",
+          "type": "string"
+        },
+        "o": {
+          "title": "O",
+          "type": "string"
+        }
+      },
+      "required": [
+        "s",
+        "p",
+        "o"
+      ],
+      "title": "Triple",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "triple": {
+      "$ref": "#/$defs/Triple"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "evidence_chunk_id": {
+      "title": "Evidence Chunk Id",
+      "type": "string"
+    },
+    "quote": {
+      "title": "Quote",
+      "type": "string"
+    },
+    "confidence": {
+      "title": "Confidence",
+      "type": "number"
+    },
+    "proposed_by": {
+      "title": "Proposed By",
+      "type": "string"
+    },
+    "status": {
+      "default": "proposed",
+      "enum": [
+        "approved",
+        "proposed",
+        "rejected"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "triple",
+    "rationale",
+    "evidence_chunk_id",
+    "quote",
+    "confidence",
+    "proposed_by"
+  ],
+  "title": "Proposal",
+  "type": "object"
+}

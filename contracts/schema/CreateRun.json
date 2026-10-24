@@ -1,0 +1,13 @@
+{
+  "properties": {
+    "question": {
+      "title": "Question",
+      "type": "string"
+    }
+  },
+  "required": [
+    "question"
+  ],
+  "title": "CreateRun",
+  "type": "object"
+}

@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "Edge": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "s": {
+          "title": "S",
+          "type": "string"
+        },
+        "p": {
+          "title": "P",
+          "type": "string"
+        },
+        "o": {
+          "title": "O",
+          "type": "string"
+        },
+        "graph": {
+          "default": "approved",
+          "enum": [
+            "approved",
+            "proposed",
+            "rejected"
+          ],
+          "title": "Graph",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "s",
+        "p",
+        "o"
+      ],
+      "title": "Edge",
+      "type": "object"
+    },
+    "Node": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "cls": {
+          "title": "Cls",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "props": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "default": {},
+          "title": "Props",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "cls",
+        "label"
+      ],
+      "title": "Node",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/Node"
+      },
+      "title": "Nodes",
+      "type": "array"
+    },
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/Edge"
+      },
+      "title": "Edges",
+      "type": "array"
+    }
+  },
+  "required": [
+    "nodes",
+    "edges"
+  ],
+  "title": "GraphExport",
+  "type": "object"
+}

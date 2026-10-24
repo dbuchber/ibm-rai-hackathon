@@ -1,0 +1,801 @@
+{
+  "$defs": {
+    "AnswerEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "answer",
+          "default": "answer",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/AnswerPayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "AnswerEvent",
+      "type": "object"
+    },
+    "AnswerPayload": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "justification": {
+          "title": "Justification",
+          "type": "string"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/Citation"
+          },
+          "title": "Citations",
+          "type": "array"
+        },
+        "contradictions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Contradiction"
+          },
+          "title": "Contradictions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "justification",
+        "citations"
+      ],
+      "title": "AnswerPayload",
+      "type": "object"
+    },
+    "BaselineEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "baseline",
+          "default": "baseline",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/BaselinePayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "BaselineEvent",
+      "type": "object"
+    },
+    "BaselinePayload": {
+      "properties": {
+        "chunks": {
+          "items": {
+            "$ref": "#/$defs/ScoredNode"
+          },
+          "title": "Chunks",
+          "type": "array"
+        },
+        "answer": {
+          "title": "Answer",
+          "type": "string"
+        },
+        "illustrative": {
+          "default": false,
+          "title": "Illustrative",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chunks",
+        "answer"
+      ],
+      "title": "BaselinePayload",
+      "type": "object"
+    },
+    "Citation": {
+      "properties": {
+        "edge_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edge Id"
+        },
+        "chunk_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chunk Id"
+        }
+      },
+      "title": "Citation",
+      "type": "object"
+    },
+    "Contradiction": {
+      "properties": {
+        "a": {
+          "title": "A",
+          "type": "string"
+        },
+        "b": {
+          "title": "B",
+          "type": "string"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "note"
+      ],
+      "title": "Contradiction",
+      "type": "object"
+    },
+    "Decision": {
+      "properties": {
+        "edge_id": {
+          "title": "Edge Id",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "follow",
+            "prune"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "edge_id",
+        "verdict",
+        "reason"
+      ],
+      "title": "Decision",
+      "type": "object"
+    },
+    "Edge": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "s": {
+          "title": "S",
+          "type": "string"
+        },
+        "p": {
+          "title": "P",
+          "type": "string"
+        },
+        "o": {
+          "title": "O",
+          "type": "string"
+        },
+        "graph": {
+          "default": "approved",
+          "enum": [
+            "approved",
+            "proposed",
+            "rejected"
+          ],
+          "title": "Graph",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "s",
+        "p",
+        "o"
+      ],
+      "title": "Edge",
+      "type": "object"
+    },
+    "EvidenceEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "evidence",
+          "default": "evidence",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/EvidencePayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "EvidenceEvent",
+      "type": "object"
+    },
+    "EvidencePayload": {
+      "description": "The graph that led to the result: cited edges plus the walked path from the seeds.",
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/Edge"
+          },
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "title": "EvidencePayload",
+      "type": "object"
+    },
+    "Node": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "cls": {
+          "title": "Cls",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "props": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "default": {},
+          "title": "Props",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "cls",
+        "label"
+      ],
+      "title": "Node",
+      "type": "object"
+    },
+    "RunFinished": {
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "RunFinished",
+      "type": "object"
+    },
+    "RunFinishedEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "run.finished",
+          "default": "run.finished",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/RunFinished"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "RunFinishedEvent",
+      "type": "object"
+    },
+    "RunStarted": {
+      "properties": {
+        "question": {
+          "title": "Question",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "replay",
+            "live"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "mock": {
+          "default": false,
+          "title": "Mock",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "question",
+        "model",
+        "mode"
+      ],
+      "title": "RunStarted",
+      "type": "object"
+    },
+    "RunStartedEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "run.started",
+          "default": "run.started",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/RunStarted"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "RunStartedEvent",
+      "type": "object"
+    },
+    "ScoredNode": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "cls": {
+          "title": "Cls",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "props": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "default": {},
+          "title": "Props",
+          "type": "object"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "cls",
+        "label",
+        "score"
+      ],
+      "title": "ScoredNode",
+      "type": "object"
+    },
+    "SeedsEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "seeds",
+          "default": "seeds",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/SeedsPayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "SeedsEvent",
+      "type": "object"
+    },
+    "SeedsPayload": {
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/ScoredNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "title": "SeedsPayload",
+      "type": "object"
+    },
+    "StepEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "step",
+          "default": "step",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/StepPayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "StepEvent",
+      "type": "object"
+    },
+    "StepPayload": {
+      "properties": {
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "frontier": {
+          "items": {
+            "$ref": "#/$defs/Edge"
+          },
+          "title": "Frontier",
+          "type": "array"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "decisions": {
+          "items": {
+            "$ref": "#/$defs/Decision"
+          },
+          "title": "Decisions",
+          "type": "array"
+        },
+        "sufficient": {
+          "title": "Sufficient",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "n",
+        "frontier",
+        "nodes",
+        "decisions",
+        "sufficient"
+      ],
+      "title": "StepPayload",
+      "type": "object"
+    },
+    "StrategyEvent": {
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "type": {
+          "const": "strategy",
+          "default": "strategy",
+          "title": "Type",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/StrategyPayload"
+        }
+      },
+      "required": [
+        "run_id",
+        "seq",
+        "ts",
+        "payload"
+      ],
+      "title": "StrategyEvent",
+      "type": "object"
+    },
+    "StrategyPayload": {
+      "properties": {
+        "question_type": {
+          "title": "Question Type",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "allowed_predicates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Predicates",
+          "type": "array"
+        },
+        "max_depth": {
+          "title": "Max Depth",
+          "type": "integer"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_type",
+        "rationale",
+        "allowed_predicates",
+        "max_depth",
+        "prompt"
+      ],
+      "title": "StrategyPayload",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "answer": "#/$defs/AnswerEvent",
+      "baseline": "#/$defs/BaselineEvent",
+      "evidence": "#/$defs/EvidenceEvent",
+      "run.finished": "#/$defs/RunFinishedEvent",
+      "run.started": "#/$defs/RunStartedEvent",
+      "seeds": "#/$defs/SeedsEvent",
+      "step": "#/$defs/StepEvent",
+      "strategy": "#/$defs/StrategyEvent"
+    },
+    "propertyName": "type"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/RunStartedEvent"
+    },
+    {
+      "$ref": "#/$defs/StrategyEvent"
+    },
+    {
+      "$ref": "#/$defs/SeedsEvent"
+    },
+    {
+      "$ref": "#/$defs/StepEvent"
+    },
+    {
+      "$ref": "#/$defs/AnswerEvent"
+    },
+    {
+      "$ref": "#/$defs/EvidenceEvent"
+    },
+    {
+      "$ref": "#/$defs/BaselineEvent"
+    },
+    {
+      "$ref": "#/$defs/RunFinishedEvent"
+    }
+  ],
+  "title": "Event"
+}

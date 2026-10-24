@@ -1,0 +1,53 @@
+@prefix ont:  <https://rai-hackathon.bbger.at/ont#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+# Contract C1. Adding a class or predicate is a contract change (coordinator only).
+
+# --- classes: iMAKS (layer 1) ---
+ont:System        a owl:Class ; rdfs:comment "The production system / plant (iMAKS line A)." .
+ont:Zone          a owl:Class ; rdfs:comment "Physical area of the plant." .
+ont:Station       a owl:Class ; rdfs:comment "Production station or room (iMAKS 'Component'), e.g. ST02_SEALING." .
+ont:Sensor        a owl:Class ; rdfs:comment "Sensor with thresholds (props warnHi, critHi, warnLo, critLo, unit, sensorType)." .
+ont:Person        a owl:Class ; rdfs:comment "Employee from the iMAKS person registry." .
+ont:AnomalyEvent  a owl:Class ; rdfs:comment "Detected sensor anomaly." .
+ont:SafetyEvent   a owl:Class ; rdfs:comment "Safety incident involving persons." .
+ont:Maintenance   a owl:Class ; rdfs:comment "Maintenance action." .
+ont:Rule          a owl:Class ; rdfs:comment "Operational / maintenance / alarm rule from an SOP (ground_truth.csv)." .
+# --- classes: documents (layer 2) ---
+ont:Document      a owl:Class ; rdfs:comment "SOP, datasheet or company document." .
+ont:Chunk         a owl:Class ; rdfs:comment "Section or table row of a document (props text, page)." .
+# --- classes: fictional company (layer 3) ---
+ont:Company       a owl:Class ; rdfs:comment "The fictional company Kelvara Packaging GmbH." .
+ont:Customer      a owl:Class .
+ont:Supplier      a owl:Class .
+ont:SensorModel   a owl:Class ; rdfs:comment "Vendor product, e.g. TMP-2210." .
+ont:ProductionOrder a owl:Class .
+ont:Role          a owl:Class .
+
+# --- predicates: iMAKS (direction as in edges.csv) ---
+ont:contains        rdfs:comment "System contains Zone; Zone contains Station." .
+ont:part_of         rdfs:comment "Station part_of System." .
+ont:monitors        rdfs:comment "Sensor monitors Station (canonical direction; the reverse iMAKS duplicates are dropped)." .
+ont:triggers        rdfs:comment "Sensor triggers AnomalyEvent or Maintenance." .
+ont:resolves        rdfs:comment "Maintenance resolves Sensor issue." .
+ont:feeds_into      rdfs:comment "Station feeds_into next Station." .
+ont:correlates_with rdfs:comment "Sensor correlates_with Sensor." .
+ont:authorized_for  rdfs:comment "Person authorized_for Zone." .
+ont:involves        rdfs:comment "SafetyEvent involves Person." .
+ont:detected_in     rdfs:comment "SafetyEvent detected_in Zone." .
+# --- predicates: documents ---
+ont:has_chunk       rdfs:comment "Document has_chunk Chunk." .
+ont:mentions        rdfs:comment "Chunk mentions Station/Sensor/SensorModel/Rule (exact ID match or approved proposal)." .
+ont:defined_in      rdfs:comment "Rule defined_in Chunk." .
+ont:applies_to      rdfs:comment "Rule applies_to Station or Sensor." .
+ont:governs         rdfs:comment "Document governs Station/Sensor/SensorModel." .
+ont:contradicts     rdfs:comment "Chunk contradicts Chunk (conflicting values or instructions)." .
+# --- predicates: company ---
+ont:operates        rdfs:comment "Company operates System." .
+ont:of_model        rdfs:comment "Sensor of_model SensorModel." .
+ont:supplied_by     rdfs:comment "SensorModel supplied_by Supplier." .
+ont:executed_at     rdfs:comment "ProductionOrder executed_at Station." .
+ont:ordered_by      rdfs:comment "ProductionOrder ordered_by Customer." .
+ont:has_role        rdfs:comment "Person has_role Role." .
+ont:party_to        rdfs:comment "Supplier/Company party_to Document (contract, agreement)." .
