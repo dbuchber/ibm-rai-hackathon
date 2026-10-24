@@ -48,3 +48,15 @@ def test_datasheet_chunk_mentions_model(ds):
     g = ds.graph(URIRef(GRAPH_IRIS["approved"]))
     c = URIRef(node_iri("Chunk", "DS-THERM-2200-s1"))
     assert (c, URIRef(pred_iri("mentions")), URIRef(node_iri("SensorModel", "TMP-2210"))) in g
+
+
+def test_full_build_counts(tmp_path):
+    from kg import build
+
+    full = build.build(RAW)
+    assert len(full.prov) > 319 + 86
+    build.write(full, tmp_path)
+    from contracts.rdf_store import RdfGraphStore
+
+    store = RdfGraphStore(tmp_path / "kg.trig")
+    assert store.node(node_iri("Station", "ST02_SEALING")).cls == "Station"

@@ -32,7 +32,7 @@ def _label(row: dict, cls: str, lid: str) -> str:
 
 
 def build(raw_dir: Path, ds: KGDataset | None = None) -> KGDataset:
-    ds = ds or KGDataset()
+    ds = KGDataset() if ds is None else ds
     seed = Path(raw_dir) / "kg_seed"
     iri_of: dict[str, str] = {}
     cls_of: dict[str, str] = {}
