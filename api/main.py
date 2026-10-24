@@ -1,0 +1,187 @@
+"""FastAPI over the C4 endpoints. Runs are JSONL files in `runs/`; live runs stream while they are written."""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import os
+import threading
+import time
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Callable
+
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from sse_starlette.sse import EventSourceResponse
+
+from contracts.models import (CreateRun, CreateRunResponse, EventAdapter, GraphExport,
+                              Proposal, ProposalDecision, RunSummary)
+from contracts.rdf_store import RdfGraphStore
+
+ROOT = Path(__file__).resolve().parent.parent
+FIXTURES = ROOT / "contracts" / "fixtures"
+
+Emit = Callable[[object], None]
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _stub_runner(delay: float):
+    """Stand-in for the engine: replays the fixture run with 400 ms between events."""
+    def run(question: str, store, *, model: str, mode: str, emit: Emit) -> None:
+        for line in (FIXTURES / "run_demo.jsonl").read_text().splitlines():
+            ev = EventAdapter.validate_json(line)
+            if ev.type == "run.started":
+                ev = ev.model_copy(update={"payload": ev.payload.model_copy(
+                    update={"question": question, "mode": "live", "mock": True})})
+            emit(ev)
+            time.sleep(delay)
+    return run
+
+
+def _real_runner():
+    try:
+        from engine.run import run_question  # stream B
+        return run_question
+    except Exception:
+        return None
+
+
+class LiveRun:
+    def __init__(self, run_id: str, path: Path):
+        self.run_id, self.path = run_id, path
+        self.events: list[dict] = []
+        self.done = False
+        self.lock = threading.Lock()
+
+    def add(self, ev) -> None:
+        ev = ev.model_copy(update={"run_id": self.run_id, "seq": len(self.events)})
+        d = json.loads(ev.model_dump_json())
+        with self.lock:
+            self.events.append(d)
+            with self.path.open("a") as f:
+                f.write(json.dumps(d) + "\n")
+
+
+def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
+               proposals_path: Path | None = None, proposals_seed: Path | None = None,
+               web_dist: Path | None = None, stub_delay: float = 0.4) -> FastAPI:
+    env = os.environ.get
+    kg = ROOT / "data" / "graph" / "kg.trig"
+    graph_path = Path(graph_path or env("RAI_GRAPH") or kg)
+    if not graph_path.exists():  # stream A's kg.trig not landed yet
+        graph_path = FIXTURES / "mini_graph.trig"
+    runs_dir = Path(runs_dir or env("RAI_RUNS") or ROOT / "runs")
+    proposals_path = Path(proposals_path or env("RAI_PROPOSALS") or ROOT / "data" / "proposals.json")
+    proposals_seed = Path(proposals_seed or FIXTURES / "proposals.json")
+    web_dist = Path(web_dist or ROOT / "web" / "dist")
+    runs_dir.mkdir(parents=True, exist_ok=True)
+
+    app = FastAPI(title="Graph Anchor API")
+    store = RdfGraphStore(graph_path)
+    src = proposals_path if proposals_path.exists() else proposals_seed
+    proposals = {p.id: p for p in (Proposal.model_validate(x) for x in json.loads(src.read_text()))}
+    # reflect already-decided proposals in the in-memory graph
+    for p in proposals.values():
+        if p.status != "proposed" and p.id in store._edges:
+            store.set_edge_graph(p.id, p.status)
+    live: dict[str, LiveRun] = {}
+    runner = _real_runner() or _stub_runner(stub_delay)
+    model = env("RAI_MODEL", "stub")
+
+    app.state.store, app.state.proposals_path = store, proposals_path
+
+    def read_run(run_id: str) -> list[dict]:
+        if run_id in live:
+            with live[run_id].lock:
+                return list(live[run_id].events)
+        f = runs_dir / f"{run_id}.jsonl"
+        if "/" in run_id or not f.exists():
+            raise HTTPException(404, "unknown run")
+        return [json.loads(l) for l in f.read_text().splitlines() if l.strip()]
+
+    @app.get("/healthz")
+    def healthz():
+        return {"ok": True}
+
+    @app.get("/api/graph")
+    def graph() -> GraphExport:
+        return store.export({"approved", "proposed"})
+
+    @app.get("/api/runs")
+    def runs() -> list[RunSummary]:
+        out = []
+        for f in sorted(runs_dir.glob("*.jsonl")):
+            first = f.read_text().split("\n", 1)[0]
+            if not first:
+                continue
+            ev = EventAdapter.validate_json(first)
+            if ev.type == "run.started" and ev.payload.mode != "live":
+                out.append(RunSummary(run_id=f.stem, question=ev.payload.question, mock=ev.payload.mock))
+        return out
+
+    @app.get("/api/runs/{run_id}")
+    def get_run(run_id: str) -> list[dict]:
+        return read_run(run_id)
+
+    @app.post("/api/runs")
+    async def create_run(body: CreateRun) -> CreateRunResponse:
+        run_id = "live-" + uuid.uuid4().hex[:8]
+        lr = LiveRun(run_id, runs_dir / f"{run_id}.jsonl")
+        live[run_id] = lr
+
+        def work():
+            try:
+                runner(body.question, store, model=model, mode="live", emit=lr.add)
+            except Exception as e:  # keep the stream well-formed
+                from contracts.models import RunFinished, RunFinishedEvent
+                lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
+                                        payload=RunFinished(status="error", error=str(e))))
+            finally:
+                lr.done = True
+        threading.Thread(target=work, daemon=True).start()
+        return CreateRunResponse(run_id=run_id)
+
+    @app.get("/api/runs/{run_id}/stream")
+    async def stream(run_id: str):
+        read_run(run_id)  # 404 early
+
+        async def gen():
+            i = 0
+            while True:
+                evs = read_run(run_id)
+                while i < len(evs):
+                    yield {"data": json.dumps(evs[i])}
+                    i += 1
+                if run_id not in live or live[run_id].done and i >= len(read_run(run_id)):
+                    return
+                await asyncio.sleep(0.05)
+        return EventSourceResponse(gen())
+
+    @app.get("/api/proposals")
+    def list_proposals() -> list[Proposal]:
+        return list(proposals.values())
+
+    @app.post("/api/proposals/{pid}")
+    def decide(pid: str, body: ProposalDecision) -> Proposal:
+        p = proposals.get(pid)
+        if p is None:
+            raise HTTPException(404, "unknown proposal")
+        status = "approved" if body.decision == "approve" else "rejected"
+        p = p.model_copy(update={"status": status})
+        proposals[pid] = p
+        if pid in store._edges:
+            store.set_edge_graph(pid, status)
+        proposals_path.parent.mkdir(parents=True, exist_ok=True)
+        proposals_path.write_text(json.dumps([x.model_dump() for x in proposals.values()], indent=2))
+        return p
+
+    if web_dist.is_dir():
+        app.mount("/", StaticFiles(directory=web_dist, html=True), name="web")
+    return app
+
