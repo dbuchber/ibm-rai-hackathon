@@ -153,6 +153,9 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     chat = ChatCanary(lambda: store, lambda kind, detail, pid=None: guard.log(kind, detail, pid),
                       streak=chat_streak or int(env("RAI_CHAT_CANARY_STREAK", "3")), record=keep_feedback)
     run_rl = RateLimiter(run_limit, clock=limit_clock)
+    # strict models (engine/models.py): per IP and model, and per model across all clients
+    strict_ip_rl = RateLimiter(int(env("RAI_STRICT_IP_LIMIT", "2")), clock=limit_clock)
+    strict_all_rl = RateLimiter(int(env("RAI_STRICT_GLOBAL_LIMIT", "10")), clock=limit_clock)
     write_rl = RateLimiter(write_limit, clock=limit_clock)
 
     def too_many(retry: int, what: str) -> HTTPException:
@@ -225,6 +228,14 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         ip = client_ip(request)
         if (retry := run_rl.retry_after(ip)) is not None:
             raise too_many(retry, "run limit reached for this client")
+        strict = any(m.id == run_model and m.strict for m in allowed_models())
+        if strict:
+            if (retry := strict_ip_rl.retry_after(f"{ip} {run_model}")) is not None:
+                raise too_many(retry, "run limit reached for this model and client")
+            if (retry := strict_all_rl.retry_after(run_model)) is not None:
+                raise too_many(retry, "run limit reached for this model")
+            strict_ip_rl.record(f"{ip} {run_model}")
+            strict_all_rl.record(run_model)
         run_rl.record(ip)
         run_id = "live-" + uuid.uuid4().hex[:8]
         lr = LiveRun(run_id, runs_dir / f"{run_id}.jsonl")

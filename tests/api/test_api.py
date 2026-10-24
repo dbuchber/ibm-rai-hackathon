@@ -383,6 +383,25 @@ async def test_run_rate_limit_per_ip_with_retry_after(tmp_path):
     assert (await c.post("/api/runs", json={"question": "a"}, headers=h)).status_code == 200
 
 
+async def test_strict_model_has_own_tight_limit(tmp_path, monkeypatch):
+    monkeypatch.setenv("RAI_STRICT_IP_LIMIT", "1")
+    monkeypatch.setenv("RAI_STRICT_GLOBAL_LIMIT", "2")
+    c = _client(_app(tmp_path))
+    haiku = {"question": "a", "model": "openai/claude-haiku-5-5"}
+
+    async def post(body, ip):
+        r = await c.post("/api/runs", json=body, headers={"CF-Connecting-IP": ip})
+        if r.status_code == 200:
+            await _wait_idle(None, c, r.json()["run_id"])
+        return r.status_code
+
+    assert await post(haiku, "1.1.1.1") == 200
+    assert await post(haiku, "1.1.1.1") == 429           # per IP and model
+    assert await post({"question": "a"}, "1.1.1.1") == 200   # default model unaffected
+    assert await post(haiku, "2.2.2.2") == 200
+    assert await post(haiku, "3.3.3.3") == 429           # global budget for the model
+
+
 async def test_write_rate_limit(tmp_path):
     app = _app(tmp_path, write_limit=3)
     c = _client(app)
@@ -539,7 +558,7 @@ async def test_models_allowlist(tmp_path, monkeypatch):
     ms = (await c.get("/api/models")).json()
     assert ms[0] == {"id": "openai/mistral-large-4-openrouter", "label": "Mistral Large 4", "provider": "gateway"}
     assert {m["id"] for m in ms[1:]} == {"openai/ibm/granite-4-h-small", "openai/watsonx/mistralai/mistral-medium-2505",
-                                         "openai/meta-llama/llama-3-3-70b-instruct"}
+                                         "openai/meta-llama/llama-3-3-70b-instruct", "openai/claude-haiku-5-5", "openai/gpt-6-luna"}
     assert all(m["provider"] == "ibm-ica" for m in ms[1:])
 
 
