@@ -18,7 +18,9 @@ export interface DataSource {
   listRuns(): Promise<RunSummary[]>;
   getRun(id: string): Promise<Event[]>;
   /** Live questions need an invitation code; the API answers 403 "invite code required" without a valid one. */
-  startRun(question: string, invite?: string): Promise<{ run_id: string }>;
+  startRun(question: string, invite?: string, model?: string): Promise<{ run_id: string }>;
+  /** Models offered for live questions (GET /api/models); empty when the API does not offer a choice. */
+  listModels(): Promise<LiveModel[]>;
   streamRun(id: string, onEvent: (e: Event) => void, onLost: () => void): () => void;
   listProposals(): Promise<Proposal[]>;
   /** On a failed canary the result carries `alert`; its `reverted` ids are back to "proposed". */
@@ -45,6 +47,9 @@ const BASE = import.meta.env.BASE_URL + "data/";
 export class HttpError extends Error {
   constructor(message: string, readonly status: number, readonly retryAfter: number | null) { super(message); }
 }
+
+/** GET /api/models entry. Not in contracts/ yet (stream D adds the endpoint); kept local until it is. */
+export interface LiveModel { id: string; label: string; provider: string }
 
 async function json<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
@@ -74,6 +79,7 @@ function staticSource(): DataSource {
     listRuns: () => json<RunSummary[]>(BASE + "runs/index.json"),
     getRun: async (id) => parseJsonl(await (await fetch(BASE + `runs/${id}.jsonl`)).text()),
     startRun: () => Promise.reject(new Error("Live mode needs the API.")),
+    listModels: async () => [],
     streamRun: (_id, _on, onLost) => {
       onLost();
       return () => {};
@@ -118,12 +124,14 @@ function apiSource(): DataSource {
     getGraph: () => orStatic(json("/api/graph"), fallback.getGraph),
     listRuns: () => orStatic(json("/api/runs"), fallback.listRuns),
     getRun: (id) => orStatic(json(`/api/runs/${id}`), () => fallback.getRun(id)),
-    startRun: (question, invite = "") =>
+    startRun: (question, invite = "", model) =>
       json("/api/runs", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Invite-Code": invite },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify(model ? { question, model } : { question }),
       }),
+    listModels: () =>
+      json<LiveModel[]>("/api/models").then((xs) => (Array.isArray(xs) ? xs : [])).catch(() => []),
     streamRun: (id, onEvent, onLost) => {
       const es = new EventSource(`/api/runs/${id}/stream`);
       let done = false;
