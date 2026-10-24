@@ -450,9 +450,9 @@ async def test_check_order_invite_before_busy_before_rate(tmp_path):
 
 def _chat_app(tmp_path):
     from api.main import _stub_runner
-    from contracts.models import NodeSpec
     app = _app(tmp_path, runner=_stub_runner(0.0), chat_streak=1)
-    app.state.store.add_node(NodeSpec(cls="Supplier", local_id="SensorikNord", label="Sensorik Nord GmbH"))
+    from tests.api.test_chat_canary import _with_second_supplier
+    _with_second_supplier(app.state.store)
     return app
 
 
@@ -501,3 +501,20 @@ async def test_feedback_and_opened_endpoints(tmp_path):
         assert (await c.post("/api/runs/nope/opened", json={"target": "x"})).status_code == 404
         assert (await c.post(f"/api/runs/{rid}/feedback", json={"text": "x" * 2001})).status_code == 422
         assert any(e["kind"] == "feedback" for e in (await c.get("/api/audit")).json())
+
+
+async def test_opened_is_not_write_limited(tmp_path):
+    from api.main import _stub_runner
+    async with _client(_app(tmp_path, runner=_stub_runner(0.0), write_limit=1)) as c:
+        rid = (await _live(c, "s1"))[0]["run_id"]
+        for _ in range(3):
+            assert (await c.post(f"/api/runs/{rid}/opened", json={"target": "evidence"})).status_code == 204
+
+
+async def test_public_audit_hides_open_chat_canary(tmp_path):
+    async with _client(_chat_app(tmp_path)) as c:
+        await _live(c, "s1")
+        await _live(c, "s1")                              # canary planted, still open
+        audit = (await c.get("/api/audit")).json()
+        assert "canary_planted" not in {e["kind"] for e in audit}
+        assert "Sensorik" not in json.dumps(audit)

@@ -82,7 +82,9 @@ The stored run file (`runs/live-*.jsonl`) holds the answer exactly as streamed. 
 Every assistant message gets a flag action (thumbs down) that opens an optional text field, like ChatGPT/Claude.
 `POST /api/runs/{id}/feedback {text?}`:
 
-- on the open canary of this session → **caught**. Response carries the reveal (`claim`, `truth`,
+- on the open canary of this session → **caught**. *(Review fix: feedback text never goes into the public audit;
+  it is kept server-side in `feedback.jsonl` next to the audit. The open canary's `canary_planted` entry carries
+  no run id or claim and is hidden from `GET /api/audit` until resolved.)* Response carries the reveal (`claim`, `truth`,
   `outcome: "caught"`). UI: quiet toast "Good catch, that answer contained a planted false fact", plus the
   comparison. Audit `canary_passed` with the feedback text.
 - on any other answer → normal feedback. Response without reveal. UI: "Thanks, an analyst will review this

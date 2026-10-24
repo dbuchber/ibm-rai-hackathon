@@ -137,8 +137,15 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     load_state()
     live: dict[str, LiveRun] = {}
     # lambdas: load_state() rebuilds store and guard, chat canaries share the curation audit log
+    feedback_path = proposals_path.parent / "feedback.jsonl"   # feedback text: never served
+
+    def keep_feedback(rec: dict) -> None:
+        feedback_path.parent.mkdir(parents=True, exist_ok=True)
+        with feedback_path.open("a") as f:
+            f.write(json.dumps(rec) + "\n")
+
     chat = ChatCanary(lambda: store, lambda kind, detail, pid=None: guard.log(kind, detail, pid),
-                      streak=chat_streak or int(env("RAI_CHAT_CANARY_STREAK", "3")))
+                      streak=chat_streak or int(env("RAI_CHAT_CANARY_STREAK", "3")), record=keep_feedback)
     run_rl = RateLimiter(run_limit, clock=limit_clock)
     write_rl = RateLimiter(write_limit, clock=limit_clock)
 
@@ -225,7 +232,8 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         read_run(run_id)  # 404
         return FeedbackResponse(reveal=chat.feedback(x_chat_session, run_id, body.text))
 
-    @app.post("/api/runs/{run_id}/opened", status_code=204, dependencies=[Depends(write_limited)])
+    # not write-limited: a silent 429 would make a user who checked look blind; it only flips a flag
+    @app.post("/api/runs/{run_id}/opened", status_code=204)
     def opened(run_id: str, body: SourceOpened) -> Response:
         read_run(run_id)  # 404
         chat.opened(run_id, body.target)
@@ -264,7 +272,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
     @app.get("/api/audit")
     def audit() -> list[AuditEntry]:
-        return guard.audit
+        return [e for e in guard.audit if not chat.hidden(e.detail)]
 
     def save() -> None:
         proposals_path.parent.mkdir(parents=True, exist_ok=True)

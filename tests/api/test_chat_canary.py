@@ -17,8 +17,15 @@ def _answer():
 
 @pytest.fixture
 def store():
-    s = CurationStore(FIX / "mini_graph.trig")
-    s.add_node(NodeSpec(cls="Supplier", local_id="SensorikNord", label="Sensorik Nord GmbH"))
+    return _with_second_supplier(CurationStore(FIX / "mini_graph.trig"))
+
+
+def _with_second_supplier(s):
+    """A second Supplier that really supplies something, so a swap has a plausible target."""
+    from contracts.ids import pred_iri
+    sup = s.add_node(NodeSpec(cls="Supplier", local_id="SensorikNord", label="Sensorik Nord GmbH"))
+    model = s.add_node(NodeSpec(cls="SensorModel", local_id="HUM-2250", label="HUM-2250"))
+    s.add_edge(model.id, pred_iri("supplied_by"), sup.id, "approved")
     return s
 
 
@@ -131,3 +138,89 @@ def test_failed_run_keeps_session_due(cc):
         ask(cc, "s", f"r{i}")
     ask(cc, "s", "r3", answer_event=False)   # run ended in error before the answer
     assert ask(cc, "s", "r4")
+
+
+# --- review fixes -----------------------------------------------------------
+
+def _single(store, edge, text, question):
+    """An answer citing exactly one edge (s, p, o local names) with the given text."""
+    from contracts.ids import edge_id, node_iri, pred_iri
+    from contracts.models import AnswerPayload, Citation
+    e = next(x for x in store._edges.values() if x.id == edge)
+    return AnswerPayload(text=text, justification="", citations=[Citation(edge_id=e.id)]), question
+
+
+def _edge(store, s_local, p, o_local):
+    from contracts.ids import local_name
+    return next(e for e in store._edges.values()
+                if local_name(e.s) == s_local and local_name(e.p) == p and local_name(e.o) == o_local).id
+
+
+def test_never_corrupts_longer_labels(store):
+    from contracts.ids import pred_iri
+    st = store.add_node(NodeSpec(cls="Station", local_id="ST09_FILLING", label="ST09_FILLING"))
+    tmp = store.add_node(NodeSpec(cls="Sensor", local_id="ST09_FILLING_TMP", label="ST09_FILLING_TMP"))
+    store.add_edge(tmp.id, pred_iri("monitors"), st.id, "approved")
+    ans, q = _single(store, _edge(store, "ST02_SEALING_TMP", "monitors", "ST02_SEALING"),
+                     "ST02_SEALING_TMP monitors ST02_SEALING.", "What is monitored?")
+    hit = falsify(ans, q, store, random.Random(0))
+    assert hit is None or "ST02_SEALING_TMP" in hit[0].text
+
+
+def _model_store(store, *models):
+    from contracts.ids import pred_iri
+    for i, m in enumerate(models):
+        n = store.add_node(NodeSpec(cls="SensorModel", local_id=m, label=m))
+        sensor = store.add_node(NodeSpec(cls="Sensor", local_id=f"X{i}_TMP", label=f"X{i}_TMP"))
+        store.add_edge(sensor.id, pred_iri("of_model"), n.id, "approved")
+    return _single(store, _edge(store, "ST02_SEALING_TMP", "of_model", "TMP-2210"),
+                   "The installed sensor is a TMP-2210.", "Which model is installed?")
+
+
+def test_model_code_swaps_only_within_its_family(store):
+    ans, q = _model_store(store, "VIB-4480")
+    assert falsify(ans, q, store, random.Random(0)) is None
+
+
+def test_model_code_swaps_to_same_family(store):
+    ans, q = _model_store(store, "VIB-4480", "TMP-2250")
+    out, swap = falsify(ans, q, store, random.Random(0))
+    assert "TMP-2250" in out.text and swap.claim == "ST02_SEALING_TMP of model TMP-2250"
+
+
+def test_replacement_only_from_predicate_range(answer):
+    s = CurationStore(FIX / "mini_graph.trig")
+    s.add_node(NodeSpec(cls="Supplier", local_id="Unused", label="Never Supplies AG"))  # no supplied_by edge
+    assert falsify(answer, "Who supplies the sensor?", s, random.Random(0)) is None
+
+
+def test_falsify_error_keeps_true_answer(cc, monkeypatch):
+    import api.chat_canary as mod
+    for i in range(3):
+        ask(cc, "s", f"r{i}")
+    monkeypatch.setattr(mod, "falsify", lambda *a: (_ for _ in ()).throw(RuntimeError("boom")))
+    assert not ask(cc, "s", "r3")                     # true answer streamed, no crash
+    monkeypatch.undo()
+    assert ask(cc, "s", "r4")                         # still due
+
+
+def test_open_canary_hidden_from_public_audit(cc, log):
+    plant(cc, "s", "rc")
+    assert cc.hidden(log_entry_detail(log, "canary_planted"))
+    assert all("Sensorik" not in d and "rc" not in d for k, d, _ in log if k == "canary_planted")
+    cc.start("s", "rn", "q")                          # missed -> resolved
+    assert not cc.hidden(log_entry_detail(log, "canary_planted"))
+
+
+def log_entry_detail(log, kind):
+    return next(d for k, d, _ in log if k == kind)
+
+
+def test_feedback_text_kept_out_of_audit(store, log):
+    kept = []
+    cc = ChatCanary(lambda: store, lambda k, d, p=None: log.append((k, d, p)), streak=3,
+                    rng=random.Random(0), record=kept.append)
+    ask(cc, "s", "r0")
+    cc.feedback("s", "r0", "my private note")
+    assert all("my private note" not in d for _, d, _ in log)
+    assert kept[0]["text"] == "my private note" and kept[0]["run_id"] == "r0"
