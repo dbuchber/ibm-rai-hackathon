@@ -72,7 +72,7 @@ export function AlertDialog({ a, idx, onReview, onAudit, onClose }: {
 
 const KIND: Record<AuditEntry["kind"], string> = {
   decision: "Decision", canary_planted: "Test planted", canary_passed: "Test caught",
-  canary_failed: "Test missed", reverted: "Reverted", supervisor_notified: "Supervisor",
+  canary_failed: "Test missed", reverted: "Reverted", supervisor_notified: "Supervisor", feedback: "Feedback",
 };
 
 export function AuditDrawer({ entries, proposals, idx, onClose }: {

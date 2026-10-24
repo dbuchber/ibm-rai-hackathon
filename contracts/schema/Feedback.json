@@ -1,0 +1,20 @@
+{
+  "description": "POST /api/runs/{id}/feedback body (header X-Chat-Session): the user flags an answer.",
+  "properties": {
+    "text": {
+      "anyOf": [
+        {
+          "maxLength": 2000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text"
+    }
+  },
+  "title": "Feedback",
+  "type": "object"
+}

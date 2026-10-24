@@ -1,0 +1,14 @@
+{
+  "description": "POST /api/runs/{id}/opened body (204): the user looked at a source of the answer.",
+  "properties": {
+    "target": {
+      "title": "Target",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target"
+  ],
+  "title": "SourceOpened",
+  "type": "object"
+}

@@ -1,0 +1,33 @@
+{
+  "description": "Resolution of a live chat canary: one planted false fact in a real answer. Never written to the graph.",
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "claim": {
+      "title": "Claim",
+      "type": "string"
+    },
+    "truth": {
+      "title": "Truth",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "caught",
+        "missed"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "claim",
+    "truth",
+    "outcome"
+  ],
+  "title": "ChatCanaryReveal",
+  "type": "object"
+}

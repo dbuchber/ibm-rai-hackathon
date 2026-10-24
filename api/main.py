@@ -17,15 +17,17 @@ import hmac
 import secrets
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
 
 from api.canary import CanaryGuard
+from api.chat_canary import ChatCanary
 from api.limits import RateLimiter, client_ip
 from api.store import CurationStore
 from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
-from contracts.models import (RunFinished, RunFinishedEvent, CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
+from contracts.models import (RunFinished, RunFinishedEvent, CreateProposal, CreateRun, CreateRunResponse,
+                              EventAdapter, Feedback, FeedbackResponse, GraphExport, SourceOpened,
                               AuditEntry, Proposal, ProposalDecision, RunSummary)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -88,7 +90,8 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                clock: Callable[[], float] | None = None,
                limit_clock: Callable[[], float] = time.monotonic,
                run_limit: int = 15, write_limit: int = 120, max_question: int = 500, run_timeout: float = 300.0,
-               invite_codes: list[str] | None = None) -> FastAPI:
+               invite_codes: list[str] | None = None, runner: Callable | None = None,
+               chat_streak: int | None = None) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
     graph_path = Path(graph_path or env("RAI_GRAPH") or kg)
@@ -138,6 +141,16 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
     load_state()
     live: dict[str, LiveRun] = {}
+    # lambdas: load_state() rebuilds store and guard, chat canaries share the curation audit log
+    feedback_path = proposals_path.parent / "feedback.jsonl"   # feedback text: never served
+
+    def keep_feedback(rec: dict) -> None:
+        feedback_path.parent.mkdir(parents=True, exist_ok=True)
+        with feedback_path.open("a") as f:
+            f.write(json.dumps(rec) + "\n")
+
+    chat = ChatCanary(lambda: store, lambda kind, detail, pid=None: guard.log(kind, detail, pid),
+                      streak=chat_streak or int(env("RAI_CHAT_CANARY_STREAK", "3")), record=keep_feedback)
     run_rl = RateLimiter(run_limit, clock=limit_clock)
     write_rl = RateLimiter(write_limit, clock=limit_clock)
 
@@ -149,7 +162,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         if (retry := write_rl.retry_after(ip)) is not None:
             raise too_many(retry, "too many changes, slow down")
         write_rl.record(ip)
-    runner = _real_runner() or _stub_runner(stub_delay)
+    runner = runner or _real_runner() or _stub_runner(stub_delay)
     model = env("RAI_MODEL", "stub")
 
     app.state.proposals_path = proposals_path
@@ -188,7 +201,8 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         return read_run(run_id)
 
     @app.post("/api/runs")
-    async def create_run(body: CreateRun, request: Request, x_invite_code: str = Header("")) -> CreateRunResponse:
+    async def create_run(body: CreateRun, request: Request, x_invite_code: str = Header(""),
+                         x_chat_session: str | None = Header(None)) -> CreateRunResponse:
         # order: invite code, then input size, then one run at a time, then per-IP hourly budget
         if not any(secrets.compare_digest(x_invite_code.encode(), c.encode()) for c in invite_codes):
             raise HTTPException(403, "invite code required")
@@ -207,17 +221,31 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         run_id = "live-" + uuid.uuid4().hex[:8]
         lr = LiveRun(run_id, runs_dir / f"{run_id}.jsonl")
         live[run_id] = lr
+        reveal = chat.start(x_chat_session, run_id, body.question)
+        emit = chat.emit(run_id, lr.add)
 
         def work():
             try:
-                runner(body.question, store, model=model, mode="live", emit=lr.add)
+                runner(body.question, store, model=model, mode="live", emit=emit)
             except Exception as e:  # keep the stream well-formed
                 lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
                                         payload=RunFinished(status="error", error=str(e))))
             finally:
                 lr.done = True
         threading.Thread(target=work, daemon=True).start()
-        return CreateRunResponse(run_id=run_id)
+        return CreateRunResponse(run_id=run_id, reveal=reveal)
+
+    @app.post("/api/runs/{run_id}/feedback", dependencies=[Depends(write_limited)])
+    def feedback(run_id: str, body: Feedback, x_chat_session: str | None = Header(None)) -> FeedbackResponse:
+        read_run(run_id)  # 404
+        return FeedbackResponse(reveal=chat.feedback(x_chat_session, run_id, body.text))
+
+    # not write-limited: a silent 429 would make a user who checked look blind; it only flips a flag
+    @app.post("/api/runs/{run_id}/opened", status_code=204)
+    def opened(run_id: str, body: SourceOpened) -> Response:
+        read_run(run_id)  # 404
+        chat.opened(run_id, body.target)
+        return Response(status_code=204)
 
     @app.get("/api/runs/{run_id}/stream")
     async def stream(run_id: str):
@@ -252,7 +280,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
     @app.get("/api/audit")
     def audit() -> list[AuditEntry]:
-        return guard.audit
+        return [e for e in guard.audit if not chat.hidden(e.detail)]
 
     def save() -> None:
         proposals_path.parent.mkdir(parents=True, exist_ok=True)
@@ -310,6 +338,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         for f in (proposals_path, proposals_path.parent / "audit.jsonl"):
             f.unlink(missing_ok=True)
         load_state()
+        chat.reset()
         return {"ok": True, "proposals": len(proposals)}
 
     if web_dist.is_dir():

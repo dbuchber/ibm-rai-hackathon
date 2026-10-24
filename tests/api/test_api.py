@@ -446,6 +446,80 @@ async def test_check_order_invite_before_busy_before_rate(tmp_path):
     assert over.status_code == 429 and int(over.headers["retry-after"]) > 5
 
 
+# --- chat canary -------------------------------------------------------------------
+
+def _chat_app(tmp_path):
+    from api.main import _stub_runner
+    app = _app(tmp_path, runner=_stub_runner(0.0), chat_streak=1)
+    from tests.api.test_chat_canary import _with_second_supplier
+    _with_second_supplier(app.state.store)
+    return app
+
+
+async def _live(c, session):
+    """Posts a question in a chat session and drains its stream. Returns (response json, events)."""
+    r = (await c.post("/api/runs", json={"question": "Who supplies the sensor?"},
+                      headers={"X-Chat-Session": session})).json()
+    events = []
+    async with c.stream("GET", f"/api/runs/{r['run_id']}/stream") as s:
+        async for line in s.aiter_lines():
+            if line.startswith("data:"):
+                events.append(json.loads(line[5:]))
+    return r, events
+
+
+async def test_chat_canary_end_to_end(tmp_path):
+    async with _client(_chat_app(tmp_path)) as c:
+        first, ev1 = await _live(c, "s1")                 # blind answer
+        second, ev2 = await _live(c, "s1")                # due -> canary
+        assert first["reveal"] is None and second["reveal"] is None
+        answer = next(e for e in ev2 if e["type"] == "answer")["payload"]
+        assert "Sensorik Nord GmbH" in answer["text"] and answer["canary"] is None
+        assert [e["type"] for e in ev2] == [e["type"] for e in ev1]
+        third, _ = await _live(c, "s1")
+        assert third["reveal"]["outcome"] == "missed" and third["reveal"]["run_id"] == second["run_id"]
+        audit = {e["kind"] for e in (await c.get("/api/audit")).json()}
+        assert {"canary_planted", "canary_failed", "supervisor_notified"} <= audit
+
+
+async def test_chat_canary_caught_by_flag(tmp_path):
+    async with _client(_chat_app(tmp_path)) as c:
+        await _live(c, "s1")
+        canary, _ = await _live(c, "s1")
+        r = await c.post(f"/api/runs/{canary['run_id']}/feedback", json={"text": "wrong supplier"},
+                         headers={"X-Chat-Session": "s1"})
+        assert r.json()["reveal"]["outcome"] == "caught"
+
+
+async def test_feedback_and_opened_endpoints(tmp_path):
+    async with _client(_chat_app(tmp_path)) as c:
+        rid = (await _live(c, "s1"))[0]["run_id"]
+        assert (await c.post(f"/api/runs/{rid}/opened", json={"target": "evidence"})).status_code == 204
+        r = await c.post(f"/api/runs/{rid}/feedback", json={"text": "hm"}, headers={"X-Chat-Session": "s1"})
+        assert r.json() == {"reveal": None}
+        assert (await c.post("/api/runs/nope/feedback", json={})).status_code == 404
+        assert (await c.post("/api/runs/nope/opened", json={"target": "x"})).status_code == 404
+        assert (await c.post(f"/api/runs/{rid}/feedback", json={"text": "x" * 2001})).status_code == 422
+        assert any(e["kind"] == "feedback" for e in (await c.get("/api/audit")).json())
+
+
+async def test_opened_is_not_write_limited(tmp_path):
+    from api.main import _stub_runner
+    async with _client(_app(tmp_path, runner=_stub_runner(0.0), write_limit=1)) as c:
+        rid = (await _live(c, "s1"))[0]["run_id"]
+        for _ in range(3):
+            assert (await c.post(f"/api/runs/{rid}/opened", json={"target": "evidence"})).status_code == 204
+
+
+async def test_public_audit_hides_open_chat_canary(tmp_path):
+    async with _client(_chat_app(tmp_path)) as c:
+        await _live(c, "s1")
+        await _live(c, "s1")                              # canary planted, still open
+        audit = (await c.get("/api/audit")).json()
+        assert "canary_planted" not in {e["kind"] for e in audit}
+        assert "Sensorik" not in json.dumps(audit)
+
+
 async def test_hung_run_is_closed_after_timeout(tmp_path):
     app = _app(tmp_path, stub_delay=5.0, run_timeout=0.0)   # worker sleeps; watchdog fires on the next request
     c = _client(app)

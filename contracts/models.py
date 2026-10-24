@@ -216,8 +216,31 @@ class ModelInfo(BaseModel):
     provider: str   # "gateway" | "ibm-ica"
 
 
+class ChatCanaryReveal(BaseModel):
+    """Resolution of a live chat canary: one planted false fact in a real answer. Never written to the graph."""
+    run_id: str                      # the run whose answer carried the false fact
+    claim: str                       # what the answer said
+    truth: str                       # what the approved graph says
+    outcome: Literal["caught", "missed"]
+
+
 class CreateRunResponse(BaseModel):
     run_id: str
+    reveal: ChatCanaryReveal | None = None     # set when the session's previous canary was missed
+
+
+class Feedback(BaseModel):
+    """POST /api/runs/{id}/feedback body (header X-Chat-Session): the user flags an answer."""
+    text: str | None = Field(None, max_length=2000)
+
+
+class FeedbackResponse(BaseModel):
+    reveal: ChatCanaryReveal | None = None     # set when the flagged answer was the session's canary
+
+
+class SourceOpened(BaseModel):
+    """POST /api/runs/{id}/opened body (204): the user looked at a source of the answer."""
+    target: str                      # edge id, chunk IRI or "evidence"
 
 
 class ProposalDecision(BaseModel):
@@ -233,7 +256,8 @@ class CanaryAlert(BaseModel):
 
 class AuditEntry(BaseModel):
     ts: str
-    kind: Literal["decision", "canary_planted", "canary_passed", "canary_failed", "reverted", "supervisor_notified"]
+    kind: Literal["decision", "canary_planted", "canary_passed", "canary_failed", "reverted", "supervisor_notified",
+                  "feedback"]
     proposal_id: str | None = None
     detail: str
 
