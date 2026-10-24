@@ -1,0 +1,18 @@
+# Fallback override while 172.31.250.0/28 is unusable (calcom_default owns 172.31.0.0/16): host network, no gw-forward.
+# docker compose --env-file .env -f deploy/compose.yml -f deploy/compose.hostnet.yml up -d --build
+services:
+  rai:
+    network_mode: host
+    networks: !reset []
+    ports: !reset []
+    environment:
+      LITELLM_BASE_URL: http://127.0.0.1:14000/v1
+    command: ["uvicorn", "api.main:create_app", "--factory", "--host", "127.0.0.1", "--port", "17080"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:17080/healthz')"]
+      interval: 15s
+      retries: 3
+  gw-forward:
+    profiles: ["off"]
+networks:
+  rai-net: !reset null

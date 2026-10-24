@@ -444,3 +444,14 @@ async def test_check_order_invite_before_busy_before_rate(tmp_path):
     await _wait_idle(None, c, first.json()["run_id"])
     over = await c.post("/api/runs", json={"question": "a"})
     assert over.status_code == 429 and int(over.headers["retry-after"]) > 5
+
+
+async def test_hung_run_is_closed_after_timeout(tmp_path):
+    app = _app(tmp_path, stub_delay=5.0, run_timeout=0.0)   # worker sleeps; watchdog fires on the next request
+    c = _client(app)
+    first = (await c.post("/api/runs", json={"question": "a"})).json()["run_id"]
+    second = await c.post("/api/runs", json={"question": "b"})
+    assert second.status_code == 200                         # not blocked by the hung run
+    evs = (await c.get(f"/api/runs/{first}")).json()
+    assert evs[-1]["type"] == "run.finished" and evs[-1]["payload"]["status"] == "error"
+    assert "timed out" in evs[-1]["payload"]["error"]

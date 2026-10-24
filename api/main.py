@@ -25,7 +25,7 @@ from api.canary import CanaryGuard
 from api.limits import RateLimiter, client_ip
 from api.store import CurationStore
 from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
-from contracts.models import (CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
+from contracts.models import (RunFinished, RunFinishedEvent, CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
                               AuditEntry, Proposal, ProposalDecision, RunSummary)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -66,15 +66,20 @@ class LiveRun:
         self.run_id, self.path = run_id, path
         self.events: list[dict] = []
         self.done = False
+        self.started = time.monotonic()
         self.lock = threading.Lock()
 
-    def add(self, ev) -> None:
-        ev = ev.model_copy(update={"run_id": self.run_id, "seq": len(self.events)})
-        d = json.loads(ev.model_dump_json())
+    def add(self, ev, close: bool = False) -> None:
         with self.lock:
+            if self.done:  # run was closed (finished or timed out): drop late events from the worker thread
+                return
+            ev = ev.model_copy(update={"run_id": self.run_id, "seq": len(self.events)})
+            d = json.loads(ev.model_dump_json())
             self.events.append(d)
             with self.path.open("a") as f:
                 f.write(json.dumps(d) + "\n")
+            if close:
+                self.done = True
 
 
 def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
@@ -82,7 +87,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                web_dist: Path | None = None, stub_delay: float = 0.4,
                clock: Callable[[], float] | None = None,
                limit_clock: Callable[[], float] = time.monotonic,
-               run_limit: int = 15, write_limit: int = 120, max_question: int = 500,
+               run_limit: int = 15, write_limit: int = 120, max_question: int = 500, run_timeout: float = 300.0,
                invite_codes: list[str] | None = None) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
@@ -189,6 +194,10 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
             raise HTTPException(403, "invite code required")
         if len(body.question) > max_question:
             raise HTTPException(422, f"question longer than {max_question} characters")
+        for r in live.values():  # a hung LLM call must not block live mode for everyone
+            if not r.done and time.monotonic() - r.started > run_timeout:
+                r.add(RunFinishedEvent(run_id=r.run_id, seq=0, ts=_now(), payload=RunFinished(
+                    status="error", error=f"run timed out after {int(run_timeout)} s")), close=True)
         if any(not r.done for r in live.values()):
             raise too_many(5, "another live run is in progress")
         ip = client_ip(request)
@@ -203,7 +212,6 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
             try:
                 runner(body.question, store, model=model, mode="live", emit=lr.add)
             except Exception as e:  # keep the stream well-formed
-                from contracts.models import RunFinished, RunFinishedEvent
                 lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
                                         payload=RunFinished(status="error", error=str(e))))
             finally:
