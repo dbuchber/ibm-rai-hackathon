@@ -1,58 +1,107 @@
 [
   {
-    "id": "8e9e3bb74591",
-    "triple": {
-      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3",
-      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
-      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
-    },
-    "rationale": "The SOP mandates a normal operating range up to 195°C and sets a critical threshold at 210°C, but the datasheet states the sensor's rated maximum for continuous operation is 200°C, meaning the SOP's 195°C upper bound approaches and its 210°C emergency threshold exceeds the sensor's continuous rating.",
-    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
-    "quote": "The rated maximum for continuous operation is 200°C.",
-    "confidence": 0.91,
-    "proposed_by": "llm:openai/claude-sonnet-4-6",
-    "status": "proposed"
-  },
-  {
-    "id": "42f7a837a923",
-    "triple": {
-      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6",
-      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
-      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1"
-    },
-    "rationale": "The SOP sets an E-STOP (corrective action) trigger at 15.0 A, which exceeds the datasheet's continuous overload rating of 14 A and violates the explicit recommendation that alarm thresholds triggering corrective action be set no higher than 14 A.",
-    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1",
-    "quote": "ElectroMeasure recommends that process alarm thresholds triggering corrective action be set no higher than the continuous overload rating.",
-    "confidence": 0.91,
-    "proposed_by": "llm:openai/claude-sonnet-4-6",
-    "status": "proposed"
-  },
-  {
-    "id": "46830dd39bd4",
-    "triple": {
-      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2",
-      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
-      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1"
-    },
-    "rationale": "The SOP sets a low alarm at 3.3 bar and a high alarm at 3.8 bar relative to a nominal of 3.0 bar, giving threshold separations of 0.30 bar and 0.80 bar respectively; the 3.3 bar threshold is only 0.30 bar from the 3.0 bar nominal, exactly at the datasheet's minimum not-recommended margin of 0.30 bar (and well below the recommended 0.50 bar minimum), conflicting with the datasheet's recommendation.",
-    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1",
-    "quote": "Thresholds closer than 3× accuracy (0.30 bar) are not recommended for process control.",
-    "confidence": 0.82,
-    "proposed_by": "llm:openai/claude-sonnet-4-6",
-    "status": "proposed"
-  },
-  {
-    "id": "1599dd1d776f",
+    "kind": "edge",
     "triple": {
       "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4",
       "p": "https://rai-hackathon.bbger.at/ont#contradicts",
       "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
     },
-    "rationale": "SOP-002 lists CRIT_HI 210 °C for the ST02_SEALING temperature sensor, but datasheet DS-THERM-2200 rates the TMP-2210 for 200 °C continuous operation.",
+    "node": null,
+    "predicate": null,
+    "rationale": "The SOP sets an E-STOP threshold of 210°C, which is used as a control limit, yet the datasheet explicitly states the sensor's rated maximum for continuous operation is 200°C, meaning the sensor may already be operating outside its continuous rating before the E-STOP is triggered.",
     "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
     "quote": "The rated maximum for continuous operation is 200°C.",
+    "id": "1599dd1d776f",
+    "confidence": 0.92,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "proposed"
+  },
+  {
+    "kind": "edge",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1"
+    },
+    "node": null,
+    "predicate": null,
+    "rationale": "The SOP sets an E-STOP (corrective action) alarm threshold at 15.0 A, which exceeds the datasheet's continuous overload rating of 14 A and violates the explicit recommendation that alarm thresholds triggering corrective action be set no higher than 14 A.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1",
+    "quote": "ElectroMeasure recommends that process alarm thresholds triggering corrective action be set no higher than the continuous overload rating.",
+    "id": "42f7a837a923",
+    "confidence": 0.91,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "approved"
+  },
+  {
+    "kind": "edge",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
+    },
+    "node": null,
+    "predicate": null,
+    "rationale": "SOP-001 sets 210 °C as the critical limit for the ST02_SEALING temperature sensor, but datasheet DS-THERM-2200 rates the TMP-2210 for 200 °C continuous operation.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "The rated maximum for continuous operation is 200°C.",
+    "id": "8e9e3bb74591",
     "confidence": 0.9,
     "proposed_by": "analyst-seed",
+    "status": "proposed"
+  },
+  {
+    "kind": "node",
+    "triple": null,
+    "node": {
+      "cls": "SensorModel",
+      "local_id": "Series_2400",
+      "label": "Series 2400",
+      "description": "ThermoSense Pt100 RTD sensor model rated to 250°C continuous operation, recommended for sustained use above 200°C."
+    },
+    "predicate": null,
+    "rationale": "The Series 2400 is a distinct sensor model named in the passage as a successor/alternative to the TMP-2210, not yet present in the graph.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous).",
+    "id": "947572e76f58",
+    "confidence": 0.97,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "proposed"
+  },
+  {
+    "kind": "predicate",
+    "triple": null,
+    "node": null,
+    "predicate": {
+      "name": "recommends",
+      "description": "Supplier recommends a SensorModel as an alternative or successor product.",
+      "domain": "Supplier",
+      "range": "SensorModel"
+    },
+    "rationale": "The passage explicitly states that ThermoSense (a Supplier) recommends the Series 2400 (a SensorModel). No existing predicate captures a vendor recommendation relationship.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous).",
+    "id": "db03cdb48dad",
+    "confidence": 0.93,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
+    "status": "proposed"
+  },
+  {
+    "kind": "predicate",
+    "triple": null,
+    "node": null,
+    "predicate": {
+      "name": "performs",
+      "description": "Company verb Maintenance.",
+      "domain": "Company",
+      "range": "Maintenance"
+    },
+    "rationale": "The passage states that a service provider (Company) performs specific maintenance actions (Maintenance). No existing predicate captures a Company performing a Maintenance activity; 'executes_at' relates ProductionOrder to Station, and 'operates' does not fit this relationship.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s1",
+    "quote": "The service provider performs the predictive maintenance actions MAINT-01 and MAINT-02 on ST04_PACKAGING and ST02_SEALING",
+    "id": "7fc71db08056",
+    "confidence": 0.85,
+    "proposed_by": "llm:openai/claude-sonnet-4-6",
     "status": "proposed"
   }
 ]

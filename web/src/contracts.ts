@@ -15,6 +15,7 @@ export type Event =
   | RunFinishedEvent;
 
 export interface Contracts {
+  AuditEntry?: AuditEntry;
   NodeSpec?: NodeSpec;
   PredicateSpec?: PredicateSpec;
   Triple?: Triple;
@@ -25,6 +26,7 @@ export interface Contracts {
   AnswerPayload?: AnswerPayload;
   BaselineEvent?: BaselineEvent;
   BaselinePayload?: BaselinePayload;
+  Canary?: Canary;
   Citation?: Citation;
   Contradiction?: Contradiction;
   Decision?: Decision;
@@ -45,9 +47,20 @@ export interface Contracts {
   StrategyPayload?: StrategyPayload;
   Event?: Event;
   GraphExport?: GraphExport;
+  CanaryAlert?: CanaryAlert;
   Proposal?: Proposal;
   ProposalDecision?: ProposalDecision;
   RunSummary?: RunSummary;
+}
+/**
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "AuditEntry".
+ */
+export interface AuditEntry {
+  ts: string;
+  kind: "decision" | "canary_planted" | "canary_passed" | "canary_failed" | "reverted" | "supervisor_notified";
+  proposal_id?: string | null;
+  detail: string;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -127,6 +140,7 @@ export interface AnswerPayload {
   justification: string;
   citations: Citation[];
   contradictions?: Contradiction[];
+  canary?: Canary | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -144,6 +158,16 @@ export interface Contradiction {
   a: string;
   b: string;
   note: string;
+}
+/**
+ * A deliberately false statement planted to detect automation bias. Never written to the graph.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "Canary".
+ */
+export interface Canary {
+  claim: string;
+  truth: string;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -346,6 +370,17 @@ export interface GraphExport {
   edges: Edge[];
 }
 /**
+ * Returned with the decision that approved a planted canary.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "CanaryAlert".
+ */
+export interface CanaryAlert {
+  message: string;
+  reverted: string[];
+  supervisor_notified: string;
+}
+/**
  * This interface was referenced by `Contracts`'s JSON-Schema
  * via the `definition` "Proposal".
  */
@@ -361,13 +396,14 @@ export interface Proposal {
   confidence?: number | null;
   proposed_by: string;
   status?: "approved" | "proposed" | "rejected";
+  alert?: CanaryAlert | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
  * via the `definition` "ProposalDecision".
  */
 export interface ProposalDecision {
-  decision: "approve" | "reject";
+  decision: "approve" | "reject" | "flag";
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema

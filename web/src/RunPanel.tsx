@@ -3,6 +3,7 @@ import type { Edge, RunSummary } from "./contracts";
 import { labelOf, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 import { pretty } from "./run";
+import { FlagIcon } from "./Curate";
 
 interface PickerProps {
   runs: RunSummary[];
@@ -59,9 +60,11 @@ interface RunProps {
   lost: boolean;
   onBack: () => void;
   onCite: (id: string) => void;
+  reported: boolean;
+  onReport: () => void;
 }
 
-export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite }: RunProps) {
+export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, reported, onReport }: RunProps) {
   const body = useRef<HTMLDivElement>(null);
   const cards = (v.strategy ? 1 : 0) + (v.seeds.length ? 1 : 0) + v.steps.length * 2 + (v.answer ? 1 : 0) + (v.evidence ? 1 : 0);
   useEffect(() => {
@@ -148,7 +151,13 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite }: Ru
 
         {v.answer && (
           <section className="card answer">
-            <h3>Answer</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3>Answer</h3>
+              <button className={"report-btn" + (reported ? " done" : "")} onClick={onReport} disabled={reported}
+                title="Something in this answer is wrong">
+                <FlagIcon /> {reported ? "Reported" : "Report"}
+              </button>
+            </div>
             <p className="answer-text">{v.answer.text}</p>
             {v.answer.contradictions?.map((c, i) => (
               <div className="contra-box" key={i} role="note">

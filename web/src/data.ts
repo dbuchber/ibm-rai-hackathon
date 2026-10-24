@@ -1,12 +1,15 @@
 // Data source abstraction (plan, stream C). VITE_DATA=static reads public/data; api talks to C4.
 // The api source falls back to static files for reads, so a dead API never breaks replay.
-import type { CreateProposal, Event, GraphExport, Proposal, RunSummary } from "./contracts";
+import type { AuditEntry, CreateProposal, Event, GraphExport, Proposal, RunSummary } from "./contracts";
+import { CanaryEngine, localAudit } from "./canary";
 import { nodeIri, predIri, proposalId } from "./ids";
 
 export interface Ontology {
   classes: { name: string; description: string }[];
   predicates: { iri: string; name: string; description: string }[];
 }
+
+export type Decision = "approve" | "reject" | "flag";
 
 export interface DataSource {
   kind: "static" | "api";
@@ -17,7 +20,9 @@ export interface DataSource {
   startRun(question: string): Promise<{ run_id: string }>;
   streamRun(id: string, onEvent: (e: Event) => void, onLost: () => void): () => void;
   listProposals(): Promise<Proposal[]>;
-  decide(id: string, decision: "approve" | "reject"): Promise<Proposal>;
+  /** On a failed canary the result carries `alert`; its `reverted` ids are back to "proposed". */
+  decide(id: string, decision: Decision): Promise<Proposal>;
+  getAudit(): Promise<AuditEntry[]>;
   createProposal(body: CreateProposal): Promise<Proposal>;
   /** Not part of C4: shipped as a static file next to the graph export in both modes. */
   getOntology(): Promise<Ontology>;
@@ -51,10 +56,13 @@ function parseJsonl(text: string): Event[] {
 
 function staticSource(): DataSource {
   let proposals: Proposal[] | null = null;
+  let graph: Promise<GraphExport> | null = null;
+  const getGraph = () => (graph ??= json<GraphExport>(BASE + "graph_export.json"));
+  const canary = new CanaryEngine(getGraph);
   return {
     kind: "static",
     live: false,
-    getGraph: () => json<GraphExport>(BASE + "graph_export.json"),
+    getGraph,
     listRuns: () => json<RunSummary[]>(BASE + "runs/index.json"),
     getRun: async (id) => parseJsonl(await (await fetch(BASE + `runs/${id}.jsonl`)).text()),
     startRun: () => Promise.reject(new Error("Live mode needs the API.")),
@@ -62,13 +70,25 @@ function staticSource(): DataSource {
       onLost();
       return () => {};
     },
-    listProposals: async () => (proposals ??= await json<Proposal[]>(BASE + "proposals.json")),
+    listProposals: async () => {
+      proposals ??= await json<Proposal[]>(BASE + "proposals.json");
+      proposals = await canary.plant(proposals);
+      return proposals.map((p) => ({ ...p }));
+    },
     decide: async (id, decision) => {
       const p = (proposals ?? []).find((x) => x.id === id);
       if (!p) throw new Error(`unknown proposal ${id}`);
-      p.status = decision === "approve" ? "approved" : "rejected";
-      return { ...p };
+      const res = canary.decide(p, decision, proposals!);
+      if (res.alert) {
+        // a failed canary is never kept; approvals since the last passed canary go back for review
+        proposals = proposals!.filter((x) => x.id !== id);
+        for (const x of proposals) if (res.alert.reverted.includes(x.id)) x.status = "proposed";
+      } else {
+        p.status = res.status;
+      }
+      return res;
     },
+    getAudit: async () => [...localAudit],
     createProposal: async (body) => {
       const p = localProposal(body);
       proposals = [...(proposals ?? []).filter((x) => x.id !== p.id), p];
@@ -133,6 +153,11 @@ function apiSource(): DataSource {
         () => fallback.createProposal(body),
       ),
     getOntology: fallback.getOntology,
+    // server log plus the browser-side entries of the chat canary click mock
+    getAudit: () =>
+      json<AuditEntry[]>("/api/audit")
+        .then((xs) => [...localAudit, ...xs].sort((a, b) => b.ts.localeCompare(a.ts)))
+        .catch(() => [...localAudit]),
   };
 }
 

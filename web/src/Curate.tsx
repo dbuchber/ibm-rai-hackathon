@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { CreateProposal, Node, Proposal } from "./contracts";
 import { labelOf, Triple, type Index } from "./bits";
-import type { Ontology } from "./data";
+import type { Decision, Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
 
 export type Kind = "edge" | "node" | "predicate";
@@ -15,15 +15,24 @@ interface Props {
   idx: Index;
   ontology: Ontology;
   mock: boolean;
-  onDecide: (id: string, d: "approve" | "reject") => void;
+  onDecide: (id: string, d: Decision) => void;
+  onAudit: () => void;
+  /** set after a failed canary: ids that went back to "proposed" */
+  reverted: string[];
   onCreate: (body: CreateProposal) => Promise<void>;
   onShow: (p: Proposal) => void;
 }
 
-export default function Curate({ proposals, idx, ontology, mock, onDecide, onCreate, onShow }: Props) {
+export default function Curate({ proposals, idx, ontology, mock, onDecide, onCreate, onShow, onAudit, reverted }: Props) {
   const [filter, setFilter] = useState<Kind | "all">("all");
   const [adding, setAdding] = useState(false);
-  const shown = proposals.filter((p) => filter === "all" || kindOf(p) === filter);
+  // open items first, decided ones below, otherwise in server order
+  const shown = proposals
+    .filter((p) => filter === "all" || kindOf(p) === filter)
+    .map((p, i) => [p, i] as const)
+    .sort(([a, i], [b, j]) => Number(a.status !== "proposed") - Number(b.status !== "proposed") || i - j)
+    .map(([p]) => p);
+  const stillReverted = reverted.filter((id) => proposals.find((p) => p.id === id)?.status === "proposed").length;
   const open = proposals.filter((p) => p.status === "proposed").length;
   const count = (k: Kind | "all") => (k === "all" ? proposals.length : proposals.filter((p) => kindOf(p) === k).length);
 
@@ -32,7 +41,10 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
       <div className="panel-head">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div className="eyebrow">Curation</div>
-          {mock && <span className="tag mock" title="Static mode: proposals and decisions stay in this browser">Mock · in memory</span>}
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {mock && <span className="tag mock" title="Static mode: proposals and decisions stay in this browser">Mock · in memory</span>}
+            <button className="link-btn" onClick={onAudit}>Audit log</button>
+          </div>
         </div>
         <h2 className="question">Models and people propose. An analyst decides.</h2>
         <p className="small muted" style={{ margin: "8px 0 0" }}>
@@ -53,6 +65,11 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
         </div>
       </div>
       <div className="panel-body">
+        {stillReverted > 0 && (
+          <div className="revert-note" role="status">
+            {stillReverted} approval{stillReverted === 1 ? "" : "s"} went back to review after a missed test proposal. They are marked below.
+          </div>
+        )}
         {adding && (
           <AddForm
             initial={filter === "all" ? "edge" : filter}
@@ -69,7 +86,10 @@ export default function Curate({ proposals, idx, ontology, mock, onDecide, onCre
         {shown.length === 0 && !adding && (
           <div className="empty">No {filter === "all" ? "" : KIND_LABEL[filter as Kind].toLowerCase() + " "}proposals yet. Add one.</div>
         )}
-        {shown.map((p) => <ProposalCard key={p.id} p={p} idx={idx} onDecide={onDecide} onShow={onShow} />)}
+        {shown.map((p) => (
+          <ProposalCard key={p.id} p={p} idx={idx} onDecide={onDecide} onShow={onShow}
+            again={reverted.includes(p.id) && p.status === "proposed"} />
+        ))}
       </div>
     </aside>
   );
@@ -81,15 +101,15 @@ function origin(p: Proposal) {
   return { label: "LLM · " + p.proposed_by.replace(/^llm:/, "").split("/").pop(), cls: "llm" };
 }
 
-function ProposalCard({ p, idx, onDecide, onShow }: {
-  p: Proposal; idx: Index; onDecide: Props["onDecide"]; onShow: Props["onShow"];
+function ProposalCard({ p, idx, onDecide, onShow, again }: {
+  p: Proposal; idx: Index; onDecide: Props["onDecide"]; onShow: Props["onShow"]; again: boolean;
 }) {
   const k = kindOf(p);
   const o = origin(p);
   return (
-    <section className={"card proposal " + p.status}>
+    <section className={"card proposal " + p.status + (again ? " again" : "")}>
       <div className="prop-head">
-        <span className={"kind k-" + k}>{KIND_LABEL[k]}</span>
+        <span className={"kind k-" + k}>{KIND_LABEL[k]}{again && <span className="again-tag">Review again</span>}</span>
         <span className={"origin " + o.cls}>{o.label}</span>
       </div>
       <button className="prop-body" onClick={() => onShow(p)} title="Show in graph">
@@ -122,6 +142,9 @@ function ProposalCard({ p, idx, onDecide, onShow }: {
       {p.status === "proposed" ? (
         <div className="actions">
           <button className="btn secondary" onClick={() => onDecide(p.id, "reject")}>Reject</button>
+          <button className="btn secondary flag" onClick={() => onDecide(p.id, "flag")} title="This is wrong: report it" aria-label="Flag as wrong">
+            <FlagIcon />
+          </button>
           <button className="btn approve" onClick={() => onDecide(p.id, "approve")}>Approve</button>
         </div>
       ) : (
@@ -308,5 +331,13 @@ function NodePicker({ label, value, onChange, idx }: {
         </ul>
       )}
     </label>
+  );
+}
+
+export function FlagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+      <path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
   );
 }
