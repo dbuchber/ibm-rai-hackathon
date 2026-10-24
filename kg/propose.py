@@ -11,6 +11,7 @@ from contracts.ids import edge_id, local_name, node_iri, pred_iri, proposal_id
 from contracts.models import NodeSpec, Node, PredicateSpec, Proposal, Triple
 from contracts.rdf_store import RdfGraphStore
 from contracts.store import GraphStore
+from engine import prompt
 
 PROPOSALS_PATH = Path("data/proposals.json")
 MAX_EDGES = 3
@@ -20,34 +21,18 @@ MIN_CONFIDENCE = 0.9        # edges: a wrong edge in the graph is worse than a m
 MIN_CONFIDENCE_OTHER = 0.75  # node and predicate proposals
 NODE_CLASSES = ["SensorModel", "Supplier", "Customer", "Company", "Role"]  # real-world entities only
 
-PROMPT = """You are an industrial-quality analyst. Compare an SOP passage with a sensor datasheet passage.
+PROMPT = """You are an industrial-quality analyst. Compare an SOP passage with a sensor datasheet passage (blocks `sop_passage` and `datasheet_passage`).
 Decide whether the SOP sets an operating value or instruction that CONFLICTS with a limit or recommendation in the
 datasheet (for example an alarm or critical threshold above the sensor's rated continuous maximum).
 
-Answer with JSON only: {{"relation": "contradicts" | "none", "quote": "<verbatim sentence copied from the DATASHEET passage>",
-"rationale": "<one sentence naming both numbers>", "confidence": <0..1>}}
-Use "none" if there is no clear numeric or instructional conflict.
-
-SOP passage ({sop_id}):
-{sop}
-
-Datasheet passage ({ds_id}):
-{ds}
-"""
+Answer with JSON only: {"relation": "contradicts" | "none", "quote": "<verbatim sentence copied from the DATASHEET passage>",
+"rationale": "<one sentence naming both numbers>", "confidence": <0..1>}
+Use "none" if there is no clear numeric or instructional conflict."""
 
 
-VERIFY = """Check this claimed conflict between an SOP passage and a datasheet passage. Every number in the claim must
+VERIFY = """Check a claimed conflict between an SOP passage and a datasheet passage (blocks `claim`, `sop_passage`, `datasheet_passage`). Every number in the claim must
 match the passages, and the datasheet must really forbid or discourage what the SOP sets. Be strict.
-Answer with JSON only: {{"correct": true | false}}
-
-Claim: {rationale}
-
-SOP passage:
-{sop}
-
-Datasheet passage:
-{ds}
-"""
+Answer with JSON only: {"correct": true | false}"""
 
 
 def _env() -> dict[str, str]:
@@ -61,14 +46,14 @@ def _env() -> dict[str, str]:
     return env
 
 
-def _llm_json(prompt: str, model: str) -> dict | None:
+def _llm_json(messages: list[dict], model: str) -> dict | None:
     import litellm
 
     env = _env()
     for _ in range(2):
         try:
             r = litellm.completion(model=model, api_base=env["LITELLM_BASE_URL"], api_key=env["LITELLM_API_KEY"],
-                                   messages=[{"role": "user", "content": prompt}], temperature=0)
+                                   messages=messages, temperature=0)
             m = re.search(r"\{.*\}", r.choices[0].message.content, re.S)
             return json.loads(m.group(0)) if m else None
         except Exception:
@@ -107,7 +92,8 @@ def propose(store: GraphStore, chunks: list[Node] | None = None, model: str | No
 
     def judge(pair: tuple[Node, Node]) -> Proposal | None:
         s, d = pair
-        out = _llm_json(PROMPT.format(sop_id=local_name(s.id), sop=s.text, ds_id=local_name(d.id), ds=d.text), model)
+        out = _llm_json(prompt.build(PROMPT, sop_passage=f"{local_name(s.id)}\n{s.text}",
+                                     datasheet_passage=f"{local_name(d.id)}\n{d.text}"), model)
         if not out or out.get("relation") != "contradicts":
             return None
         quote = str(out.get("quote", "")).strip()
@@ -116,7 +102,8 @@ def propose(store: GraphStore, chunks: list[Node] | None = None, model: str | No
         conf = float(out.get("confidence", 0))
         if conf < MIN_CONFIDENCE:
             return None
-        check = _llm_json(VERIFY.format(rationale=out.get("rationale", ""), sop=s.text, ds=d.text), model)
+        check = _llm_json(prompt.build(VERIFY, claim=str(out.get("rationale", "")), sop_passage=s.text,
+                                       datasheet_passage=d.text), model)
         if not check or check.get("correct") is not True:  # second pass: drop claims whose numbers do not hold up
             return None
         p = pred_iri("contradicts")

@@ -14,14 +14,14 @@ from pydantic import BaseModel
 from contracts.ids import local_name
 from contracts.models import Decision, Edge, Node, SeedsPayload, StepPayload, StrategyPayload
 from contracts.store import GraphStore
-from engine import embed, llm
+from engine import embed, llm, prompt
 from engine.llm import LLMFormatError
 
 FRONTIER_CAP = 25
 TEXT_PREVIEW = 160
 
 SYSTEM = """You traverse an enterprise knowledge graph step by step to collect evidence for a question. You never answer the question here.
-Each step you see the question, the strategy guidance, the facts collected so far and a list of candidate edges (fact triples) that touch the current frontier.
+Each step you get these data blocks: question, strategy_guidance, facts_collected, nodes_in_candidate_edges and candidate_edges (fact triples that touch the current frontier).
 For EVERY candidate edge decide:
 - "follow": the edge leads towards information needed for the question, or is itself needed evidence;
 - "prune": it is irrelevant or a detour.
@@ -101,13 +101,10 @@ def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: See
         listing = "\n".join(_fmt_edge(e, w.nodes) for e in cands)
         nodes_in = {i: w.nodes[i] for e in cands for i in (e.s, e.o)}
         detail = "\n".join(f"- {_fmt_node(x)}" for x in nodes_in.values())
-        messages = [
-            {"role": "system", "content": SYSTEM},
-            {"role": "user", "content": (
-                f"Question: {question}\n\nStrategy guidance ({strategy.question_type}): {strategy.prompt}\n\n"
-                f"Facts collected so far:\n" + "\n".join(facts) +
-                f"\n\nNodes in the candidate edges:\n{detail}\n\nCandidate edges (step {n} of max {strategy.max_depth}):\n{listing}")},
-        ]
+        messages = prompt.build(
+            SYSTEM, question=question, strategy_guidance=f"({strategy.question_type}) {strategy.prompt}",
+            facts_collected="\n".join(facts), nodes_in_candidate_edges=detail,
+            candidate_edges=f"(step {n} of max {strategy.max_depth})\n{listing}")
         failed, cand_ids = False, {e.id for e in cands}
         for _try in range(2):   # a valid-but-empty answer (no usable edge ids) is retried too
             try:

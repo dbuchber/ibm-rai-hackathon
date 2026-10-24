@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from contracts.ids import local_name
 from contracts.models import StrategyPayload
-from engine import llm
+from engine import llm, prompt
 from engine.llm import LLMFormatError
 
 FALLBACK_DEPTH = 3
@@ -16,7 +16,7 @@ SYSTEM = """You plan how to search an enterprise knowledge graph (a digital twin
 You do NOT answer the question. You decide a traversal strategy:
 - question_type: a short label, e.g. "order -> asset -> documents", "rule lookup", "supplier trace".
 - rationale: one or two sentences on why these relations matter for this question.
-- allowed_predicates: the relations the traversal may follow, chosen ONLY from the list given. Pick the few that matter; do not allow everything. The set must form connected chains: include the intermediate relations needed to get from the entities in the question to what it asks for (e.g. order -> station -> sensor -> sensor model -> supplier, and rule/document links such as has_chunk, mentions, defined_in).
+- allowed_predicates: the relations the traversal may follow, chosen ONLY from the block `available_predicates`. Pick the few that matter; do not allow everything. The set must form connected chains: include the intermediate relations needed to get from the entities in the question to what it asks for (e.g. order -> station -> sensor -> sensor model -> supplier, and rule/document links such as has_chunk, mentions, defined_in).
 - max_depth: how many hops are needed (1-5).
 - prompt: one or two sentences of guidance for the agent that will judge each hop (what to look for, what to ignore).
 Reply with a single JSON object with exactly these keys."""
@@ -40,10 +40,7 @@ def _resolve(name: str, known: dict[str, str]) -> str | None:
 def plan(question: str, predicates: list[tuple[str, str]], model: str) -> StrategyPayload:
     known = {local_name(iri): iri for iri, _ in predicates}
     listing = "\n".join(f"- {local_name(iri)}: {desc}" for iri, desc in predicates)
-    messages = [
-        {"role": "system", "content": SYSTEM},
-        {"role": "user", "content": f"Question: {question}\n\nAvailable predicates:\n{listing}"},
-    ]
+    messages = prompt.build(SYSTEM, question=question, available_predicates=listing)
     try:
         p = llm.complete_json(messages, model, _Plan)
     except LLMFormatError:

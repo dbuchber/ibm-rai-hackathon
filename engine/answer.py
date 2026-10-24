@@ -7,13 +7,13 @@ from pydantic import BaseModel
 from contracts.ids import local_name
 from contracts.models import AnswerPayload, Citation, Contradiction
 from contracts.store import GraphStore
-from engine import llm
+from engine import llm, prompt
 from engine.llm import LLMFormatError
 from engine.traverse import Walk
 
 INSUFFICIENT = "Not enough evidence in the approved graph to answer this question."
 
-SYSTEM = """You answer questions about an industrial plant using ONLY the facts below, taken from a human-curated knowledge graph. Do not use outside knowledge.
+SYSTEM = """You answer questions about an industrial plant using ONLY the facts in the block `facts`, taken from a human-curated knowledge graph. Do not use outside knowledge.
 Facts are triples written `[edge_id] subject — predicate — object`, and document passages written `{chunk_id} text`.
 Reply with one JSON object:
 {"text": "<the answer, 2-4 sentences, concrete values and names>",
@@ -53,8 +53,7 @@ def answer(question: str, walk: Walk, store: GraphStore, model: str) -> AnswerPa
         return AnswerPayload(text=INSUFFICIENT, justification="The traversal found no approved facts relevant to the question.",
                              citations=[])
     context, edge_ids, chunk_ids = context_for(walk, store)
-    messages = [{"role": "system", "content": SYSTEM},
-                {"role": "user", "content": f"Question: {question}\n\nFacts:\n{context}"}]
+    messages = prompt.build(SYSTEM, question=question, facts=context)
     try:
         out = llm.complete_json(messages, model, _Out)
     except LLMFormatError:
