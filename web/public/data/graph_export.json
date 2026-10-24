@@ -1,0 +1,219 @@
+{
+  "nodes": [
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210",
+      "cls": "SensorModel",
+      "label": "TMP-2210",
+      "description": "Thermocouple temperature sensor, Series 2200.",
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01",
+      "cls": "Rule",
+      "label": "RULE-ST02-01",
+      "description": "TMP MUST remain between 175°C and 195°C.",
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/document/SOP-001",
+      "cls": "Document",
+      "label": "SOP-001 Operating Procedures",
+      "description": null,
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP",
+      "cls": "Sensor",
+      "label": "ST02_SEALING_TMP",
+      "description": "Sealing jaw temperature.",
+      "text": null,
+      "props": {
+        "critHi": 210.0,
+        "warnLo": 175.0,
+        "sensorType": "TMP",
+        "unit": "°C",
+        "critLo": 165.0,
+        "warnHi": 195.0
+      }
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/station/ST02_SEALING",
+      "cls": "Station",
+      "label": "ST02_SEALING",
+      "description": "Heat sealing station.",
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/customer/Velora",
+      "cls": "Customer",
+      "label": "Velora Foods AG",
+      "description": "Fictional customer.",
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/system/iMAKS",
+      "cls": "System",
+      "label": "iMAKS Line A",
+      "description": null,
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/company/Kelvara",
+      "cls": "Company",
+      "label": "Kelvara Packaging GmbH",
+      "description": "Fictional company operating iMAKS line A.",
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+      "cls": "Chunk",
+      "label": "DS-THERM-2200 §1 TMP-2210",
+      "description": null,
+      "text": "DS-THERM-2200 Temperature Sensor TMP-2210. Measurement range -40 to +200°C. Note 1: the rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours.",
+      "props": {
+        "page": 1
+      }
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
+      "cls": "Chunk",
+      "label": "SOP-001 §2 Sealing",
+      "description": null,
+      "text": "SOP-001 Operating Procedures, Station ST02_SEALING. RULE-ST02-01: TMP MUST remain between 175°C and 195°C. Warning above 195°C, critical above 210°C: inspect and notify maintenance.",
+      "props": {
+        "page": 1
+      }
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/productionorder/PO-1003",
+      "cls": "ProductionOrder",
+      "label": "PO-1003",
+      "description": "Sealed yoghurt cups, 40,000 units.",
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200",
+      "cls": "Document",
+      "label": "DS-THERM-2200 Thermal Sensors Datasheet",
+      "description": null,
+      "text": null,
+      "props": {}
+    },
+    {
+      "id": "https://rai-hackathon.bbger.at/kg/supplier/ThermoSense",
+      "cls": "Supplier",
+      "label": "ThermoSense GmbH",
+      "description": null,
+      "text": null,
+      "props": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "b323800bb767",
+      "s": "https://rai-hackathon.bbger.at/kg/productionorder/PO-1003",
+      "p": "https://rai-hackathon.bbger.at/ont#ordered_by",
+      "o": "https://rai-hackathon.bbger.at/kg/customer/Velora",
+      "graph": "approved"
+    },
+    {
+      "id": "bad079674282",
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
+      "p": "https://rai-hackathon.bbger.at/ont#contradicts",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+      "graph": "proposed"
+    },
+    {
+      "id": "34b63c1cf963",
+      "s": "https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP",
+      "p": "https://rai-hackathon.bbger.at/ont#monitors",
+      "o": "https://rai-hackathon.bbger.at/kg/station/ST02_SEALING",
+      "graph": "approved"
+    },
+    {
+      "id": "1ec67916c004",
+      "s": "https://rai-hackathon.bbger.at/kg/document/SOP-001",
+      "p": "https://rai-hackathon.bbger.at/ont#has_chunk",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
+      "graph": "approved"
+    },
+    {
+      "id": "59269030a580",
+      "s": "https://rai-hackathon.bbger.at/kg/company/Kelvara",
+      "p": "https://rai-hackathon.bbger.at/ont#operates",
+      "o": "https://rai-hackathon.bbger.at/kg/system/iMAKS",
+      "graph": "approved"
+    },
+    {
+      "id": "ce1bef585642",
+      "s": "https://rai-hackathon.bbger.at/kg/station/ST02_SEALING",
+      "p": "https://rai-hackathon.bbger.at/ont#part_of",
+      "o": "https://rai-hackathon.bbger.at/kg/system/iMAKS",
+      "graph": "approved"
+    },
+    {
+      "id": "76b1a8f75577",
+      "s": "https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP",
+      "p": "https://rai-hackathon.bbger.at/ont#of_model",
+      "o": "https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210",
+      "graph": "approved"
+    },
+    {
+      "id": "2d478e1ed0a3",
+      "s": "https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01",
+      "p": "https://rai-hackathon.bbger.at/ont#defined_in",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
+      "graph": "approved"
+    },
+    {
+      "id": "e9ce42ef50d9",
+      "s": "https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200",
+      "p": "https://rai-hackathon.bbger.at/ont#has_chunk",
+      "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+      "graph": "approved"
+    },
+    {
+      "id": "4bea210b8d48",
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
+      "p": "https://rai-hackathon.bbger.at/ont#mentions",
+      "o": "https://rai-hackathon.bbger.at/kg/station/ST02_SEALING",
+      "graph": "approved"
+    },
+    {
+      "id": "984875e3c22d",
+      "s": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+      "p": "https://rai-hackathon.bbger.at/ont#mentions",
+      "o": "https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210",
+      "graph": "approved"
+    },
+    {
+      "id": "68dff3af3f55",
+      "s": "https://rai-hackathon.bbger.at/kg/productionorder/PO-1003",
+      "p": "https://rai-hackathon.bbger.at/ont#executed_at",
+      "o": "https://rai-hackathon.bbger.at/kg/station/ST02_SEALING",
+      "graph": "approved"
+    },
+    {
+      "id": "19bb6e2f0f3c",
+      "s": "https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01",
+      "p": "https://rai-hackathon.bbger.at/ont#applies_to",
+      "o": "https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP",
+      "graph": "approved"
+    },
+    {
+      "id": "2151832c7759",
+      "s": "https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210",
+      "p": "https://rai-hackathon.bbger.at/ont#supplied_by",
+      "o": "https://rai-hackathon.bbger.at/kg/supplier/ThermoSense",
+      "graph": "approved"
+    }
+  ]
+}
