@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Edge, RunSummary } from "./contracts";
-import { labelOf, Triple, type Index } from "./bits";
+import { labelOf, readable, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 import { pretty } from "./run";
 import { FlagIcon } from "./Curate";
@@ -158,7 +158,7 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
                 <FlagIcon /> {reported ? "Reported" : "Report"}
               </button>
             </div>
-            <p className="answer-text">{v.answer.text}</p>
+            <p className="answer-text">{readable(v.answer.text, idx)}</p>
             {v.answer.contradictions?.map((c, i) => (
               <div className="contra-box" key={i} role="note">
                 <span aria-hidden="true">⚠︎</span>
@@ -169,7 +169,7 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
                 </div>
               </div>
             ))}
-            <p className="justification">{v.answer.justification}</p>
+            <p className="justification">{readable(v.answer.justification, idx)}</p>
             <div className="eyebrow" style={{ marginTop: 14 }}>Cited</div>
             <div className="cites">
               {v.answer.citations.map((c, i) => {

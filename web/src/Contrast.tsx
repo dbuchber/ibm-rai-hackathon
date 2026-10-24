@@ -1,5 +1,5 @@
 import type { Edge } from "./contracts";
-import { labelOf, Triple, type Index } from "./bits";
+import { labelOf, readable, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 
 export default function Contrast({ v, idx, edges }: { v: RunView; idx: Index; edges: Map<string, Edge> }) {
@@ -27,7 +27,7 @@ export default function Contrast({ v, idx, edges }: { v: RunView; idx: Index; ed
             <div className="how">Top {b?.chunks.length ?? 3} {b?.chunks.length === 1 ? "chunk" : "chunks"} by text similarity. Relations are ignored.</div>
             {b ? (
               <>
-                <p className="ans">{b.answer}</p>
+                <p className="ans">{readable(b.answer, idx)}</p>
                 <h5>Context it was given</h5>
                 {b.chunks.map((c) => (
                   <div className="chunk-card" key={c.id}>
@@ -49,7 +49,7 @@ export default function Contrast({ v, idx, edges }: { v: RunView; idx: Index; ed
           <div className="col graph-side">
             <h3>Graph Anchor</h3>
             <div className="how">Walks analyst-approved relations from the question's entities.</div>
-            <p className="ans">{v.answer?.text}</p>
+            <p className="ans">{readable(v.answer?.text ?? "", idx)}</p>
             {contra.map((c, i) => (
               <div className="contra-box" key={i}>
                 <span aria-hidden="true">⚠︎</span>
