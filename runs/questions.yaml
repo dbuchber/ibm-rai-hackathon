@@ -1,0 +1,6 @@
+- id: demo-po1003
+  question: "Order PO-1003 runs at the sealing station. Can it run at the sealing temperature limit, and who supplies the temperature sensor?"
+- id: demo-contradiction
+  question: "What is the critical temperature limit at ST02_SEALING, and does the sensor datasheet support running up to that limit?"
+- id: demo-maintenance
+  question: "Who is authorized to perform maintenance on the packaging station ST04_PACKAGING, and which SOP defines the maintenance procedure?"
