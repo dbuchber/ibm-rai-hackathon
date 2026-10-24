@@ -157,7 +157,8 @@ function apiSource(): DataSource {
     // server log plus the browser-side entries of the chat canary click mock
     getAudit: () =>
       json<AuditEntry[]>("/api/audit")
-        .then((xs) => [...localAudit, ...xs].sort((a, b) => b.ts.localeCompare(a.ts)))
+        // the server lists oldest first; reverse before the stable sort so same-second entries stay newest first
+        .then((xs) => [...localAudit, ...[...xs].reverse()].sort((a, b) => b.ts.localeCompare(a.ts)))
         .catch(() => [...localAudit]),
   };
 }

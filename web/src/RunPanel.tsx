@@ -4,16 +4,22 @@ import { labelOf, readable, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 import { pretty } from "./run";
 import { FlagIcon } from "./Curate";
+import { fmtDuration, modelInfo } from "./models";
+
+export interface RunMeta { model: string; secs: number | null }
 
 interface PickerProps {
   runs: RunSummary[];
+  meta: Map<string, RunMeta>;
   live: boolean;
   onPick: (id: string) => void;
   onAsk: (q: string) => void;
 }
 
-export function Picker({ runs, live, onPick, onAsk }: PickerProps) {
+export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
   const [q, setQ] = useState("");
+  // runs of the same question with different models share one card
+  const groups = [...runs.reduce((m, r) => m.set(r.question, [...(m.get(r.question) ?? []), r]), new Map<string, RunSummary[]>()).values()];
   return (
     <aside className="panel glass" aria-label="Ask a question">
       <div className="panel-head">
@@ -22,12 +28,14 @@ export function Picker({ runs, live, onPick, onAsk }: PickerProps) {
       </div>
       <div className="panel-body">
         <div className="pick">
-          {runs.map((r) => (
-            <button key={r.run_id} className="pick-q" onClick={() => onPick(r.run_id)}>
-              <div className="q">{r.question}</div>
+          {groups.map((g) => (
+            <button key={g[0].run_id} className="pick-q" onClick={() => onPick(g[0].run_id)}>
+              <div className="q">{g[0].question}</div>
               <div className="row">
-                <span className="tag neutral">Recorded run</span>
-                {r.mock && <span className="tag mock">Mock</span>}
+                {g.length > 1
+                  ? g.map((r) => <span key={r.run_id} className="tag neutral">{modelInfo(meta.get(r.run_id)?.model ?? "").name}</span>)
+                  : <span className="tag neutral">Recorded run</span>}
+                {g.some((r) => r.mock) && <span className="tag mock">Mock</span>}
               </div>
             </button>
           ))}
@@ -62,9 +70,14 @@ interface RunProps {
   onCite: (id: string) => void;
   reported: boolean;
   onReport: () => void;
+  /** other runs of the same question with a different model */
+  models: { run_id: string; model: string; secs: number | null }[];
+  current: string;
+  onSwitch: (runId: string) => void;
+  onCompare: () => void;
 }
 
-export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, reported, onReport }: RunProps) {
+export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, reported, onReport, models, current, onSwitch, onCompare }: RunProps) {
   const body = useRef<HTMLDivElement>(null);
   const cards = (v.strategy ? 1 : 0) + (v.seeds.length ? 1 : 0) + v.steps.length * 2 + (v.answer ? 1 : 0) + (v.evidence ? 1 : 0);
   useEffect(() => {
@@ -83,8 +96,20 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
         <div className="meta-row">
           <span className={"tag " + (live ? "live" : "neutral")}>{live ? "Live run" : "Replay"}</span>
           {v.started?.mock && <span className="tag mock" title="Hand-curated run, not produced by the engine">Mock run</span>}
-          {v.started && <span className="tag neutral">{v.started.model.split("/").pop()}</span>}
+          {v.started && models.length < 2 && <span className="tag neutral">{modelInfo(v.started.model).name}</span>}
         </div>
+        {models.length > 1 && (
+          <div className="model-switch">
+            <div className="segmented mini" role="group" aria-label="Model">
+              {models.map((m) => (
+                <button key={m.run_id} aria-pressed={m.run_id === current} onClick={() => onSwitch(m.run_id)}>
+                  {modelInfo(m.model).name}{m.secs != null && <span className="count"> {fmtDuration(m.secs)}</span>}
+                </button>
+              ))}
+            </div>
+            <button className="link-btn" onClick={onCompare}>Compare</button>
+          </div>
+        )}
       </div>
       <div className="panel-body" ref={body} aria-live="polite">
         {lost && <div className="banner">Connection lost. Showing the events received so far.</div>}

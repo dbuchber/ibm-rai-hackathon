@@ -15,6 +15,11 @@
     "mock": false
   },
   {
+    "run_id": "demo-po1003-granite",
+    "question": "Order PO-1003 runs at the sealing station. Can it run at the sealing temperature limit, and who supplies the temperature sensor?",
+    "mock": false
+  },
+  {
     "run_id": "demo-canary-chat",
     "question": "Who supplies the temperature sensor at the sealing station?",
     "mock": true

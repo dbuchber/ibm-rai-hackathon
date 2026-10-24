@@ -9,6 +9,7 @@ export const labelOf = (idx: Index, iri: string) => idx.get(iri)?.label ?? local
 export function readable(text: string, idx: Index) {
   return text
     .replace(/\s*\[[0-9a-f]{12}\]/g, "")
+    .replace(/\s*\((?:edges?\s+)?[0-9a-f]{12}(?:\s*(?:,|and)\s*(?:edge\s+)?[0-9a-f]{12})*\)/g, "")
     .replace(/\{(https?:\/\/[^}\s]+)\}/g, (_, iri: string) => labelOf(idx, iri));
 }
 
