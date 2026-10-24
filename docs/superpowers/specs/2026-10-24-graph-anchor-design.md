@@ -23,6 +23,7 @@ A **click prototype** with an Apple-like look. The pitch replays **precomputed r
 4. **Answer.** The answer comes with a justification, the cited path (triples) and the linked document passages. Where iMAKS contains an SOP-vs-datasheet contradiction, the answer **flags the contradiction** instead of picking one silently.
 5. **Contrast.** The same question goes through plain vector RAG, which retrieves a similar-but-wrong passage. One side-by-side view. The first version is an **illustrative example**, visibly labelled. Afterwards we try candidate questions against the real baseline (fair, top-k=3) until one fails naturally, and that one replaces the illustration.
 6. **Curate.** A new document arrives. The LLM proposes 3 to 5 edges, the analyst clicks approve or reject, and the graph updates. This step is mocked and labelled as such.
+7. **Roadmap** (last screen, after Curate; pitch only, nothing of it runs today): **local models of different sizes with intelligent routing**. A model ladder from small to large, all runnable on-prem (e.g. Ministral 3B/8B/14B → Gemma/Granite mid-size → Mistral Large). A router assigns each task to the smallest model that is good enough: the many per-step traversal verdicts go to small models, the strategy step and the final answer go to large ones, and contradictions or low confidence escalate. This gives sovereignty (company data stays in-house), cost and latency control, and through LiteLLM a config-only switch to IBM watsonx/Granite. Further roadmap items on the same screen: **guardrails** on input and output (e.g. IBM Granite Guardian: prompt injection, PII, ungrounded claims); **feedback in the chat window** (thumbs, corrections) that flows back into the curation queue as proposals; **forward navigation** from an answer citation → the document chunk → a deep link into the source system (DMS, ERP, SharePoint); **RBAC on two levels**: on vector level via payload filters on chunks, and on node level in the KG (per-node/per-graph ACL, traversal and seed search only over nodes the user may see). The screen is labelled "roadmap".
 
 ## Goals
 
@@ -149,7 +150,7 @@ Build order is UI first, so stream C starts immediately on the fixtures.
 - Parallel sub-agents and the parameter study from the thesis. One traversal agent with per-step evaluation is enough. The parallel version is mentioned in the pitch as the thesis' next step.
 - A real curation backend, persistence, auth.
 - A quantitative evaluation over many questions. Accuracy/faithfulness may appear as "how we would measure it" in the pitch only.
-- watsonx/Granite: no credentials. Models go through LiteLLM with existing fallback keys, so switching to Granite is a config change and can be named in the pitch.
+- watsonx/Granite: no credentials, and Granite is not in the BA gateway. Today's runs use `gemma-4-31b-it-openrouter`. **Granite appears only on the roadmap** (pitch + README): because everything goes through LiteLLM, switching to watsonx/Granite is a config change.
 
 ## Anti-goals (failure even if it works)
 

@@ -1,0 +1,3363 @@
+@prefix ns1: <https://rai-hackathon.bbger.at/ont#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:g:proposed> {
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1> .
+}
+
+<urn:g:approved> {
+    <https://rai-hackathon.bbger.at/kg/company/Kelvara> a ns1:Company ;
+        rdfs:label "Kelvara Packaging GmbH" ;
+        rdfs:comment "Fictional food-packaging company. Operates the iMAKS production line A." ;
+        ns1:operates <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:party_to <https://rai-hackathon.bbger.at/kg/document/MC-2026-01>,
+            <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> .
+
+    <https://rai-hackathon.bbger.at/kg/document/DS-ELEC-3300> a ns1:Document ;
+        rdfs:label "DS-ELEC-3300 Industrial Current Transformer Series 3300" ;
+        rdfs:comment "Industrial Current Transformer Series 3300 — Datasheet" ;
+        ns1:author "ElectroMeasure AG — Applications Engineering" ;
+        ns1:date "2024-09-10" ;
+        ns1:file "DS_Electrical_Sensors.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1> ;
+        ns1:rev "Rev C" .
+
+    <https://rai-hackathon.bbger.at/kg/document/DS-MECH-4400> a ns1:Document ;
+        rdfs:label "DS-MECH-4400 Industrial Mechanical Sensor Series 4400" ;
+        rdfs:comment "Industrial Mechanical Sensor Series 4400 — Datasheet" ;
+        ns1:author "MechSens Italia S.r.l. — Technical Division" ;
+        ns1:date "2024-03-15" ;
+        ns1:file "DS_Mechanical_Sensors.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s4> ;
+        ns1:rev "Rev B" .
+
+    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> a ns1:Document ;
+        rdfs:label "DS-THERM-2200 Industrial Thermal Sensor Series 2200" ;
+        rdfs:comment "Industrial Thermal Sensor Series 2200 — Datasheet" ;
+        ns1:author "ThermoSense GmbH — Engineering Division" ;
+        ns1:date "2024-06-01" ;
+        ns1:file "DS_Thermal_Sensors.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s2> ;
+        ns1:rev "Rev D" .
+
+    <https://rai-hackathon.bbger.at/kg/document/SOP-001> a ns1:Document ;
+        rdfs:label "SOP-001 Standard Operating Procedures" ;
+        rdfs:comment "Standard Operating Procedures — Production Line A" ;
+        ns1:author "Ing. M. Bianchi — Process Engineering" ;
+        ns1:date "2025-11-15" ;
+        ns1:file "SOP_001_OperatingProcedures.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s6>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s7>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s9> ;
+        ns1:rev "2.3" .
+
+    <https://rai-hackathon.bbger.at/kg/document/SOP-002> a ns1:Document ;
+        rdfs:label "SOP-002 Alarm Thresholds and Response Matrix" ;
+        rdfs:comment "Alarm Thresholds and Response Matrix — Production Line A" ;
+        ns1:author "Ing. L. Greco — Automation & Control" ;
+        ns1:date "2025-10-20" ;
+        ns1:file "SOP_002_AlarmThresholds.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s10>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s11>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s12>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s13>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s14>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s15>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s16>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s17>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s18>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s19>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s20>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s21>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s22>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s5>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s7>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s8>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s9> ;
+        ns1:rev "1.8" .
+
+    <https://rai-hackathon.bbger.at/kg/document/SOP-003> a ns1:Document ;
+        rdfs:label "SOP-003 Predictive & Corrective Maintenance Rules" ;
+        rdfs:comment "Predictive & Corrective Maintenance Rules — Production Line A" ;
+        ns1:author "Ing. A. Conti — Maintenance Engineering" ;
+        ns1:date "2025-09-01" ;
+        ns1:file "SOP_003_MaintenanceRules.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s5>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s6>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s7>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s8>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s9> ;
+        ns1:rev "1.5" .
+
+    <https://rai-hackathon.bbger.at/kg/document/SOP-004> a ns1:Document ;
+        rdfs:label "SOP-004 Personnel Zone Access and Alarm Response Procedures" ;
+        rdfs:comment "Personnel Zone Access and Alarm Response Procedures" ;
+        ns1:author "Ing. F. Ferrari — Safety & Compliance" ;
+        ns1:date "2025-12-01" ;
+        ns1:file "SOP_004_PersonnelZoneAccess.pdf" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> ;
+        ns1:rev "1.0" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P004> a ns1:Person ;
+        rdfs:label "P004 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 4" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0065" ;
+        ns1:personId "P004" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P006> a ns1:Person ;
+        rdfs:label "P006 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 6" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0067" ;
+        ns1:personId "P006" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P007> a ns1:Person ;
+        rdfs:label "P007 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 7" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0068" ;
+        ns1:personId "P007" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P008> a ns1:Person ;
+        rdfs:label "P008 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 8" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0069" ;
+        ns1:personId "P008" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P009> a ns1:Person ;
+        rdfs:label "P009 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 9" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0070" ;
+        ns1:personId "P009" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P010> a ns1:Person ;
+        rdfs:label "P010 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 10" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0071" ;
+        ns1:personId "P010" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P011> a ns1:Person ;
+        rdfs:label "P011 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 11" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0072" ;
+        ns1:personId "P011" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P012> a ns1:Person ;
+        rdfs:label "P012 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 12" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0073" ;
+        ns1:personId "P012" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P013> a ns1:Person ;
+        rdfs:label "P013 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 13" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0074" ;
+        ns1:personId "P013" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P015> a ns1:Person ;
+        rdfs:label "P015 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 15" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0076" ;
+        ns1:personId "P015" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P018> a ns1:Person ;
+        rdfs:label "P018 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 18" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0079" ;
+        ns1:personId "P018" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P019> a ns1:Person ;
+        rdfs:label "P019 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 19" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0080" ;
+        ns1:personId "P019" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P020> a ns1:Person ;
+        rdfs:label "P020 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 20" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0081" ;
+        ns1:personId "P020" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P021> a ns1:Person ;
+        rdfs:label "P021 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 21" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0082" ;
+        ns1:personId "P021" ;
+        ns1:role "technician" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P022> a ns1:Person ;
+        rdfs:label "P022 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 22" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0083" ;
+        ns1:personId "P022" ;
+        ns1:role "technician" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P023> a ns1:Person ;
+        rdfs:label "P023 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 23" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0084" ;
+        ns1:personId "P023" ;
+        ns1:role "technician" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P024> a ns1:Person ;
+        rdfs:label "P024 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 24" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0085" ;
+        ns1:personId "P024" ;
+        ns1:role "technician" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P025> a ns1:Person ;
+        rdfs:label "P025 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 25" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0086" ;
+        ns1:personId "P025" ;
+        ns1:role "technician" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P026> a ns1:Person ;
+        rdfs:label "P026 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 26" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0087" ;
+        ns1:personId "P026" ;
+        ns1:role "technician" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P028> a ns1:Person ;
+        rdfs:label "P028 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 28" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0089" ;
+        ns1:personId "P028" ;
+        ns1:role "technician" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P030> a ns1:Person ;
+        rdfs:label "P030 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 30" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0091" ;
+        ns1:personId "P030" ;
+        ns1:role "technician" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P031> a ns1:Person ;
+        rdfs:label "P031 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 31" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0092" ;
+        ns1:personId "P031" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P032> a ns1:Person ;
+        rdfs:label "P032 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 32" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0093" ;
+        ns1:personId "P032" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P033> a ns1:Person ;
+        rdfs:label "P033 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 33" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0094" ;
+        ns1:personId "P033" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P034> a ns1:Person ;
+        rdfs:label "P034 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 34" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0095" ;
+        ns1:personId "P034" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P036> a ns1:Person ;
+        rdfs:label "P036 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 36" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0097" ;
+        ns1:personId "P036" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P037> a ns1:Person ;
+        rdfs:label "P037 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 37" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0098" ;
+        ns1:personId "P037" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P038> a ns1:Person ;
+        rdfs:label "P038 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 38" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0099" ;
+        ns1:personId "P038" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P039> a ns1:Person ;
+        rdfs:label "P039 (manager)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 39" ;
+        ns1:dept "Management" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/manager> ;
+        ns1:nodeId "N0100" ;
+        ns1:personId "P039" ;
+        ns1:role "manager" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P040> a ns1:Person ;
+        rdfs:label "P040 (manager)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 40" ;
+        ns1:dept "Management" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/manager> ;
+        ns1:nodeId "N0101" ;
+        ns1:personId "P040" ;
+        ns1:role "manager" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P041> a ns1:Person ;
+        rdfs:label "P041 (manager)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 41" ;
+        ns1:dept "Management" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/manager> ;
+        ns1:nodeId "N0102" ;
+        ns1:personId "P041" ;
+        ns1:role "manager" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P042> a ns1:Person ;
+        rdfs:label "P042 (manager)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 42" ;
+        ns1:dept "Management" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/manager> ;
+        ns1:nodeId "N0103" ;
+        ns1:personId "P042" ;
+        ns1:role "manager" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P043> a ns1:Person ;
+        rdfs:label "P043 (security)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 43" ;
+        ns1:dept "Security" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/security> ;
+        ns1:nodeId "N0104" ;
+        ns1:personId "P043" ;
+        ns1:role "security" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P044> a ns1:Person ;
+        rdfs:label "P044 (security)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 44" ;
+        ns1:dept "Security" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/security> ;
+        ns1:nodeId "N0105" ;
+        ns1:personId "P044" ;
+        ns1:role "security" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/productionorder/PO-1001> a ns1:ProductionOrder ;
+        rdfs:label "PO-1001" ;
+        rdfs:comment "Yoghurt cups 150 g, 60,000 units." ;
+        ns1:executed_at <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:ordered_by <https://rai-hackathon.bbger.at/kg/customer/Velora> .
+
+    <https://rai-hackathon.bbger.at/kg/productionorder/PO-1002> a ns1:ProductionOrder ;
+        rdfs:label "PO-1002" ;
+        rdfs:comment "Milk pouches 1 L, 25,000 units." ;
+        ns1:executed_at <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:ordered_by <https://rai-hackathon.bbger.at/kg/customer/Nordmilch> .
+
+    <https://rai-hackathon.bbger.at/kg/productionorder/PO-1003> a ns1:ProductionOrder ;
+        rdfs:label "PO-1003" ;
+        rdfs:comment "Sealed yoghurt cups, 40,000 units." ;
+        ns1:executed_at <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:ordered_by <https://rai-hackathon.bbger.at/kg/customer/Velora> .
+
+    <https://rai-hackathon.bbger.at/kg/productionorder/PO-1004> a ns1:ProductionOrder ;
+        rdfs:label "PO-1004" ;
+        rdfs:comment "Labelled milk pouches, 25,000 units." ;
+        ns1:executed_at <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:ordered_by <https://rai-hackathon.bbger.at/kg/customer/Nordmilch> .
+
+    <https://rai-hackathon.bbger.at/kg/productionorder/PO-1005> a ns1:ProductionOrder ;
+        rdfs:label "PO-1005" ;
+        rdfs:comment "Packed yoghurt trays, 5,000 trays." ;
+        ns1:executed_at <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:ordered_by <https://rai-hackathon.bbger.at/kg/customer/Velora> .
+
+    <https://rai-hackathon.bbger.at/kg/productionorder/PO-1006> a ns1:ProductionOrder ;
+        rdfs:label "PO-1006" ;
+        rdfs:comment "Sealed dessert cups, 18,000 units." ;
+        ns1:executed_at <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:ordered_by <https://rai-hackathon.bbger.at/kg/customer/Nordmilch> .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-MAN-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-ACK-MAN-CRIT" ;
+        rdfs:comment "manager role — CRITICAL alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 5 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-MAN-WARN> a ns1:Rule ;
+        rdfs:label "RULE-ACK-MAN-WARN" ;
+        rdfs:comment "manager role — WARNING alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 15 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-OP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-ACK-OP-CRIT" ;
+        rdfs:comment "operator role — CRITICAL alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 3 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-OP-WARN> a ns1:Rule ;
+        rdfs:label "RULE-ACK-OP-WARN" ;
+        rdfs:comment "operator role — WARNING alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 15 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-SEC-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-ACK-SEC-CRIT" ;
+        rdfs:comment "security role — CRITICAL alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 5 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-SEC-WARN> a ns1:Rule ;
+        rdfs:label "RULE-ACK-SEC-WARN" ;
+        rdfs:comment "security role — WARNING alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 20 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-SUP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-ACK-SUP-CRIT" ;
+        rdfs:comment "supervisor role — CRITICAL alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 1 minute" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-SUP-WARN> a ns1:Rule ;
+        rdfs:label "RULE-ACK-SUP-WARN" ;
+        rdfs:comment "supervisor role — WARNING alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 5 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACK-TECH-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-ACK-TECH-CRIT" ;
+        rdfs:comment "technician role — CRITICAL alarm acknowledgment" ;
+        ns1:action "Must acknowledge within 2 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "min" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ANOM-CORRELATED> a ns1:Rule ;
+        rdfs:label "RULE-ANOM-CORRELATED" ;
+        rdfs:comment "Causally linked to another station; Onset within 90 min of cause" ;
+        ns1:action "AnomalyEvent::Correlated" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ANOM-DRIFT> a ns1:Rule ;
+        rdfs:label "RULE-ANOM-DRIFT" ;
+        rdfs:comment "Monotonic deviation >15 min; Slope >0.1σ/min for 5+ readings" ;
+        ns1:action "AnomalyEvent::Drift" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ANOM-OUT_OF_RANGE> a ns1:Rule ;
+        rdfs:label "RULE-ANOM-OUT_OF_RANGE" ;
+        rdfs:comment "Sustained WARN violation >10 min; >WARN for 20+ readings" ;
+        ns1:action "AnomalyEvent::OutOfRange" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ANOM-SPIKE> a ns1:Rule ;
+        rdfs:label "RULE-ANOM-SPIKE" ;
+        rdfs:comment "Transient deviation >3σ, <5 min; Single reading >CRIT" ;
+        ns1:action "AnomalyEvent::Spike" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ANOM-STUCK> a ns1:Rule ;
+        rdfs:label "RULE-ANOM-STUCK" ;
+        rdfs:comment "Unchanged >10 consecutive readings; std(last 10)<0.001×nominal" ;
+        ns1:action "AnomalyEvent::StuckSensor" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-01a> a ns1:Rule ;
+        rdfs:label "RULE-CHM01-01a" ;
+        rdfs:comment "TMP MUST remain between 10°C and 20°C" ;
+        ns1:action "Activate emergency ventilation and notify safety officer" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:critHi 2.5e+01 ;
+        ns1:critLo 5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2e+01 ;
+        ns1:warnLo 1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-01b> a ns1:Rule ;
+        rdfs:label "RULE-CHM01-01b" ;
+        rdfs:comment "TMP CRITICAL above 25°C" ;
+        ns1:action "Activate emergency ventilation; notify safety officer immediately" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:critHi 2.5e+01 ;
+        ns1:critLo 5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2e+01 ;
+        ns1:warnLo 1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-02a> a ns1:Rule ;
+        rdfs:label "RULE-CHM01-02a" ;
+        rdfs:comment "HUM MUST NOT exceed 50%RH" ;
+        ns1:action "Activate desiccant system if HUM >45%RH" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:critHi 6e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 5e+01 ;
+        ns1:warnLo 2e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-02b> a ns1:Rule ;
+        rdfs:label "RULE-CHM01-02b" ;
+        rdfs:comment "HUM above 45%RH" ;
+        ns1:action "Activate desiccant system; inspect storage containers for leaks" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:critHi 6e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 5e+01 ;
+        ns1:warnLo 2e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CORR-01> a ns1:Rule ;
+        rdfs:label "RULE-CORR-01" ;
+        rdfs:comment "ST02_SEALING-CUR↑ causes ST04_PACKAGING-SPD↓ via shared electrical coupling" ;
+        ns1:action "1.Verify ST02-CUR trend 2.Inspect sealing jaw 3.Reset ST04 speed" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s9> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "A" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CORR-02> a ns1:Rule ;
+        rdfs:label "RULE-CORR-02" ;
+        rdfs:comment "SRV01-TMP↑ causes SCADA latency↑ → apparent STUCK readings on all sensors" ;
+        ns1:action "1.Reduce SRV01-TMP <25°C 2.Verify PLC heartbeats 3.Clear STUCK flags" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s9> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "°C" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CORR-03> a ns1:Rule ;
+        rdfs:label "RULE-CORR-03" ;
+        rdfs:comment "WRH01-TMP↑ causes product quality risk → QC HOLD" ;
+        ns1:action "1.Restore WRH01-TMP <8°C 2.Notify QC 3.Place batch on HOLD" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s9> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-OCC-CAFETERIA> a ns1:Rule ;
+        rdfs:label "RULE-OCC-CAFETERIA" ;
+        rdfs:comment "Monitoring only — occupant comfort" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/Cafeteria> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:unit "persons" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-OCC-CHM> a ns1:Rule ;
+        rdfs:label "RULE-OCC-CHM" ;
+        rdfs:comment "CRITICAL above 4 persons; hazmat training required" ;
+        ns1:action "Alert safety officer; enforce hazmat policy" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "persons" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-OCC-PROD> a ns1:Rule ;
+        rdfs:label "RULE-OCC-PROD" ;
+        rdfs:comment "Occupancy WARNING above 10 persons; CRITICAL above 12 (max)" ;
+        ns1:action "Alert security; enforce evacuation if CRITICAL" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "persons" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-OCC-RND> a ns1:Rule ;
+        rdfs:label "RULE-OCC-RND" ;
+        rdfs:comment "WARNING above 5 persons (max 6); precision experiments may be disturbed" ;
+        ns1:action "Notify lab supervisor" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "persons" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-OCC-SRV> a ns1:Rule ;
+        rdfs:label "RULE-OCC-SRV" ;
+        rdfs:comment "CRITICAL above 2 persons; access badge required" ;
+        ns1:action "Alert security immediately; badge enforcement" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "persons" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-OCC-WRH> a ns1:Rule ;
+        rdfs:label "RULE-OCC-WRH" ;
+        rdfs:comment "WARNING above 3 persons (max 4)" ;
+        ns1:action "Alert supervisor" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "persons" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-RND01-02a> a ns1:Rule ;
+        rdfs:label "RULE-RND01-02a" ;
+        rdfs:comment "HUM drift above 65%RH" ;
+        ns1:action "Activate dehumidifier" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:critHi 7.5e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s9> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 6.5e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-RND01-02b> a ns1:Rule ;
+        rdfs:label "RULE-RND01-02b" ;
+        rdfs:comment "HUM above 75%RH (CRITICAL)" ;
+        ns1:action "Suspend sensitive experiments and inspect HVAC system" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:critHi 7.5e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s9> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 6.5e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST03-02a> a ns1:Rule ;
+        rdfs:label "RULE-ST03-02a" ;
+        rdfs:comment "CNT below 110 pcs/min" ;
+        ns1:action "Check for label jam" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 140 ;
+        ns1:critLo 100 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "CNT" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "pcs/min" ;
+        ns1:warnHi 130 ;
+        ns1:warnLo 110 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST03-02b> a ns1:Rule ;
+        rdfs:label "RULE-ST03-02b" ;
+        rdfs:comment "CNT below 100 pcs/min (CRITICAL)" ;
+        ns1:action "Halt labelling; inspect label path" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 140 ;
+        ns1:critLo 100 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "CNT" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "pcs/min" ;
+        ns1:warnHi 130 ;
+        ns1:warnLo 110 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-CAF01-HUM-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-CAF01-HUM-CRIT" ;
+        rdfs:comment "Humidity critical thresholds: CRIT_LO=25.0%RH, WARN_LOW=35.0%RH, nominal=55.0±1.5%RH, WARN_HI=70.0%RH, CRIT_HI=80.0%RH" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:critHi 8e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s22> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 7e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-CAF01-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-CAF01-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: CRIT_LO=14.0°C, WARN_LOW=17.0°C, nominal=21.0±0.4°C, WARN_HI=26.0°C, CRIT_HI=30.0°C" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.4e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s21> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.7e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-CHM01-HUM-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-CHM01-HUM-CRIT" ;
+        rdfs:comment "Humidity critical thresholds: CRIT_LO=15.0%RH, WARN_LOW=20.0%RH, nominal=35.0±1.0%RH, WARN_HI=50.0%RH, CRIT_HI=60.0%RH" ;
+        ns1:action "Activate desiccant system; inspect storage containers for leaks" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:critHi 6e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s18> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 5e+01 ;
+        ns1:warnLo 2e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-CHM01-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-CHM01-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: CRIT_LO=5.0°C, WARN_LOW=10.0°C, nominal=15.0±0.3°C, WARN_HI=20.0°C, CRIT_HI=25.0°C" ;
+        ns1:action "Activate emergency ventilation; notify safety officer immediately" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:critHi 2.5e+01 ;
+        ns1:critLo 5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s17> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2e+01 ;
+        ns1:warnLo 1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-RND01-HUM-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-RND01-HUM-CRIT" ;
+        rdfs:comment "Humidity critical thresholds: CRIT_LO=25.0%RH, WARN_LOW=35.0%RH, nominal=50.0±1.0%RH, WARN_HI=65.0%RH, CRIT_HI=75.0%RH" ;
+        ns1:action "Suspend experiments; inspect HVAC system" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:critHi 7.5e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s20> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 6.5e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-RND01-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-RND01-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: CRIT_LO=15.0°C, WARN_LOW=18.0°C, nominal=22.0±0.2°C, WARN_HI=26.0°C, CRIT_HI=30.0°C" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s19> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-SRV01-HUM-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-SRV01-HUM-CRIT" ;
+        rdfs:comment "Humidity critical thresholds: 25.0%RH (CRIT_LO), 30.0%RH (WARN_LO), 45.0±1.0%RH (NOMINAL), 60.0%RH (WARN_HI), 70.0%RH (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:critHi 7e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s14> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 6e+01 ;
+        ns1:warnLo 3e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-SRV01-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-SRV01-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: 16.0°C (CRIT_LO), 18.0°C (WARN_LO), 21.0±0.3°C (NOMINAL), 25.0°C (WARN_HI), 28.0°C (CRIT_HI)" ;
+        ns1:action "Activate backup cooling; prepare controlled PLC shutdown" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:critHi 2.8e+01 ;
+        ns1:critLo 1.6e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s13> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.5e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST01-FLW-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST01-FLW-CRIT" ;
+        rdfs:comment "Flow critical thresholds: 105.0 L/min (CRIT_LO), 112.0 L/min (WARN_LO), 120.0±1.5 L/min (NOMINAL), 128.0 L/min (WARN_HI), 135.0 L/min (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 1.35e+02 ;
+        ns1:critLo 1.05e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s3> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "FLW" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "L/min" ;
+        ns1:warnHi 1.28e+02 ;
+        ns1:warnLo 1.12e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST01-PRS-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST01-PRS-CRIT" ;
+        rdfs:comment "Pressure critical thresholds: 3.0 bar (CRIT_LO), 3.3 bar (WARN_LO), 3.8±0.05 bar (NOMINAL), 4.2 bar (WARN_HI), 4.8 bar (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 4.8e+00 ;
+        ns1:critLo 3e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "PRS" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "bar" ;
+        ns1:warnHi 4.2e+00 ;
+        ns1:warnLo 3.3e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST01-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST01-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: 15.0°C (CRIT_LO), 18.0°C (WARN_LO), 22.0±0.4°C (NOMINAL), 26.0°C (WARN_HI), 30.0°C (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s1> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST02-CUR-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST02-CUR-CRIT" ;
+        rdfs:comment "Current critical thresholds: 9.5 A (CRIT_LO), 11.0 A (WARN_LO), 12.4±0.3 A (NOMINAL), 13.5 A (WARN_HI), 15.0 A (CRIT_HI)" ;
+        ns1:action "E-STOP; inspect load; verify ST04-SPD (RULE-ST02-04)" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 1.5e+01 ;
+        ns1:critLo 9.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "A" ;
+        ns1:warnHi 1.35e+01 ;
+        ns1:warnLo 1.1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST02-PRS-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST02-PRS-CRIT" ;
+        rdfs:comment "Pressure critical thresholds: 4.2 bar (CRIT_LO), 4.6 bar (WARN_LO), 5.2±0.08 bar (NOMINAL), 5.7 bar (WARN_HI), 6.2 bar (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 6.2e+00 ;
+        ns1:critLo 4.2e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s5> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "PRS" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "bar" ;
+        ns1:warnHi 5.7e+00 ;
+        ns1:warnLo 4.6e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST02-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST02-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: 165.0°C (CRIT_LO), 175.0°C (WARN_LO), 185.0±1.2°C (NOMINAL), 195.0°C (WARN_HI), 210.0°C (CRIT_HI)" ;
+        ns1:action "E-STOP ST02/ST03/ST04; inspect element" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST03-CNT-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST03-CNT-CRIT" ;
+        rdfs:comment "Count critical thresholds: 100 pcs/min (CRIT_LO), 110 pcs/min (WARN_LO), 120±2.0 pcs/min (NOMINAL), 130 pcs/min (WARN_HI), 140 pcs/min (CRIT_HI)" ;
+        ns1:action "E-STOP labelling; inspect label path" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 140 ;
+        ns1:critLo 100 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s9> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "CNT" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "pcs/min" ;
+        ns1:warnHi 130 ;
+        ns1:warnLo 110 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST03-SPD-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST03-SPD-CRIT" ;
+        rdfs:comment "Speed critical thresholds: 0.65 m/s (CRIT_LO), 0.75 m/s (WARN_LO), 0.85±0.01 m/s (NOMINAL), 0.95 m/s (WARN_HI), 1.05 m/s (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 1.05e+00 ;
+        ns1:critLo 1.05e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s7> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "SPD" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "m/s" ;
+        ns1:warnHi 1.35e+00 ;
+        ns1:warnLo 1.15e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST03-TEN-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST03-TEN-CRIT" ;
+        rdfs:comment "Tension critical thresholds: 1.5 N (CRIT_LO), 1.8 N (WARN_LO), 2.2±0.05 N (NOMINAL), 2.6 N (WARN_HI), 3.0 N (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 3e+00 ;
+        ns1:critLo 1.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s8> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TEN" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "N" ;
+        ns1:warnHi 2.6e+00 ;
+        ns1:warnLo 1.8e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST04-CUR-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST04-CUR-CRIT" ;
+        rdfs:comment "Current critical thresholds: 6.5 A (CRIT_LO), 7.5 A (WARN_LO), 8.7±0.2 A (NOMINAL), 9.8 A (WARN_HI), 11.0 A (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 1.1e+01 ;
+        ns1:critLo 6.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s11> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "A" ;
+        ns1:warnHi 9.8e+00 ;
+        ns1:warnLo 7.5e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST04-SPD-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST04-SPD-CRIT" ;
+        rdfs:comment "Speed critical thresholds: 0.85 m/s (CRIT_LO), 1.0 m/s (WARN_LO), 1.2±0.02 m/s (NOMINAL), 1.4 m/s (WARN_HI), 1.6 m/s (CRIT_HI)" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 1.6e+00 ;
+        ns1:critLo 1.25e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s12> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "SPD" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "m/s" ;
+        ns1:warnHi 1.4e+00 ;
+        ns1:warnLo 1e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-ST04-VIB-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-ST04-VIB-CRIT" ;
+        rdfs:comment "Vibration critical thresholds: 0.01 mm/s (CRIT_LO), 0.02 mm/s (WARN_LO), 0.12±0.005 mm/s (NOMINAL), 0.2 mm/s (WARN_HI), 0.35 mm/s (CRIT_HI)" ;
+        ns1:action "E-STOP; inspect main bearing" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s10> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-WRH01-HUM-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-WRH01-HUM-CRIT" ;
+        rdfs:comment "Humidity critical thresholds: CRIT_LO=55.0%RH, WARN_LOW=60.0%RH, nominal=75.0±1.5%RH, WARN_HI=85.0%RH, CRIT_HI=90.0%RH" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:critHi 9e+01 ;
+        ns1:critLo 5.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s16> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 8.5e+01 ;
+        ns1:warnLo 6e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-THR-WRH01-TMP-CRIT> a ns1:Rule ;
+        rdfs:label "RULE-THR-WRH01-TMP-CRIT" ;
+        rdfs:comment "Temperature critical thresholds: CRIT_LO=-1.0°C, WARN_LOW=0.5°C, nominal=4.0±0.5°C, WARN_HI=8.0°C, CRIT_HI=12.0°C" ;
+        ns1:action "Activate backup refrigeration; notify QC" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:critHi 1.2e+01 ;
+        ns1:critLo -1e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s15> ;
+        ns1:ruleClass "ThresholdRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 8e+00 ;
+        ns1:warnLo 5e-01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-WRH01-01a> a ns1:Rule ;
+        rdfs:label "RULE-WRH01-01a" ;
+        rdfs:comment "TMP MUST remain between 0.5°C and 8°C" ;
+        ns1:action "Activate backup refrigeration; notify QC" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:critHi 1.2e+01 ;
+        ns1:critLo -1e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s7> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 8e+00 ;
+        ns1:warnLo 5e-01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-WRH01-01b> a ns1:Rule ;
+        rdfs:label "RULE-WRH01-01b" ;
+        rdfs:comment "TMP CRITICAL above 12°C" ;
+        ns1:action "Notify QC and quarantine batch" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:critHi 1.2e+01 ;
+        ns1:critLo -1e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s7> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 8e+00 ;
+        ns1:warnLo 5e-01 .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-001> a ns1:SafetyEvent ;
+        rdfs:label "SE-001 FALL" ;
+        rdfs:comment "Operator fall on production line" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:durationSec 30 ;
+        ns1:eventId "SE-001" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P001> ;
+        ns1:nodeId "N0106" ;
+        ns1:personId "P001" ;
+        ns1:severity "CRITICAL" ;
+        ns1:timestamp "2026-01-06T09:00:00" ;
+        ns1:type "FALL" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-002> a ns1:SafetyEvent ;
+        rdfs:label "SE-002 FALL" ;
+        rdfs:comment "Operator fall in warehouse" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse> ;
+        ns1:durationSec 30 ;
+        ns1:eventId "SE-002" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P014> ;
+        ns1:nodeId "N0107" ;
+        ns1:personId "P014" ;
+        ns1:severity "CRITICAL" ;
+        ns1:timestamp "2026-01-06T17:00:00" ;
+        ns1:type "FALL" ;
+        ns1:zone "General Warehouse" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-003> a ns1:SafetyEvent ;
+        rdfs:label "SE-003 IMMOBILITY" ;
+        rdfs:comment "Operator stationary >5 min on production line" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:durationSec 300 ;
+        ns1:eventId "SE-003" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P003> ;
+        ns1:nodeId "N0108" ;
+        ns1:personId "P003" ;
+        ns1:severity "WARNING" ;
+        ns1:timestamp "2026-01-07T01:00:00" ;
+        ns1:type "IMMOBILITY" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-004> a ns1:SafetyEvent ;
+        rdfs:label "SE-004 FALL" ;
+        rdfs:comment "Technician fall in R&D Lab" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab> ;
+        ns1:durationSec 30 ;
+        ns1:eventId "SE-004" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P029> ;
+        ns1:nodeId "N0109" ;
+        ns1:personId "P029" ;
+        ns1:severity "CRITICAL" ;
+        ns1:timestamp "2026-01-07T09:00:00" ;
+        ns1:type "FALL" ;
+        ns1:zone "R&D Lab" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-005> a ns1:SafetyEvent ;
+        rdfs:label "SE-005 IMMOBILITY" ;
+        rdfs:comment "Supervisor stationary >5 min in Chemical Storage" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> ;
+        ns1:durationSec 300 ;
+        ns1:eventId "SE-005" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P035> ;
+        ns1:nodeId "N0110" ;
+        ns1:personId "P035" ;
+        ns1:severity "WARNING" ;
+        ns1:timestamp "2026-01-07T17:00:00" ;
+        ns1:type "IMMOBILITY" ;
+        ns1:zone "Chemical Storage" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-006> a ns1:SafetyEvent ;
+        rdfs:label "SE-006 FALL" ;
+        rdfs:comment "Operator fall on production line (afternoon shift)" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:durationSec 30 ;
+        ns1:eventId "SE-006" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P002> ;
+        ns1:nodeId "N0111" ;
+        ns1:personId "P002" ;
+        ns1:severity "CRITICAL" ;
+        ns1:timestamp "2026-01-07T22:00:00" ;
+        ns1:type "FALL" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-007> a ns1:SafetyEvent ;
+        rdfs:label "SE-007 IMMOBILITY" ;
+        rdfs:comment "Operator stationary >5 min in Cafeteria" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Cafeteria> ;
+        ns1:durationSec 300 ;
+        ns1:eventId "SE-007" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P017> ;
+        ns1:nodeId "N0112" ;
+        ns1:personId "P017" ;
+        ns1:severity "WARNING" ;
+        ns1:timestamp "2026-01-08T09:00:00" ;
+        ns1:type "IMMOBILITY" ;
+        ns1:zone "Cafeteria" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-008> a ns1:SafetyEvent ;
+        rdfs:label "SE-008 FALL" ;
+        rdfs:comment "Operator fall in warehouse (afternoon)" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse> ;
+        ns1:durationSec 30 ;
+        ns1:eventId "SE-008" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P016> ;
+        ns1:nodeId "N0113" ;
+        ns1:personId "P016" ;
+        ns1:severity "CRITICAL" ;
+        ns1:timestamp "2026-01-08T17:00:00" ;
+        ns1:type "FALL" ;
+        ns1:zone "General Warehouse" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-009> a ns1:SafetyEvent ;
+        rdfs:label "SE-009 IMMOBILITY" ;
+        rdfs:comment "Technician stationary >5 min in Server Room" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:durationSec 300 ;
+        ns1:eventId "SE-009" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P027> ;
+        ns1:nodeId "N0114" ;
+        ns1:personId "P027" ;
+        ns1:severity "WARNING" ;
+        ns1:timestamp "2026-01-08T22:00:00" ;
+        ns1:type "IMMOBILITY" ;
+        ns1:zone "Server Room" .
+
+    <https://rai-hackathon.bbger.at/kg/safetyevent/SE-010> a ns1:SafetyEvent ;
+        rdfs:label "SE-010 FALL" ;
+        rdfs:comment "Operator fall on production line" ;
+        ns1:detected_in <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:durationSec 30 ;
+        ns1:eventId "SE-010" ;
+        ns1:involves <https://rai-hackathon.bbger.at/kg/person/P005> ;
+        ns1:nodeId "N0115" ;
+        ns1:personId "P005" ;
+        ns1:severity "CRITICAL" ;
+        ns1:timestamp "2026-01-09T01:00:00" ;
+        ns1:type "FALL" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0040> a ns1:AnomalyEvent ;
+        rdfs:label "N0040 SPIKE" ;
+        ns1:anomalyType "SPIKE" ;
+        ns1:durationMin 3 ;
+        ns1:endTs "2026-01-06T08:33:00" ;
+        ns1:gtId "GT-0001" ;
+        ns1:magnitude 2.8e+01 ;
+        ns1:nodeId "N0040" ;
+        ns1:severity "CRITICAL" ;
+        ns1:sourceRule "RULE_TMP_THRESHOLD_CRITICAL" ;
+        ns1:startTs "2026-01-06T08:30:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0041> a ns1:AnomalyEvent ;
+        rdfs:label "N0041 DRIFT" ;
+        ns1:anomalyType "DRIFT" ;
+        ns1:durationMin 45 ;
+        ns1:endTs "2026-01-06T11:45:00" ;
+        ns1:gtId "GT-0002" ;
+        ns1:magnitude 6e-01 ;
+        ns1:nodeId "N0041" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_PRS_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-06T11:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0042> a ns1:AnomalyEvent ;
+        rdfs:label "N0042 DRIFT" ;
+        ns1:anomalyType "DRIFT" ;
+        ns1:durationMin 90 ;
+        ns1:endTs "2026-01-07T08:30:00" ;
+        ns1:gtId "GT-0003" ;
+        ns1:magnitude 1.8e-01 ;
+        ns1:nodeId "N0042" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_VIB_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-07T07:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0043> a ns1:AnomalyEvent ;
+        rdfs:label "N0043 STUCK" ;
+        ns1:anomalyType "STUCK" ;
+        ns1:durationMin 12 ;
+        ns1:endTs "2026-01-07T09:42:00" ;
+        ns1:gtId "GT-0004" ;
+        ns1:magnitude 0 ;
+        ns1:nodeId "N0043" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_TEN_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-07T09:30:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0044> a ns1:AnomalyEvent ;
+        rdfs:label "N0044 OUT_OF_RANGE" ;
+        ns1:anomalyType "OUT_OF_RANGE" ;
+        ns1:durationMin 20 ;
+        ns1:endTs "2026-01-07T12:20:00" ;
+        ns1:gtId "GT-0005" ;
+        ns1:magnitude 5.5e+00 ;
+        ns1:nodeId "N0044" ;
+        ns1:severity "CRITICAL" ;
+        ns1:sourceRule "RULE_TMP_THRESHOLD_CRITICAL" ;
+        ns1:startTs "2026-01-07T12:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0045> a ns1:AnomalyEvent ;
+        rdfs:label "N0045 OUT_OF_RANGE" ;
+        ns1:anomalyType "OUT_OF_RANGE" ;
+        ns1:durationMin 30 ;
+        ns1:endTs "2026-01-07T16:30:00" ;
+        ns1:gtId "GT-0006" ;
+        ns1:magnitude 5.5e+00 ;
+        ns1:nodeId "N0045" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_TMP_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-07T16:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0046> a ns1:AnomalyEvent ;
+        rdfs:label "N0046 SPIKE" ;
+        ns1:anomalyType "SPIKE" ;
+        ns1:durationMin 2 ;
+        ns1:endTs "2026-01-08T06:32:00" ;
+        ns1:gtId "GT-0007" ;
+        ns1:magnitude -3e+01 ;
+        ns1:nodeId "N0046" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_FLW_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-08T06:30:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0047> a ns1:AnomalyEvent ;
+        rdfs:label "N0047 DRIFT" ;
+        ns1:anomalyType "DRIFT" ;
+        ns1:durationMin 120 ;
+        ns1:endTs "2026-01-08T10:00:00" ;
+        ns1:gtId "GT-0008" ;
+        ns1:magnitude 2.1e+00 ;
+        ns1:nodeId "N0047" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_CUR_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-08T08:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0048> a ns1:AnomalyEvent ;
+        rdfs:label "N0048 CORRELATED" ;
+        ns1:anomalyType "CORRELATED" ;
+        ns1:causedBy "ST02_SEALING_CUR_DRIFT" ;
+        ns1:durationMin 60 ;
+        ns1:endTs "2026-01-08T10:30:00" ;
+        ns1:gtId "GT-0009" ;
+        ns1:magnitude -1.5e-01 ;
+        ns1:nodeId "N0048" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_SPD_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-08T09:30:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0049> a ns1:AnomalyEvent ;
+        rdfs:label "N0049 OUT_OF_RANGE" ;
+        ns1:anomalyType "OUT_OF_RANGE" ;
+        ns1:durationMin 25 ;
+        ns1:endTs "2026-01-09T07:55:00" ;
+        ns1:gtId "GT-0010" ;
+        ns1:magnitude -18 ;
+        ns1:nodeId "N0049" ;
+        ns1:severity "CRITICAL" ;
+        ns1:sourceRule "RULE_CNT_THRESHOLD_CRITICAL" ;
+        ns1:startTs "2026-01-09T07:30:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0050> a ns1:AnomalyEvent ;
+        rdfs:label "N0050 OUT_OF_RANGE" ;
+        ns1:anomalyType "OUT_OF_RANGE" ;
+        ns1:durationMin 45 ;
+        ns1:endTs "2026-01-09T08:45:00" ;
+        ns1:gtId "GT-0011" ;
+        ns1:magnitude 7e+00 ;
+        ns1:nodeId "N0050" ;
+        ns1:severity "CRITICAL" ;
+        ns1:sourceRule "RULE_TMP_THRESHOLD_CRITICAL" ;
+        ns1:startTs "2026-01-09T08:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0051> a ns1:AnomalyEvent ;
+        rdfs:label "N0051 DRIFT" ;
+        ns1:anomalyType "DRIFT" ;
+        ns1:durationMin 180 ;
+        ns1:endTs "2026-01-09T13:00:00" ;
+        ns1:gtId "GT-0012" ;
+        ns1:magnitude 6e+00 ;
+        ns1:nodeId "N0051" ;
+        ns1:severity "CRITICAL" ;
+        ns1:sourceRule "RULE_TMP_THRESHOLD_CRITICAL" ;
+        ns1:startTs "2026-01-09T10:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0052> a ns1:AnomalyEvent ;
+        rdfs:label "N0052 DRIFT" ;
+        ns1:anomalyType "DRIFT" ;
+        ns1:durationMin 90 ;
+        ns1:endTs "2026-01-09T13:00:00" ;
+        ns1:gtId "GT-0013" ;
+        ns1:magnitude 1.8e+01 ;
+        ns1:nodeId "N0052" ;
+        ns1:severity "WARNING" ;
+        ns1:sourceRule "RULE_HUM_THRESHOLD_WARNING" ;
+        ns1:startTs "2026-01-09T11:30:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/N0053> a ns1:AnomalyEvent ;
+        rdfs:label "N0053 SPIKE" ;
+        ns1:anomalyType "SPIKE" ;
+        ns1:durationMin 1 ;
+        ns1:endTs "2026-01-09T13:01:00" ;
+        ns1:gtId "GT-0014" ;
+        ns1:magnitude 4.5e-01 ;
+        ns1:nodeId "N0053" ;
+        ns1:severity "CRITICAL" ;
+        ns1:sourceRule "RULE_VIB_THRESHOLD_CRITICAL" ;
+        ns1:startTs "2026-01-09T13:00:00" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s2> a ns1:Chunk ;
+        rdfs:label "DS-MECH-4400 §2. Electromagnetic Flowmeter FLW-4450" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> ;
+        ns1:page 1 ;
+        ns1:text "2. Electromagnetic Flowmeter FLW-4450 Parameter Value Unit Measuring range 0 to 500 L/min Accuracy ±0.5% of reading — Max fluid temp +80 °C" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s3> a ns1:Chunk ;
+        rdfs:label "DS-MECH-4400 §3. Piezoelectric Accelerometer VIB-4480" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> ;
+        ns1:page 1 ;
+        ns1:text "3. Piezoelectric Accelerometer VIB-4480 Parameter Value Unit Measuring range 0 to 50 mm/s RMS Frequency range 10 to 1000 Hz Accuracy ±3% of reading Resonant frequency ≥ 18 kHz" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s4> a ns1:Chunk ;
+        rdfs:label "DS-MECH-4400 §4. Inductive Speed Encoder SPD-4490" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> ;
+        ns1:page 1 ;
+        ns1:text "4. Inductive Speed Encoder SPD-4490 Parameter Value Unit Speed range 0.1 to 10 m/s Resolution 0.001 m/s Max amb. temp 80 °C" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s2> a ns1:Chunk ;
+        rdfs:label "DS-THERM-2200 §2. Humidity Sensor HUM-2250 — Specifications" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
+        ns1:page 1 ;
+        ns1:text "2. Humidity Sensor HUM-2250 — Specifications Parameter Value Unit Measurement range 0 to 100 %RH Accuracy ±2.0 %RH Operating temp -20 to +60 °C Response time < 8 s" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s1> a ns1:Chunk ;
+        rdfs:label "MC-2026-01 §1. Scope" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-02>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "1. Scope. The service provider performs the predictive maintenance actions MAINT-01 and MAINT-02 on ST04_PACKAGING and ST02_SEALING, as defined in SOP-003." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s2> a ns1:Chunk ;
+        rdfs:label "MC-2026-01 §2. Response Times" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-02>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "2. Response Times. For CRITICAL alarms at ST02_SEALING the provider is on site within 4 hours. For HIGH priority actions such as MAINT-02 (sealing jaw inspection) the provider responds within 2 working days." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s3> a ns1:Chunk ;
+        rdfs:label "MC-2026-01 §3. Spare Parts" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:page 1 ;
+        ns1:text "3. Spare Parts. Kelvara keeps a stock of TMP-2210 sensors and sealing jaw elements. Spare sensors are ordered from ThermoSense GmbH." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s1> a ns1:Chunk ;
+        rdfs:label "SOP-001 §1. Station Dependencies" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE>,
+            <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:page 1 ;
+        ns1:text "1. Station Dependencies ST01_FILLING → ST02_SEALING → ST03_LABELLING → ST04_PACKAGING. A fault at any station propagates downstream unless the line is halted. Station ID Zone Depends On Downstream Effect ST01_FILLING Production Area — Feeds ST02_SEALING ST02_SEALING Production Area ST01 Feeds ST03; thermal fault → ST04 speed reduction ST03_LABELLING Production Area ST02 Feeds ST04_PACKAGING ST04_PACKAGING Production Area ST03 Final output SRV01_SERVERROOM Server Room HVAC SCADA control; failure → line halt WRH01_WAREHOUSE General Warehouse COMPRESSOR Cold storage — product quality CHM01_CHEMICALSTORAGE Chemical Storage HVAC Hazardous materials — safety critical RND01_RDLAB R&D Lab HVAC Precision experiments — climate sensitive CAF01_CAFETERIA Cafeteria HVAC Occupant comfort — food safety" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s1> a ns1:Chunk ;
+        rdfs:label "SOP-004 §1. Role-Zone Authorisation Matrix" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:page 1 ;
+        ns1:text "1. Role-Zone Authorisation Matrix Role Prod. Area Server Room Gen. Warehous e Main Entranc e Chem. Stora ge R&D Lab Cafeteria operator YES NO YES YES NO NO YES technician YES YES YES YES YES YES YES supervisor YES YES YES YES YES YES YES manager YES YES YES YES YES YES YES security YES YES YES YES YES YES YES visitor YES NO NO YES NO NO YES" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s1> a ns1:Chunk ;
+        rdfs:label "SQA-THERMO-001 §1. Scope" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250>,
+            <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:page 1 ;
+        ns1:text "1. Scope. ThermoSense GmbH supplies the temperature sensor TMP-2210 and the humidity sensor HUM-2250 for iMAKS line A. The products conform to datasheet DS-THERM-2200." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s2> a ns1:Chunk ;
+        rdfs:label "SQA-THERMO-001 §2. Warranty Conditions" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "2. Warranty Conditions. The warranty for TMP-2210 covers continuous operation up to 200°C, as stated in DS-THERM-2200. Operation above 200°C voids the warranty for drift caused by thermocouple ageing. The Buyer is responsible for process limits at ST02_SEALING that respect this rating." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s3> a ns1:Chunk ;
+        rdfs:label "SQA-THERMO-001 §3. Calibration and Replacement" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "3. Calibration and Replacement. Sensors installed at ST02_SEALING and ST01_FILLING are calibrated every 12 months. ThermoSense replaces a defective TMP-2210 within 5 working days. Drift beyond ±5°C within 500 hours is a warranty case only if the sensor was operated within its rating." .
+
+    <https://rai-hackathon.bbger.at/kg/document/MC-2026-01> a ns1:Document ;
+        rdfs:label "MC-2026-01 Maintenance Contract Line A" ;
+        rdfs:comment "Maintenance Contract Line A" ;
+        ns1:file "MaintenanceContract.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s3> .
+
+    <https://rai-hackathon.bbger.at/kg/person/P001> a ns1:Person ;
+        rdfs:label "P001 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 1" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0062" ;
+        ns1:personId "P001" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P002> a ns1:Person ;
+        rdfs:label "P002 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 2" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0063" ;
+        ns1:personId "P002" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P003> a ns1:Person ;
+        rdfs:label "P003 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 3" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0064" ;
+        ns1:personId "P003" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P005> a ns1:Person ;
+        rdfs:label "P005 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 5" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0066" ;
+        ns1:personId "P005" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P014> a ns1:Person ;
+        rdfs:label "P014 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 14" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0075" ;
+        ns1:personId "P014" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P016> a ns1:Person ;
+        rdfs:label "P016 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 16" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0077" ;
+        ns1:personId "P016" ;
+        ns1:role "operator" ;
+        ns1:shift "Afternoon" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P017> a ns1:Person ;
+        rdfs:label "P017 (operator)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area> ;
+        ns1:csiSubject "soggetto 17" ;
+        ns1:dept "Production" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/operator> ;
+        ns1:nodeId "N0078" ;
+        ns1:personId "P017" ;
+        ns1:role "operator" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P027> a ns1:Person ;
+        rdfs:label "P027 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 27" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0088" ;
+        ns1:personId "P027" ;
+        ns1:role "technician" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P029> a ns1:Person ;
+        rdfs:label "P029 (technician)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 29" ;
+        ns1:dept "IT" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/technician> ;
+        ns1:nodeId "N0090" ;
+        ns1:personId "P029" ;
+        ns1:role "technician" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/person/P035> a ns1:Person ;
+        rdfs:label "P035 (supervisor)" ;
+        ns1:authorized_for <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:csiSubject "soggetto 35" ;
+        ns1:dept "Operations" ;
+        ns1:has_role <https://rai-hackathon.bbger.at/kg/role/supervisor> ;
+        ns1:nodeId "N0096" ;
+        ns1:personId "P035" ;
+        ns1:role "supervisor" ;
+        ns1:shift "Morning" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-03> a ns1:Rule ;
+        rdfs:label "MAINT-03" ;
+        rdfs:comment "TEN STUCK >10 consecutive samples" ;
+        ns1:action "Replace TEN sensor" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s3> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "TEN" ;
+        ns1:severity "MEDIUM" ;
+        ns1:unit "N" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-04> a ns1:Rule ;
+        rdfs:label "MAINT-04" ;
+        rdfs:comment "PRS <3.3 bar for >15 min" ;
+        ns1:action "Inspect inlet filter and pump" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s4> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "PRS" ;
+        ns1:severity "MEDIUM" ;
+        ns1:unit "bar" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-05> a ns1:Rule ;
+        rdfs:label "MAINT-05" ;
+        rdfs:comment "TMP >25°C for >5 min" ;
+        ns1:action "Activate secondary cooling" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s5> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-06> a ns1:Rule ;
+        rdfs:label "MAINT-06" ;
+        rdfs:comment "TMP DRIFT >2°C over 2 h" ;
+        ns1:action "Inspect compressor; notify QC" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s6> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-07> a ns1:Rule ;
+        rdfs:label "MAINT-07" ;
+        rdfs:comment "TMP >20°C for >10 min" ;
+        ns1:action "Emergency ventilation; notify safety officer" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s7> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-08> a ns1:Rule ;
+        rdfs:label "MAINT-08" ;
+        rdfs:comment "HUM DRIFT >10%RH over 60 min" ;
+        ns1:action "Activate dehumidifier; check HVAC drain" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s8> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "HIGH" ;
+        ns1:unit "%RH" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-01> a ns1:Rule ;
+        rdfs:label "RULE-ACCESS-01" ;
+        rdfs:comment "Any entry by an unauthorised role" ;
+        ns1:action "Log as OccupancyEvent::UnauthorisedAccess with person_id, zone, timestamp" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-02> a ns1:Rule ;
+        rdfs:label "RULE-ACCESS-02" ;
+        rdfs:comment "Unauthorised access detected" ;
+        ns1:action "Security personnel MUST be notified within 2 minutes" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-03> a ns1:Rule ;
+        rdfs:label "RULE-ACCESS-03" ;
+        rdfs:comment "KG node for unauthorised access event" ;
+        ns1:action "MUST include authorized=NO and reference to this rule" ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "MANDATORY" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-04> a ns1:Rule ;
+        rdfs:label "RULE-ACCESS-04" ;
+        rdfs:comment "Any UNAUTHORIZED_ACCESS to Chemical Storage — zero-tolerance policy" ;
+        ns1:action "Immediate escalation to Safety Officer regardless of role" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CAF01-01> a ns1:Rule ;
+        rdfs:label "RULE-CAF01-01" ;
+        rdfs:comment "TMP above 26°C" ;
+        ns1:action "Check ventilation system. Occupant comfort is the primary criterion" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.4e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.7e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CAF01-02> a ns1:Rule ;
+        rdfs:label "RULE-CAF01-02" ;
+        rdfs:comment "HUM above 70%RH" ;
+        ns1:action "Inspect drainage and activate ventilation" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:critHi 8e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 7e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-RND01-01> a ns1:Rule ;
+        rdfs:label "RULE-RND01-01" ;
+        rdfs:comment "TMP MUST remain between 18°C and 26°C for experimental validity" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s9> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-SRV01-01> a ns1:Rule ;
+        rdfs:label "RULE-SRV01-01" ;
+        rdfs:comment "TMP MUST NOT exceed 25°C" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:critHi 2.8e+01 ;
+        ns1:critLo 1.6e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s6> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.5e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-SRV01-02> a ns1:Rule ;
+        rdfs:label "RULE-SRV01-02" ;
+        rdfs:comment "TMP > 28°C (CRITICAL)" ;
+        ns1:action "Automatic controlled shutdown of all PLC nodes" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:critHi 2.8e+01 ;
+        ns1:critLo 1.6e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s6> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.5e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-01> a ns1:Rule ;
+        rdfs:label "RULE-ST01-01" ;
+        rdfs:comment "FLW MUST be maintained between 112 and 128 L/min" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 1.35e+02 ;
+        ns1:critLo 1.05e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "FLW" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "L/min" ;
+        ns1:warnHi 1.28e+02 ;
+        ns1:warnLo 1.12e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-02> a ns1:Rule ;
+        rdfs:label "RULE-ST01-02" ;
+        rdfs:comment "TMP exceeds 26°C" ;
+        ns1:action "Reduce speed by 10% and notify QC" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-03> a ns1:Rule ;
+        rdfs:label "RULE-ST01-03" ;
+        rdfs:comment "PRS drop below 3.3 bar" ;
+        ns1:action "Inspect inlet valve within 5 min" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 4.8e+00 ;
+        ns1:critLo 3e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "PRS" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "bar" ;
+        ns1:warnHi 4.2e+00 ;
+        ns1:warnLo 3.3e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01> a ns1:Rule ;
+        rdfs:label "RULE-ST02-01" ;
+        rdfs:comment "TMP MUST remain between 175°C and 195°C" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02> a ns1:Rule ;
+        rdfs:label "RULE-ST02-02" ;
+        rdfs:comment "TMP > 210°C (CRITICAL)" ;
+        ns1:action "Emergency stop ST02, ST03, ST04" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-03> a ns1:Rule ;
+        rdfs:label "RULE-ST02-03" ;
+        rdfs:comment "CUR increase >1.5 A above nominal sustained >5 min" ;
+        ns1:action "Schedule maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 1.5e+01 ;
+        ns1:critLo 9.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "A" ;
+        ns1:warnHi 1.35e+01 ;
+        ns1:warnLo 1.1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST03-01> a ns1:Rule ;
+        rdfs:label "RULE-ST03-01" ;
+        rdfs:comment "TEN MUST be between 1.8 and 2.6 N" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 3e+00 ;
+        ns1:critLo 1.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TEN" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "N" ;
+        ns1:warnHi 2.6e+00 ;
+        ns1:warnLo 1.8e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST03-03> a ns1:Rule ;
+        rdfs:label "RULE-ST03-03" ;
+        rdfs:comment "TEN STUCK >10 consecutive samples" ;
+        ns1:action "Sensor failure — replace sensor" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:critHi 3e+00 ;
+        ns1:critLo 1.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TEN" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "N" ;
+        ns1:warnHi 2.6e+00 ;
+        ns1:warnLo 1.8e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01> a ns1:Rule ;
+        rdfs:label "RULE-ST04-01" ;
+        rdfs:comment "VIB > 0.20 mm/s (WARNING)" ;
+        ns1:action "Schedule maintenance within 24 h" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-02> a ns1:Rule ;
+        rdfs:label "RULE-ST04-02" ;
+        rdfs:comment "VIB > 0.35 mm/s (CRITICAL)" ;
+        ns1:action "Emergency stop; inspect bearings" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-03> a ns1:Rule ;
+        rdfs:label "RULE-ST04-03" ;
+        rdfs:comment "SPD drops below 1.00 m/s without operator command" ;
+        ns1:action "Verify RULE-ST02-04 (electrical coupling with ST02_SEALING_CUR)" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 1.6e+00 ;
+        ns1:critLo 1.25e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "SPD" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "m/s" ;
+        ns1:warnHi 1.4e+00 ;
+        ns1:warnLo 1e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-WRH01-02> a ns1:Rule ;
+        rdfs:label "RULE-WRH01-02" ;
+        rdfs:comment "HUM above 85%RH" ;
+        ns1:action "Inspect door seals and activate dehumidifier" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:critHi 9e+01 ;
+        ns1:critLo 5.5e+01 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s7> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "HUM" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 8.5e+01 ;
+        ns1:warnLo 6e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/supplier/ElectroMeasure> a ns1:Supplier ;
+        rdfs:label "ElectroMeasure AG" ;
+        rdfs:comment "Vendor of electrical sensors, datasheet DS-ELEC-3300." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1> a ns1:Chunk ;
+        rdfs:label "DS-ELEC-3300 §1. Electrical Specifications" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
+        ns1:page 1 ;
+        ns1:text "1. Electrical Specifications Parameter Value Unit Notes Nominal current range 0 to 20 A rms Accuracy class Class 0.5 — IEC 61869-2 Continuous overload rating 14 A See note 2 Short-time overload 20 A < 1 second Output signal 4–20 mA Operating temperature -25 to +70 °C Note 2 — Continuous Overload Rating: The sensor is rated for continuous operation up to 14 A. Operation between 14 A and 20 A is permissible for short durations (< 60 seconds). Sustained operation above 14 A will cause progressive accuracy drift. ElectroMeasure recommends that process alarm thresholds triggering corrective action be set no higher than the continuous overload rating." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1> a ns1:Chunk ;
+        rdfs:label "DS-MECH-4400 §1. Pressure Transmitter PRS-4410" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
+        ns1:page 1 ;
+        ns1:text "1. Pressure Transmitter PRS-4410 Parameter Value Unit Measuring range 0 to 10 bar Accuracy (total error) ±0.10 bar (±0.075% FS) Repeatability ±0.025 bar Long-term stability ±0.05/year bar Media temperature -10 to +80 °C Application Note — Alarm Threshold Setting: With a total accuracy of ±0.10 bar, alarm thresholds should be set at least 5× the accuracy (0.50 bar) from the nominal operating point to avoid nuisance alarms. Thresholds closer than 3× accuracy (0.30 bar) are not recommended for process control." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s1> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST01_FILLING TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "ST01_FILLING TMP: °C 15.0 18.0 22.0 ± 0.4 26.0 30.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s10> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST04_PACKAGING VIB thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "ST04_PACKAGING VIB: mm/s 0.01 0.02 0.12 ± 0.005 0.2 0.35 E-STOP; inspect main bearing" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s11> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST04_PACKAGING CUR thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "ST04_PACKAGING CUR: A 6.5 7.5 8.7 ± 0.2 9.8 11.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s12> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST04_PACKAGING SPD thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "ST04_PACKAGING SPD: m/s 0.85 1.0 1.2 ± 0.02 1.4 1.6 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s13> a ns1:Chunk ;
+        rdfs:label "SOP-002 §SRV01_SERVERROOM TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:page 1 ;
+        ns1:text "SRV01_SERVERROOM TMP: °C 16.0 18.0 21.0 ± 0.3 25.0 28.0 Activate backup cooling; prepare controlled PLC shutdown" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s14> a ns1:Chunk ;
+        rdfs:label "SOP-002 §SRV01_SERVERROOM HUM thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:page 2 ;
+        ns1:text "SRV01_SERVERROOM HUM: %RH 25.0 30.0 45.0 ± 1.0 60.0 70.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s15> a ns1:Chunk ;
+        rdfs:label "SOP-002 §WRH01_WAREHOUSE TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:page 2 ;
+        ns1:text "WRH01_WAREHOUSE TMP: °C -1.0 0.5 4.0 ± 0.5 8.0 12.0 Activate backup refrigeration; notify QC" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s16> a ns1:Chunk ;
+        rdfs:label "SOP-002 §WRH01_WAREHOUSE HUM thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:page 2 ;
+        ns1:text "WRH01_WAREHOUSE HUM: %RH 55.0 60.0 75.0 ± 1.5 85.0 90.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s17> a ns1:Chunk ;
+        rdfs:label "SOP-002 §CHM01_CHEMICALSTORAGE TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:page 2 ;
+        ns1:text "CHM01_CHEMICALSTORAGE TMP: °C 5.0 10.0 15.0 ± 0.3 20.0 25.0 Activate emergency ventilation; notify safety officer immediately" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s18> a ns1:Chunk ;
+        rdfs:label "SOP-002 §CHM01_CHEMICALSTORAGE HUM thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:page 2 ;
+        ns1:text "CHM01_CHEMICALSTORAGE HUM: %RH 15.0 20.0 35.0 ± 1.0 50.0 60.0 Activate desiccant system; inspect storage containers for leaks" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s19> a ns1:Chunk ;
+        rdfs:label "SOP-002 §RND01_RDLAB TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:page 2 ;
+        ns1:text "RND01_RDLAB TMP: °C 15.0 18.0 22.0 ± 0.2 26.0 30.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s20> a ns1:Chunk ;
+        rdfs:label "SOP-002 §RND01_RDLAB HUM thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:page 2 ;
+        ns1:text "RND01_RDLAB HUM: %RH 25.0 35.0 50.0 ± 1.0 65.0 75.0 Suspend experiments; inspect HVAC system" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s21> a ns1:Chunk ;
+        rdfs:label "SOP-002 §CAF01_CAFETERIA TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:page 2 ;
+        ns1:text "CAF01_CAFETERIA TMP: °C 14.0 17.0 21.0 ± 0.4 26.0 30.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s22> a ns1:Chunk ;
+        rdfs:label "SOP-002 §CAF01_CAFETERIA HUM thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:page 2 ;
+        ns1:text "CAF01_CAFETERIA HUM: %RH 25.0 35.0 55.0 ± 1.5 70.0 80.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s3> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST01_FILLING FLW thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "ST01_FILLING FLW: L/min 105.0 112.0 120.0 ± 1.5 128.0 135.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s5> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST02_SEALING PRS thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "ST02_SEALING PRS: bar 4.2 4.6 5.2 ± 0.08 5.7 6.2 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s7> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST03_LABELLING SPD thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:page 1 ;
+        ns1:text "ST03_LABELLING SPD: m/s 0.65 0.75 0.85 ± 0.01 0.95 1.05 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s8> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST03_LABELLING TEN thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:page 1 ;
+        ns1:text "ST03_LABELLING TEN: N 1.5 1.8 2.2 ± 0.05 2.6 3.0 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s9> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST03_LABELLING CNT thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:page 1 ;
+        ns1:text "ST03_LABELLING CNT: pcs/min 100 110 120 ± 2.0 130 140 E-STOP labelling; inspect label path" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s1> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-01" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-01 VIB ST04_PACKAGING VIB DRIFT >0.05 mm/s over 60 min Inspect and lubricate bearing HIGH" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s2> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-02" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-02 CUR ST02_SEALING CUR DRIFT >1.0 A for 30+ min Inspect sealing jaw HIGH" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s3> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-03" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-03>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-03>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-03 TEN ST03_LABELLING TEN STUCK >10 samples Replace sensor MEDIUM" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s4> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-04" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-04 PRS ST01_FILLING PRS <3.3 bar for >15 min Inspect filter and pump MEDIUM" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s5> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-05" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-05>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-05>,
+            <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-05 TMP SRV01_SERVERROOM TMP >25°C for >5 min Activate secondary cooling CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s6> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-06" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-06>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-06>,
+            <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-06 TMP WRH01_WAREHOUSE TMP DRIFT >2°C over 2 h Inspect compressor; notify QC CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s7> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-07" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-07>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-07>,
+            <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-07 TMP CHM01_CHEMICALSTORAGE TMP >20°C for >10 min Emergency ventilation; notify safety officer CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s8> a ns1:Chunk ;
+        rdfs:label "SOP-003 §MAINT-08" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-08>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-08>,
+            <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:page 1 ;
+        ns1:text "MAINT-08 HUM RND01_RDLAB HUM DRIFT >10%RH over 60 min Activate dehumidifier; check HVAC drain HIGH" .
+
+    <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> a ns1:Document ;
+        rdfs:label "SQA-THERMO-001 Supplier Quality Agreement with ThermoSense GmbH" ;
+        rdfs:comment "Supplier Quality Agreement with ThermoSense GmbH" ;
+        ns1:file "SQA_ThermoSense.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s3> .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-03> a ns1:Maintenance ;
+        rdfs:label "MAINT-03: Replace TEN sensor" ;
+        ns1:action "Replace TEN sensor" ;
+        ns1:nodeId "N0056" ;
+        ns1:priority "MEDIUM" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN> ;
+        ns1:ruleId "MAINT-03" .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04> a ns1:Maintenance ;
+        rdfs:label "MAINT-04: Inspect inlet filter and pump" ;
+        ns1:action "Inspect inlet filter and pump" ;
+        ns1:nodeId "N0057" ;
+        ns1:priority "MEDIUM" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS> ;
+        ns1:ruleId "MAINT-04" .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-05> a ns1:Maintenance ;
+        rdfs:label "MAINT-05: Activate secondary cooling" ;
+        ns1:action "Activate secondary cooling" ;
+        ns1:nodeId "N0058" ;
+        ns1:priority "CRITICAL" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP> ;
+        ns1:ruleId "MAINT-05" .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-06> a ns1:Maintenance ;
+        rdfs:label "MAINT-06: Inspect compressor; notify QC" ;
+        ns1:action "Inspect compressor; notify QC" ;
+        ns1:nodeId "N0059" ;
+        ns1:priority "CRITICAL" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP> ;
+        ns1:ruleId "MAINT-06" .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-07> a ns1:Maintenance ;
+        rdfs:label "MAINT-07: Activate emergency ventilation; notify safety officer" ;
+        ns1:action "Activate emergency ventilation; notify safety officer" ;
+        ns1:nodeId "N0060" ;
+        ns1:priority "CRITICAL" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP> ;
+        ns1:ruleId "MAINT-07" .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-08> a ns1:Maintenance ;
+        rdfs:label "MAINT-08: Activate dehumidifier; check HVAC drain" ;
+        ns1:action "Activate dehumidifier; check HVAC drain" ;
+        ns1:nodeId "N0061" ;
+        ns1:priority "HIGH" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM> ;
+        ns1:ruleId "MAINT-08" .
+
+    <https://rai-hackathon.bbger.at/kg/role/security> a ns1:Role ;
+        rdfs:label "security" ;
+        rdfs:comment "Site security." .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-01> a ns1:Rule ;
+        rdfs:label "MAINT-01" ;
+        rdfs:comment "VIB DRIFT >0.05 mm/s over 60 min" ;
+        ns1:action "Inspect and lubricate main bearing" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s1> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "HIGH" ;
+        ns1:unit "mm/s" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-03> a ns1:Rule ;
+        rdfs:label "RULE-CHM01-03" ;
+        rdfs:comment "Only personnel with hazmat training (technician/supervisor/manager) are authorised to enter Chemical Storage" ;
+        ns1:action "UNAUTHORIZED_ACCESS must be escalated within 2 minutes" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> ;
+        ns1:ruleClass "AccessRule" ;
+        ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_HUM> a ns1:Sensor ;
+        rdfs:label "SRV01_SERVERROOM_HUM" ;
+        ns1:critHi 7e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:nodeId "N0027" ;
+        ns1:nominalValue 4.5e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
+        ns1:sensorType "HUM" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 6e+01 ;
+        ns1:warnLo 3e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_PRS> a ns1:Sensor ;
+        rdfs:label "ST02_SEALING_PRS" ;
+        ns1:critHi 6.2e+00 ;
+        ns1:critLo 4.2e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0015" ;
+        ns1:nominalValue 5.2e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
+        ns1:sensorType "PRS" ;
+        ns1:unit "bar" ;
+        ns1:warnHi 5.7e+00 ;
+        ns1:warnLo 4.6e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_SPD> a ns1:Sensor ;
+        rdfs:label "ST03_LABELLING_SPD" ;
+        ns1:critHi 1.05e+00 ;
+        ns1:critLo 6.5e-01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:nodeId "N0018" ;
+        ns1:nominalValue 8.5e-01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> ;
+        ns1:sensorType "SPD" ;
+        ns1:unit "m/s" ;
+        ns1:warnHi 9.5e-01 ;
+        ns1:warnLo 7.5e-01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR> a ns1:Sensor ;
+        rdfs:label "ST04_PACKAGING_CUR" ;
+        ns1:critHi 1.1e+01 ;
+        ns1:critLo 6.5e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0023" ;
+        ns1:nominalValue 8.7e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
+        ns1:sensorType "CUR" ;
+        ns1:unit "A" ;
+        ns1:warnHi 9.8e+00 ;
+        ns1:warnLo 7.5e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> a ns1:SensorModel ;
+        rdfs:label "FLW-4450" ;
+        rdfs:comment "Electromagnetic flowmeter" ;
+        ns1:sensorType "FLW" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> a ns1:SensorModel ;
+        rdfs:label "VIB-4480" ;
+        rdfs:comment "Piezoelectric accelerometer." ;
+        ns1:sensorType "VIB" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
+    <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> a ns1:Supplier ;
+        rdfs:label "ThermoSense GmbH" ;
+        rdfs:comment "Vendor of thermal sensors, datasheet DS-THERM-2200." ;
+        ns1:party_to <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
+        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:page 1 ;
+        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.9 CAF01_CAFETERIA" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-CAF01-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-CAF01-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_HUM>,
+            <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:page 2 ;
+        ns1:text "2.9 CAF01_CAFETERIA RULE-CAF01-01: TMP above 26°C — check ventilation system. Occupant comfort is the primary criterion. RULE-CAF01-02: HUM above 70%RH — inspect drainage and activate ventilation." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s6> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.5 SRV01_SERVERROOM" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-SRV01-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-SRV01-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:page 2 ;
+        ns1:text "2.5 SRV01_SERVERROOM RULE-SRV01-01: TMP MUST NOT exceed 25°C. RULE-SRV01-02: TMP > 28°C (CRITICAL) — automatic controlled shutdown of all PLC nodes." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST01_FILLING PRS thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "ST01_FILLING PRS: bar 3.0 3.3 3.8 ± 0.05 4.2 4.8 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST02_SEALING TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "ST02_SEALING TMP: °C 165.0 175.0 185.0 ± 1.2 195.0 210.0 E-STOP ST02/ST03/ST04; inspect element" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST02_SEALING CUR thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "ST02_SEALING CUR: A 9.5 11.0 12.4 ± 0.3 13.5 15.0 E-STOP; inspect load; verify ST04-SPD (RULE-ST02-04)" .
+
+    <https://rai-hackathon.bbger.at/kg/customer/Nordmilch> a ns1:Customer ;
+        rdfs:label "Nordmilch eG" ;
+        rdfs:comment "Fictional dairy cooperative." .
+
+    <https://rai-hackathon.bbger.at/kg/customer/Velora> a ns1:Customer ;
+        rdfs:label "Velora Foods AG" ;
+        rdfs:comment "Fictional dairy customer." .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01> a ns1:Maintenance ;
+        rdfs:label "MAINT-01: Inspect and lubricate main bearing" ;
+        ns1:action "Inspect and lubricate main bearing" ;
+        ns1:nodeId "N0054" ;
+        ns1:priority "HIGH" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:ruleId "MAINT-01" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-02> a ns1:Rule ;
+        rdfs:label "MAINT-02" ;
+        rdfs:comment "CUR DRIFT >1.0 A for 30+ min" ;
+        ns1:action "Inspect sealing jaw alignment" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s2> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "HIGH" ;
+        ns1:unit "A" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04> a ns1:Rule ;
+        rdfs:label "RULE-ST02-04" ;
+        rdfs:comment "CUR drift at ST02_SEALING CORRELATES with speed reduction at ST04_PACKAGING" ;
+        ns1:action "Monitor ST04_PACKAGING-SPD whenever ST02_SEALING-CUR triggers WARNING" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 1.5e+01 ;
+        ns1:critLo 9.5e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "A" ;
+        ns1:warnHi 1.35e+01 ;
+        ns1:warnLo 1.1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> a ns1:SensorModel ;
+        rdfs:label "CT-3300" ;
+        rdfs:comment "Current transformer Series 3300, 14 A continuous." ;
+        ns1:sensorType "CUR" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ElectroMeasure> .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> a ns1:SensorModel ;
+        rdfs:label "PRS-4410" ;
+        rdfs:comment "Pressure transmitter" ;
+        ns1:sensorType "PRS" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> a ns1:SensorModel ;
+        rdfs:label "SPD-4490" ;
+        rdfs:comment "Inductive speed encoder." ;
+        ns1:sensorType "SPD" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.1 ST01_FILLING" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-03>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "2.1 ST01_FILLING RULE-ST01-01: FLW MUST be maintained between 112 and 128 L/min. RULE-ST01-02: If TMP exceeds 26°C, reduce speed by 10% and notify QC. RULE-ST01-03: PRS drop below 3.3 bar — inspect inlet valve within 5 min." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.4 ST04_PACKAGING" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-03>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "2.4 ST04_PACKAGING RULE-ST04-01: VIB > 0.20 mm/s (WARNING) — schedule maintenance within 24 h. RULE-ST04-02: VIB > 0.35 mm/s (CRITICAL) — emergency stop; inspect bearings. RULE-ST04-03: SPD drops below 1.00 m/s without operator command — verify RULE-ST02-04." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s7> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.6 WRH01_WAREHOUSE (General Warehouse)" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-WRH01-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse> ;
+        ns1:page 2 ;
+        ns1:text "2.6 WRH01_WAREHOUSE (General Warehouse) RULE-WRH01-01: TMP MUST remain between 0.5°C and 8°C. CRITICAL above 12°C — notify QC and quarantine batch. RULE-WRH01-02: HUM above 85%RH — inspect door seals and activate dehumidifier." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s9> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.8 RND01_RDLAB (R&D Lab)" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-RND01-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
+            <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab> ;
+        ns1:page 2 ;
+        ns1:text "2.8 RND01_RDLAB (R&D Lab) RULE-RND01-01: TMP MUST remain between 18°C and 26°C for experimental validity. RULE-RND01-02: HUM drift above 65%RH — activate dehumidifier. Above 75%RH (CRITICAL) — suspend sensitive experiments and inspect HVAC system." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s9> a ns1:Chunk ;
+        rdfs:label "SOP-003 §2. Correlated Fault Resolution" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:page 1 ;
+        ns1:text "2. Correlated Fault Resolution Pattern Primary Fault Secondary Effect Resolution ST02_SEALING-CUR↑ → ST04_PACKAGING- SPD↓ Sealing motor overload Conveyor speed drop via electrical coupling 1.Verify ST02-CUR trend. 2.Inspect sealing jaw. 3.Reset ST04 speed setpoint. SRV01-TMP↑ → SCADA latency↑ Server Room overheating Increased scan time → apparent STUCK readings 1.Reduce SRV01-TMP <25°C. 2.Verify PLC heartbeats. 3.Clear STUCK alarms. WRH01-TMP↑ → QC HOLD Cold warehouse drift Product quality risk 1.Restore WRH01-TMP <8°C. 2.Notify QC. 3.Place batch on HOLD in ERP." .
+
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02> a ns1:Maintenance ;
+        rdfs:label "MAINT-02: Inspect sealing jaw alignment" ;
+        ns1:action "Inspect sealing jaw alignment" ;
+        ns1:nodeId "N0055" ;
+        ns1:priority "HIGH" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR> ;
+        ns1:ruleId "MAINT-02" .
+
+    <https://rai-hackathon.bbger.at/kg/role/manager> a ns1:Role ;
+        rdfs:label "manager" ;
+        rdfs:comment "Plant management." .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_HUM> a ns1:Sensor ;
+        rdfs:label "CAF01_CAFETERIA_HUM" ;
+        ns1:critHi 8e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:nodeId "N0039" ;
+        ns1:nominalValue 5.5e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
+        ns1:sensorType "HUM" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 7e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_TMP> a ns1:Sensor ;
+        rdfs:label "CAF01_CAFETERIA_TMP" ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.4e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:nodeId "N0038" ;
+        ns1:nominalValue 2.1e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0045> ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.7e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_TMP> a ns1:Sensor ;
+        rdfs:label "RND01_RDLAB_TMP" ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:nodeId "N0035" ;
+        ns1:nominalValue 2.2e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW> a ns1:Sensor ;
+        rdfs:label "ST01_FILLING_FLW" ;
+        ns1:critHi 1.35e+02 ;
+        ns1:critLo 1.05e+02 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:nodeId "N0012" ;
+        ns1:nominalValue 1.2e+02 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> ;
+        ns1:sensorType "FLW" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0046> ;
+        ns1:unit "L/min" ;
+        ns1:warnHi 1.28e+02 ;
+        ns1:warnLo 1.12e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP> a ns1:Sensor ;
+        rdfs:label "ST01_FILLING_TMP" ;
+        ns1:critHi 3e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:nodeId "N0010" ;
+        ns1:nominalValue 2.2e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.6e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_HUM> a ns1:Sensor ;
+        rdfs:label "WRH01_WAREHOUSE_HUM" ;
+        ns1:critHi 9e+01 ;
+        ns1:critLo 5.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:nodeId "N0030" ;
+        ns1:nominalValue 7.5e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
+        ns1:sensorType "HUM" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 8.5e+01 ;
+        ns1:warnLo 6e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/supplier/MechSens> a ns1:Supplier ;
+        rdfs:label "MechSens Italia S.r.l." ;
+        rdfs:comment "Vendor of mechanical sensors, datasheet DS-MECH-4400." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.3 ST03_LABELLING" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST03-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST03-03>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:page 1 ;
+        ns1:text "2.3 ST03_LABELLING RULE-ST03-01: TEN MUST be between 1.8 and 2.6 N. RULE-ST03-02: CNT below 110 pcs/min — check for label jam. Below 100 (CRITICAL): halt. RULE-ST03-03: TEN STUCK >10 consecutive samples — sensor failure." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> a ns1:Chunk ;
+        rdfs:label "SOP-004 §4. Unauthorised Access Rules" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-03>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ACCESS-04>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> ;
+        ns1:page 1 ;
+        ns1:text "4. Unauthorised Access Rules RULE-ACCESS-01: Any entry by an unauthorised role MUST be logged as OccupancyEvent::UnauthorisedAccess with person_id, zone, and timestamp. RULE-ACCESS-02: Security personnel MUST be notified within 2 minutes of detection. RULE-ACCESS-03: The KG node MUST include authorized=NO and a reference to this rule. RULE-ACCESS-04: Chemical Storage has zero-tolerance policy. Any UNAUTHORIZED_ACCESS triggers immediate escalation to the Safety Officer regardless of role." .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM> a ns1:Sensor ;
+        rdfs:label "CHM01_CHEMICALSTORAGE_HUM" ;
+        ns1:critHi 6e+01 ;
+        ns1:critLo 1.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:nodeId "N0033" ;
+        ns1:nominalValue 3.5e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
+        ns1:sensorType "HUM" ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 5e+01 ;
+        ns1:warnLo 2e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP> a ns1:Sensor ;
+        rdfs:label "ST02_SEALING_TMP" ;
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0014" ;
+        ns1:nominalValue 1.85e+02 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0040> ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT> a ns1:Sensor ;
+        rdfs:label "ST03_LABELLING_CNT" ;
+        ns1:critHi 140 ;
+        ns1:critLo 100 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:nodeId "N0020" ;
+        ns1:nominalValue 120 ;
+        ns1:sensorType "CNT" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0049> ;
+        ns1:unit "pcs/min" ;
+        ns1:warnHi 130 ;
+        ns1:warnLo 110 .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.2 ST02_SEALING" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-03>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "2.2 ST02_SEALING RULE-ST02-01: TMP MUST remain between 175°C and 195°C. RULE-ST02-02: TMP > 210°C (CRITICAL) — emergency stop ST02, ST03, ST04. RULE-ST02-03: CUR increase >1.5 A above nominal sustained >5 min — schedule maintenance. RULE-ST02-04: CUR drift at ST02_SEALING CORRELATES with speed reduction at ST04_PACKAGING due to shared electrical coupling. Monitor ST04_PACKAGING-SPD whenever ST02_SEALING-CUR triggers a WARNING." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.7 CHM01_CHEMICALSTORAGE (Chemical Storage)" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-03>,
+            <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM>,
+            <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> ;
+        ns1:page 2 ;
+        ns1:text "2.7 CHM01_CHEMICALSTORAGE (Chemical Storage) RULE-CHM01-01: TMP MUST remain between 10°C and 20°C. CRITICAL above 25°C — activate emergency ventilation and notify safety officer immediately. RULE-CHM01-02: HUM MUST NOT exceed 50%RH. Elevated humidity accelerates degradation of hygroscopic reagents. Activate desiccant system if HUM >45%RH. RULE-CHM01-03: Only personnel with hazmat training (technician/supervisor/manager role) are authorised to enter Chemical Storage. UNAUTHORIZED_ACCESS must be escalated within 2 minutes." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s23> a ns1:Chunk ;
+        rdfs:label "SOP-002 §Anomaly Type Definitions" ;
+        ns1:page 2 ;
+        ns1:text "Anomaly Type Definitions for KG Mapping Type Definition Detection Criterion Ontology Class SPIKE Transient deviation >3σ, <5 min Single reading >CRIT AnomalyEvent::Spike DRIFT Monotonic deviation >15 min Slope >0.1σ/min for 5+ readings AnomalyEvent::Drift STUCK Unchanged >10 consecutive readings std(last 10)<0.001×nominal AnomalyEvent::StuckSensor OUT_OF_RAN GE Sustained WARN violation >10 min >WARN for 20+ readings AnomalyEvent::OutOfRange CORRELATED Causally linked to another station Onset within 90 min of cause AnomalyEvent::Correlated" .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD> a ns1:Sensor ;
+        rdfs:label "ST04_PACKAGING_SPD" ;
+        ns1:critHi 1.6e+00 ;
+        ns1:critLo 8.5e-01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0024" ;
+        ns1:nominalValue 1.2e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> ;
+        ns1:sensorType "SPD" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0048> ;
+        ns1:unit "m/s" ;
+        ns1:warnHi 1.4e+00 ;
+        ns1:warnLo 1e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> a ns1:Chunk ;
+        rdfs:label "SOP-004 §2. Maximum Occupancy per Zone" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-03>,
+            <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:page 1 ;
+        ns1:text "2. Maximum Occupancy per Zone Zone Max Persons Enforcement Production Area 12 WARNING above 10; CRITICAL above 12 Server Room 2 CRITICAL above 2; access badge required General Warehouse 4 WARNING above 3 Main Entrance 8 Monitoring only Chemical Storage 4 CRITICAL above 4; hazmat training required — see RULE-CHM01-03 R&D Lab 6 WARNING above 5; precision experiments may be disturbed Cafeteria 20 Monitoring only — occupant comfort" .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS> a ns1:Sensor ;
+        rdfs:label "ST01_FILLING_PRS" ;
+        ns1:critHi 4.8e+00 ;
+        ns1:critLo 3e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:nodeId "N0011" ;
+        ns1:nominalValue 3.8e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
+        ns1:sensorType "PRS" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0041>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04> ;
+        ns1:unit "bar" ;
+        ns1:warnHi 4.2e+00 ;
+        ns1:warnLo 3.3e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> a ns1:SensorModel ;
+        rdfs:label "HUM-2250" ;
+        rdfs:comment "Humidity sensor" ;
+        ns1:sensorType "HUM" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> .
+
+    <https://rai-hackathon.bbger.at/kg/role/supervisor> a ns1:Role ;
+        rdfs:label "supervisor" ;
+        rdfs:comment "Shift supervisor." .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_TMP> a ns1:Sensor ;
+        rdfs:label "CHM01_CHEMICALSTORAGE_TMP" ;
+        ns1:critHi 2.5e+01 ;
+        ns1:critLo 5e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:nodeId "N0032" ;
+        ns1:nominalValue 1.5e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0050>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-07> ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2e+01 ;
+        ns1:warnLo 1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM> a ns1:Sensor ;
+        rdfs:label "RND01_RDLAB_HUM" ;
+        ns1:critHi 7.5e+01 ;
+        ns1:critLo 2.5e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:nodeId "N0036" ;
+        ns1:nominalValue 5e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
+        ns1:sensorType "HUM" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0052>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-08> ;
+        ns1:unit "%RH" ;
+        ns1:warnHi 6.5e+01 ;
+        ns1:warnLo 3.5e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN> a ns1:Sensor ;
+        rdfs:label "ST03_LABELLING_TEN" ;
+        ns1:critHi 3e+00 ;
+        ns1:critLo 1.5e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:nodeId "N0019" ;
+        ns1:nominalValue 2.2e+00 ;
+        ns1:sensorType "TEN" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0043>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-03> ;
+        ns1:unit "N" ;
+        ns1:warnHi 2.6e+00 ;
+        ns1:warnLo 1.8e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> a ns1:Sensor ;
+        rdfs:label "ST04_PACKAGING_VIB" ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0022" ;
+        ns1:nominalValue 1.2e-01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> ;
+        ns1:sensorType "VIB" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0042>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0053>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01> ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP> a ns1:Sensor ;
+        rdfs:label "SRV01_SERVERROOM_TMP" ;
+        ns1:critHi 2.8e+01 ;
+        ns1:critLo 1.6e+01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:nodeId "N0026" ;
+        ns1:nominalValue 2.1e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0044>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-05> ;
+        ns1:unit "°C" ;
+        ns1:warnHi 2.5e+01 ;
+        ns1:warnLo 1.8e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/WRH01_WAREHOUSE_TMP> a ns1:Sensor ;
+        rdfs:label "WRH01_WAREHOUSE_TMP" ;
+        ns1:critHi 1.2e+01 ;
+        ns1:critLo -1e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:nodeId "N0029" ;
+        ns1:nominalValue 4e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:sensorType "TMP" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0051>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-06> ;
+        ns1:unit "°C" ;
+        ns1:warnHi 8e+00 ;
+        ns1:warnLo 5e-01 .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3> a ns1:Chunk ;
+        rdfs:label "SOP-004 §3. Maximum Acknowledgment Times by Role and Severity" ;
+        ns1:page 1 ;
+        ns1:text "3. Maximum Acknowledgment Times by Role and Severity Role Max Ack — WARNING (min) Max Ack — CRITICAL (min) operator 15 3 technician 10 2 supervisor 5 1 manager 15 5 security 20 5" .
+
+    <https://rai-hackathon.bbger.at/kg/role/technician> a ns1:Role ;
+        rdfs:label "technician" ;
+        rdfs:comment "Maintenance and process technician." .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR> a ns1:Sensor ;
+        rdfs:label "ST02_SEALING_CUR" ;
+        ns1:correlates_with <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD> ;
+        ns1:critHi 1.5e+01 ;
+        ns1:critLo 9.5e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0016" ;
+        ns1:nominalValue 1.24e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
+        ns1:sensorType "CUR" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0047>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02> ;
+        ns1:unit "A" ;
+        ns1:warnHi 1.35e+01 ;
+        ns1:warnLo 1.1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/system/iMAKS> a ns1:System ;
+        rdfs:label "iMAKS" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/zone/Cafeteria>,
+            <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage>,
+            <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse>,
+            <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance>,
+            <https://rai-hackathon.bbger.at/kg/zone/Production_Area>,
+            <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab>,
+            <https://rai-hackathon.bbger.at/kg/zone/Server_Room> ;
+        ns1:line "LineaA" ;
+        ns1:nodeId "N0001" .
+
+    <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> a ns1:Station ;
+        rdfs:label "CAF01_CAFETERIA" ;
+        rdfs:comment "Staff cafeteria — occupant comfort and food safety monitoring" ;
+        ns1:nodeId "N0037" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "CAFETERIA" ;
+        ns1:zone "Cafeteria" .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> a ns1:SensorModel ;
+        rdfs:label "TMP-2210" ;
+        rdfs:comment "Thermocouple temperature sensor, rated 200 °C continuous." ;
+        ns1:sensorType "TMP" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> .
+
+    <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> a ns1:Station ;
+        rdfs:label "RND01_RDLAB" ;
+        rdfs:comment "Research and development laboratory — precision climate control" ;
+        ns1:nodeId "N0034" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "RDLAB" ;
+        ns1:zone "R&D Lab" .
+
+    <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> a ns1:Station ;
+        rdfs:label "SRV01_SERVERROOM" ;
+        rdfs:comment "IT infrastructure room — temperature and humidity control" ;
+        ns1:nodeId "N0025" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "SERVERROOM" ;
+        ns1:zone "Server Room" .
+
+    <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> a ns1:Station ;
+        rdfs:label "CHM01_CHEMICALSTORAGE" ;
+        rdfs:comment "Hazardous materials storage — strict temperature and humidity control" ;
+        ns1:nodeId "N0031" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "CHEMICALSTORAGE" ;
+        ns1:zone "Chemical Storage" .
+
+    <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> a ns1:Station ;
+        rdfs:label "WRH01_WAREHOUSE" ;
+        rdfs:comment "Cold storage warehouse — temperature controlled" ;
+        ns1:nodeId "N0028" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "WAREHOUSE" ;
+        ns1:zone "General Warehouse" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/Main_Entrance> a ns1:Zone ;
+        rdfs:label "Main Entrance" ;
+        ns1:nodeId "N0005" .
+
+    <https://rai-hackathon.bbger.at/kg/role/operator> a ns1:Role ;
+        rdfs:label "operator" ;
+        rdfs:comment "Line operator on a production shift." .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> a ns1:Station ;
+        rdfs:label "ST01_FILLING" ;
+        rdfs:comment "Filling station — liquid product filling" ;
+        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0009" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "FILLING" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> a ns1:Station ;
+        rdfs:label "ST03_LABELLING" ;
+        rdfs:comment "Labelling station — label application and tension control" ;
+        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0017" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "LABELLING" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> a ns1:Station ;
+        rdfs:label "ST04_PACKAGING" ;
+        rdfs:comment "Packaging station — final boxing and conveyor" ;
+        ns1:nodeId "N0021" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "PACKAGING" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> a ns1:Station ;
+        rdfs:label "ST02_SEALING" ;
+        rdfs:comment "Sealing station — thermal sealing of packages" ;
+        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:nodeId "N0013" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "SEALING" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab> a ns1:Zone ;
+        rdfs:label "R&D Lab" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> ;
+        ns1:nodeId "N0007" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/Server_Room> a ns1:Zone ;
+        rdfs:label "Server Room" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/station/SRV01_SERVERROOM> ;
+        ns1:nodeId "N0003" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/Chemical_Storage> a ns1:Zone ;
+        rdfs:label "Chemical Storage" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
+        ns1:nodeId "N0006" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/Cafeteria> a ns1:Zone ;
+        rdfs:label "Cafeteria" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/station/CAF01_CAFETERIA> ;
+        ns1:nodeId "N0008" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/General_Warehouse> a ns1:Zone ;
+        rdfs:label "General Warehouse" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/station/WRH01_WAREHOUSE> ;
+        ns1:nodeId "N0004" .
+
+    <https://rai-hackathon.bbger.at/kg/zone/Production_Area> a ns1:Zone ;
+        rdfs:label "Production Area" ;
+        ns1:contains <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0002" .
+}
+
