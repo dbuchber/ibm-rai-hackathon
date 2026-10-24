@@ -16,7 +16,7 @@ SYSTEM = """You plan how to search an enterprise knowledge graph (a digital twin
 You do NOT answer the question. You decide a traversal strategy:
 - question_type: a short label, e.g. "order -> asset -> documents", "rule lookup", "supplier trace".
 - rationale: one or two sentences on why these relations matter for this question.
-- allowed_predicates: the relations the traversal may follow, chosen ONLY from the list given. Pick the few that matter; do not allow everything.
+- allowed_predicates: the relations the traversal may follow, chosen ONLY from the list given. Pick the few that matter; do not allow everything. The set must form connected chains: include the intermediate relations needed to get from the entities in the question to what it asks for (e.g. order -> station -> sensor -> sensor model -> supplier, and rule/document links such as has_chunk, mentions, defined_in).
 - max_depth: how many hops are needed (1-5).
 - prompt: one or two sentences of guidance for the agent that will judge each hop (what to look for, what to ignore).
 Reply with a single JSON object with exactly these keys."""
