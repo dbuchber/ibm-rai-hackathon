@@ -14,12 +14,20 @@ PROPOSALS = Path("data/proposals.json")
 
 
 def add_proposals(ds: KGDataset, path: Path = PROPOSALS) -> list[Proposal]:
+    """Edge proposals become edges in their status graph; node proposals also get a `mentions` edge from the evidence
+    chunk, so they are connected. Predicate proposals only live in proposals.json: the ontology is frozen."""
     if not path.exists():
         return []
     props = [Proposal.model_validate(x) for x in json.loads(path.read_text())]
     for p in props:
-        ds.add_edge(p.triple.s, p.triple.p.rsplit("#", 1)[-1], p.triple.o, p.evidence_chunk_id,
-                    creator=p.proposed_by, graph=p.status)
+        creator = "analyst" if p.status != "proposed" else p.proposed_by
+        if p.kind == "edge":
+            ds.add_edge(p.triple.s, p.triple.p.rsplit("#", 1)[-1], p.triple.o, p.evidence_chunk_id or "proposals.json",
+                        creator=creator, graph=p.status)
+        elif p.kind == "node":
+            iri = ds.add_node(p.node.cls, p.node.local_id, p.node.label, p.node.description, graph=p.status)
+            if p.evidence_chunk_id:
+                ds.add_edge(p.evidence_chunk_id, "mentions", iri, p.evidence_chunk_id, creator=creator, graph=p.status)
     return props
 
 

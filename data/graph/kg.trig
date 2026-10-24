@@ -5,11 +5,13 @@
 <urn:g:proposed> {
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1> .
-
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1> .
+    <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> a ns1:SensorModel ;
+        rdfs:label "Series 2400" ;
+        rdfs:comment "ThermoSense Pt100 RTD sensor model rated to 250°C continuous operation, recommended for sustained use above 200°C." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> .
 }
 
 <urn:g:approved> {
@@ -1719,6 +1721,12 @@
         ns1:sourceRule "RULE_VIB_THRESHOLD_CRITICAL" ;
         ns1:startTs "2026-01-09T13:00:00" .
 
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1> a ns1:Chunk ;
+        rdfs:label "DS-MECH-4400 §1. Pressure Transmitter PRS-4410" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
+        ns1:page 1 ;
+        ns1:text "1. Pressure Transmitter PRS-4410 Parameter Value Unit Measuring range 0 to 10 bar Accuracy (total error) ±0.10 bar (±0.075% FS) Repeatability ±0.025 bar Long-term stability ±0.05/year bar Media temperature -10 to +80 °C Application Note — Alarm Threshold Setting: With a total accuracy of ±0.10 bar, alarm thresholds should be set at least 5× the accuracy (0.50 bar) from the nominal operating point to avoid nuisance alarms. Thresholds closer than 3× accuracy (0.30 bar) are not recommended for process control." .
+
     <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s2> a ns1:Chunk ;
         rdfs:label "DS-MECH-4400 §2. Electromagnetic Flowmeter FLW-4450" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> ;
@@ -2353,12 +2361,6 @@
         ns1:page 1 ;
         ns1:text "1. Electrical Specifications Parameter Value Unit Notes Nominal current range 0 to 20 A rms Accuracy class Class 0.5 — IEC 61869-2 Continuous overload rating 14 A See note 2 Short-time overload 20 A < 1 second Output signal 4–20 mA Operating temperature -25 to +70 °C Note 2 — Continuous Overload Rating: The sensor is rated for continuous operation up to 14 A. Operation between 14 A and 20 A is permissible for short durations (< 60 seconds). Sustained operation above 14 A will cause progressive accuracy drift. ElectroMeasure recommends that process alarm thresholds triggering corrective action be set no higher than the continuous overload rating." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1> a ns1:Chunk ;
-        rdfs:label "DS-MECH-4400 §1. Pressure Transmitter PRS-4410" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
-        ns1:page 1 ;
-        ns1:text "1. Pressure Transmitter PRS-4410 Parameter Value Unit Measuring range 0 to 10 bar Accuracy (total error) ±0.10 bar (±0.075% FS) Repeatability ±0.025 bar Long-term stability ±0.05/year bar Media temperature -10 to +80 °C Application Note — Alarm Threshold Setting: With a total accuracy of ±0.10 bar, alarm thresholds should be set at least 5× the accuracy (0.50 bar) from the nominal operating point to avoid nuisance alarms. Thresholds closer than 3× accuracy (0.30 bar) are not recommended for process control." .
-
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s1> a ns1:Chunk ;
         rdfs:label "SOP-002 §ST01_FILLING TMP thresholds" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP>,
@@ -2436,6 +2438,13 @@
         ns1:page 2 ;
         ns1:text "RND01_RDLAB TMP: °C 15.0 18.0 22.0 ± 0.2 26.0 30.0 Inspect and notify maintenance" .
 
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST01_FILLING PRS thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "ST01_FILLING PRS: bar 3.0 3.3 3.8 ± 0.05 4.2 4.8 Inspect and notify maintenance" .
+
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s20> a ns1:Chunk ;
         rdfs:label "SOP-002 §RND01_RDLAB HUM thresholds" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/RND01_RDLAB_HUM>,
@@ -2470,6 +2479,15 @@
             <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
         ns1:text "ST02_SEALING PRS: bar 4.2 4.6 5.2 ± 0.08 5.7 6.2 Inspect and notify maintenance" .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST02_SEALING CUR thresholds" ;
+        ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1> ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "ST02_SEALING CUR: A 9.5 11.0 12.4 ± 0.3 13.5 15.0 E-STOP; inspect load; verify ST04-SPD (RULE-ST02-04)" .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s7> a ns1:Chunk ;
         rdfs:label "SOP-002 §ST03_LABELLING SPD thresholds" ;
@@ -2714,12 +2732,6 @@
         rdfs:comment "Vendor of thermal sensors, datasheet DS-THERM-2200." ;
         ns1:party_to <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
-        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
-        ns1:page 1 ;
-        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
-
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.9 CAF01_CAFETERIA" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-CAF01-01>,
@@ -2739,27 +2751,12 @@
         ns1:page 2 ;
         ns1:text "2.5 SRV01_SERVERROOM RULE-SRV01-01: TMP MUST NOT exceed 25°C. RULE-SRV01-02: TMP > 28°C (CRITICAL) — automatic controlled shutdown of all PLC nodes." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s2> a ns1:Chunk ;
-        rdfs:label "SOP-002 §ST01_FILLING PRS thresholds" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
-            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
-        ns1:page 1 ;
-        ns1:text "ST01_FILLING PRS: bar 3.0 3.3 3.8 ± 0.05 4.2 4.8 Inspect and notify maintenance" .
-
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> a ns1:Chunk ;
         rdfs:label "SOP-002 §ST02_SEALING TMP thresholds" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
             <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
         ns1:text "ST02_SEALING TMP: °C 165.0 175.0 185.0 ± 1.2 195.0 210.0 E-STOP ST02/ST03/ST04; inspect element" .
-
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s6> a ns1:Chunk ;
-        rdfs:label "SOP-002 §ST02_SEALING CUR thresholds" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
-            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
-            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:page 1 ;
-        ns1:text "ST02_SEALING CUR: A 9.5 11.0 12.4 ± 0.3 13.5 15.0 E-STOP; inspect load; verify ST04-SPD (RULE-ST02-04)" .
 
     <https://rai-hackathon.bbger.at/kg/customer/Nordmilch> a ns1:Customer ;
         rdfs:label "Nordmilch eG" ;
@@ -2822,6 +2819,12 @@
         rdfs:comment "Inductive speed encoder." ;
         ns1:sensorType "SPD" ;
         ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
+        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:page 1 ;
+        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.1 ST01_FILLING" ;
