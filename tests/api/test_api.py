@@ -1,3 +1,4 @@
+import asyncio
 import json
 import shutil
 from pathlib import Path
@@ -293,6 +294,130 @@ async def test_approving_canary_fails_reverts_and_notifies(app, client):
     for k in ("canary_planted", "canary_failed", "supervisor_notified", "decision"):
         assert k in kinds
     assert (await client.get("/api/audit")).json()[0].keys() >= {"ts", "kind", "proposal_id", "detail"}
+
+
+# --- runtime state outside the tracked files ------------------------------------
+
+def test_state_initialised_from_seed_and_seed_untouched(tmp_path):
+    seed = tmp_path / "proposals.json"
+    shutil.copy(FIX / "proposals.json", seed)
+    before = seed.read_bytes()
+    state = tmp_path / "state" / "proposals.json"
+    (tmp_path / "state").mkdir()
+    state.write_text("")  # empty state falls back to the seed
+    kw = dict(graph_path=FIX / "mini_graph.trig", runs_dir=tmp_path / "runs", web_dist=tmp_path / "x",
+              proposals_path=state, proposals_seed=seed, clock=Clock())
+    app = create_app(**kw)
+
+    async def go():
+        c = httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t")
+        items = (await c.get("/api/proposals")).json()
+        assert len(items) == 4
+        await c.post(f"/api/proposals/{items[0]['id']}", json={"decision": "approve"})
+    asyncio.run(go())
+    assert seed.read_bytes() == before                      # tracked file never written
+    assert json.loads(state.read_text())[0]["status"] == "approved"
+    assert (tmp_path / "state" / "audit.jsonl").read_text().count("\n") == 1
+    app2 = create_app(**kw)                                 # restart: state wins over seed, audit reloads
+    assert app2.state.proposals_path == state
+    async def go2():
+        c = httpx.AsyncClient(transport=httpx.ASGITransport(app=app2), base_url="http://t")
+        assert [p["status"] for p in (await c.get("/api/proposals")).json()][0] == "approved"
+        assert len((await c.get("/api/audit")).json()) == 1
+    asyncio.run(go2())
+
+
+# --- hardening ---------------------------------------------------------------------
+
+def _app(tmp_path, **kw):
+    base = dict(graph_path=FIX / "mini_graph.trig", runs_dir=tmp_path / "runs",
+                proposals_path=tmp_path / "state" / "proposals.json", proposals_seed=FIX / "proposals.json",
+                web_dist=tmp_path / "x", stub_delay=0.0, clock=Clock(),
+                invite_codes=["pitch-2026"])
+    return create_app(**{**base, **kw})
+
+
+def _client(app):
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t",
+                             headers={"X-Invite-Code": "pitch-2026"})
+
+
+async def _wait_idle(app, c, rid):
+    async with c.stream("GET", f"/api/runs/{rid}/stream") as r:
+        async for _ in r.aiter_lines():
+            pass
+    await asyncio.sleep(0.1)
+
+
+async def test_question_length_limit(tmp_path):
+    c = _client(_app(tmp_path))
+    assert (await c.post("/api/runs", json={"question": "x" * 501})).status_code == 422
+    assert (await c.post("/api/runs", json={"question": "x" * 500})).status_code == 200
+
+
+async def test_only_one_live_run_at_a_time(tmp_path):
+    c = _client(_app(tmp_path, stub_delay=0.05))
+    first = await c.post("/api/runs", json={"question": "a"})
+    assert first.status_code == 200
+    second = await c.post("/api/runs", json={"question": "b"})
+    assert second.status_code == 429 and "retry-after" in second.headers
+    await _wait_idle(None, c, first.json()["run_id"])
+    assert (await c.post("/api/runs", json={"question": "c"})).status_code == 200
+
+
+async def test_run_rate_limit_per_ip_with_retry_after(tmp_path):
+    t = [0.0]
+    c = _client(_app(tmp_path, run_limit=2, limit_clock=lambda: t[0]))
+    h = {"CF-Connecting-IP": "1.1.1.1"}
+    for _ in range(2):
+        r = await c.post("/api/runs", json={"question": "a"}, headers=h)
+        assert r.status_code == 200
+        await _wait_idle(None, c, r.json()["run_id"])
+    r = await c.post("/api/runs", json={"question": "a"}, headers=h)
+    assert r.status_code == 429 and int(r.headers["retry-after"]) == 3600
+    # another client is unaffected (first X-Forwarded-For entry is used without CF header)
+    r = await c.post("/api/runs", json={"question": "a"}, headers={"X-Forwarded-For": "2.2.2.2, 10.0.0.1"})
+    assert r.status_code == 200
+    await _wait_idle(None, c, r.json()["run_id"])
+    t[0] = 3601.0   # window passed
+    assert (await c.post("/api/runs", json={"question": "a"}, headers=h)).status_code == 200
+
+
+async def test_write_rate_limit(tmp_path):
+    app = _app(tmp_path, write_limit=3)
+    c = _client(app)
+    pid = (await c.get("/api/proposals")).json()[0]["id"]
+    codes = [(await c.post(f"/api/proposals/{pid}", json={"decision": "reject"})).status_code for _ in range(4)]
+    assert codes == [200, 200, 200, 429]
+    assert (await c.get("/api/proposals")).status_code == 200   # reads stay free
+
+
+async def test_admin_reset(tmp_path, monkeypatch):
+    seed = tmp_path / "seed.json"
+    shutil.copy(FIX / "proposals.json", seed)
+    app = _app(tmp_path, proposals_seed=seed)
+    c = _client(app)
+    pid = next(p for p in (await c.get("/api/proposals")).json() if p["kind"] == "node")["id"]
+    await c.post(f"/api/proposals/{pid}", json={"decision": "approve"})
+    assert (tmp_path / "state" / "proposals.json").exists()
+    node = "https://rai-hackathon.bbger.at/kg/sensormodel/RTD-2400"
+    assert node in app.state.store._nodes
+
+    monkeypatch.delenv("ADMIN_TOKEN", raising=False)
+    assert (await c.post("/api/admin/reset", headers={"X-Admin-Token": "s3"})).status_code == 403  # disabled
+    monkeypatch.setenv("ADMIN_TOKEN", "s3")
+    assert (await c.post("/api/admin/reset")).status_code == 403
+    assert (await c.post("/api/admin/reset", headers={"X-Admin-Token": "nope"})).status_code == 403
+    assert node in app.state.store._nodes
+
+    assert (await c.post("/api/admin/reset", headers={"X-Admin-Token": "s3"})).json()["ok"] is True
+    assert node not in app.state.store._nodes
+    assert all(p["status"] == "proposed" for p in (await c.get("/api/proposals")).json())
+    assert (await c.get("/api/audit")).json() == []
+    assert not (tmp_path / "state" / "proposals.json").exists()
+    assert json.loads(seed.read_text())[1]["status"] == "proposed"   # seed untouched
+
+
 async def test_live_run_needs_invite_code(client):
     for headers in ({}, {"X-Invite-Code": "wrong"}):
         r = await client.post("/api/runs", json={"question": "q"}, headers=headers)
@@ -306,3 +431,16 @@ async def test_live_closed_without_configured_codes(tmp_path):
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://t") as c:
         r = await c.post("/api/runs", json={"question": "q"}, headers={"X-Invite-Code": ""})
         assert r.status_code == 403
+
+
+async def test_check_order_invite_before_busy_before_rate(tmp_path):
+    c = _client(_app(tmp_path, stub_delay=0.05, run_limit=1))
+    first = await c.post("/api/runs", json={"question": "a"})
+    assert first.status_code == 200
+    # busy AND over budget: no invite -> 403; with invite -> "busy" (5 s) wins over the hourly budget
+    assert (await c.post("/api/runs", json={"question": "a"}, headers={"X-Invite-Code": "x"})).status_code == 403
+    busy = await c.post("/api/runs", json={"question": "a"})
+    assert busy.status_code == 429 and busy.headers["retry-after"] == "5"
+    await _wait_idle(None, c, first.json()["run_id"])
+    over = await c.post("/api/runs", json={"question": "a"})
+    assert over.status_code == 429 and int(over.headers["retry-after"]) > 5
