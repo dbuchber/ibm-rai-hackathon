@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data } from "./data";
+import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
+import { data, type Ontology } from "./data";
+import { nodeIri, predIri } from "./ids";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
 import { Picker, RunPanel } from "./RunPanel";
 import Contrast from "./Contrast";
-import Curate from "./Curate";
+import Curate, { kindOf } from "./Curate";
 import Roadmap from "./Roadmap";
+import Inspector from "./Inspector";
+import { fold, foldClasses } from "./fold";
 import { Icon, Mark } from "./bits";
 
 type View = "twin" | "ask" | "contrast" | "curate" | "roadmap";
@@ -34,14 +37,17 @@ export default function App() {
   const [lost, setLost] = useState(false);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [focusChunk, setFocusChunk] = useState<string | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
   const [curFocus, setCurFocus] = useState<string[]>([]);
+  const [baseOntology, setOntology] = useState<Ontology>({ classes: [], predicates: [] });
   const stopStream = useRef<() => void>(() => {});
 
   useEffect(() => {
     data.getGraph().then(setGraph);
     data.listRuns().then(setRuns);
-    data.listProposals().then((p) => setProposals(p.map((x) => ({ ...x }))));
+    data.listProposals().then((p) => setProposals(p.map((x) => ({ ...x, kind: kindOf(x) }))));
+    data.getOntology().then(setOntology).catch(() => {});
   }, []);
 
   // ---- run derivation ----
@@ -52,16 +58,44 @@ export default function App() {
 
   // proposal decisions override the graph state of their edge
   const status = useMemo(() => new Map(proposals.map((p) => [p.id, p.status])), [proposals]);
+  // node and edge proposals are drawn in the graph (dashed until approved; rejected ones fade out)
+  const prop = useMemo(() => {
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+    const anchors = new Map<string, string>();
+    for (const p of proposals) {
+      if (p.status === "rejected") continue;
+      if (kindOf(p) === "node" && p.node) {
+        const id = nodeIri(p.node.cls, p.node.local_id);
+        nodes.push({ id, cls: p.node.cls, label: p.node.label, description: p.node.description ?? null, text: null, props: {} });
+        const near = p.evidence_chunk_id ?? graph.nodes.find((n) => n.cls === p.node!.cls)?.id;
+        if (near) anchors.set(id, near);
+      }
+      if (kindOf(p) === "edge" && p.triple) edges.push({ id: p.id, ...p.triple, graph: p.status ?? "proposed" });
+    }
+    return { nodes, edges, anchors };
+  }, [proposals, graph]);
+  const ontology = useMemo<Ontology>(() => {
+    const known = new Set(baseOntology.predicates.map((p) => p.iri));
+    const added = proposals
+      .filter((p) => kindOf(p) === "predicate" && p.status === "approved" && p.predicate && !known.has(predIri(p.predicate.name)))
+      .map((p) => ({ iri: predIri(p.predicate!.name), name: p.predicate!.name, description: p.predicate!.description }));
+    return { ...baseOntology, predicates: [...baseOntology.predicates, ...added] };
+  }, [baseOntology, proposals]);
+
   const { nodes, edges } = useMemo(() => {
     const n = new Map<string, Node>();
     graph.nodes.forEach((x) => n.set(x.id, x));
+    prop.nodes.forEach((x) => { if (!n.has(x.id)) n.set(x.id, x); });
     // run events embed nodes in full; they win so the run shows exactly what the model was given
     runEls.nodes.forEach((x) => n.set(x.id, x));
     const e = new Map<string, Edge>();
-    for (const x of [...graph.edges, ...runEls.edges]) e.set(x.id, { ...x, graph: status.get(x.id) ?? x.graph });
+    for (const x of [...prop.edges, ...graph.edges, ...runEls.edges]) e.set(x.id, { ...x, graph: status.get(x.id) ?? x.graph });
     return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected") };
-  }, [graph, runEls, status]);
+  }, [graph, runEls, status, prop]);
   const idx = useMemo(() => labelIndex(nodes), [nodes]);
+  // chunks are drawn one level down: hidden in the graph, lifted onto their documents (fold.ts)
+  const folded = useMemo(() => fold(nodes, edges), [nodes, edges]);
   const edgeIdx = useMemo(() => new Map(edges.map((e) => [e.id, e])), [edges]);
 
   // ---- playback ----
@@ -125,9 +159,36 @@ export default function App() {
     setProposals((xs) => xs.map((x) => (x.id === id ? { ...x, status: p.status } : x)));
   };
 
+  const targets = (p: Proposal): string[] => {
+    if (kindOf(p) === "edge" && p.triple) return [p.triple.s, p.triple.o];
+    if (kindOf(p) === "node" && p.node) {
+      const id = nodeIri(p.node.cls, p.node.local_id);
+      return p.evidence_chunk_id ? [id, p.evidence_chunk_id] : [id];
+    }
+    return [];
+  };
+
+  const showProposal = (p: Proposal) => {
+    const t = targets(p);
+    if (!t.length) return;
+    setCurFocus(t);
+    cite(kindOf(p) === "edge" ? p.id : t[0]);
+  };
+
+  const create = async (body: CreateProposal) => {
+    const p = await data.createProposal(body);
+    const full = { ...p, kind: kindOf(p) };
+    setProposals((xs) => [full, ...xs.filter((x) => x.id !== p.id)]);
+    // let the new element land in the graph before the camera moves to it
+    setTimeout(() => showProposal(full), 350);
+  };
+
+  // citations and chips: a chunk opens its document in the inspector, anything else flashes in the graph
   const cite = (id: string) => {
+    const doc = folded.docOf.get(id);
+    if (doc) { setSelected(doc); setFocusChunk(id); }
     setFlash(null);
-    requestAnimationFrame(() => setFlash(id));
+    requestAnimationFrame(() => setFlash(folded.mapId(id)));
   };
 
   // ---- what the graph shows ----
@@ -141,9 +202,15 @@ export default function App() {
     const m = new Map<string, string>();
     for (const p of proposals) {
       if (p.status === "rejected") continue;
-      m.set(p.id, p.status === "approved" ? "follow" : "frontier");
-      m.set(p.triple.s, "walked");
-      m.set(p.triple.o, "walked");
+      if (kindOf(p) === "edge" && p.triple) {
+        m.set(p.id, p.status === "approved" ? "follow" : "frontier");
+        m.set(p.triple.s, "walked");
+        m.set(p.triple.o, "walked");
+      }
+      if (kindOf(p) === "node" && p.node) {
+        m.set(nodeIri(p.node.cls, p.node.local_id), "walked " + (p.status === "approved" ? "approved-node" : "proposed-node"));
+        if (p.evidence_chunk_id) m.set(p.evidence_chunk_id, "walked");
+      }
     }
     return m;
   }, [proposals]);
@@ -156,24 +223,41 @@ export default function App() {
   } else if (view === "curate") {
     mode = "run";
     classes = curClasses;
-    focus = curFocus.length ? curFocus : proposals.flatMap((p) => [p.triple.s, p.triple.o]);
+    focus = curFocus.length ? curFocus : proposals.filter((p) => p.status !== "rejected").flatMap(targets);
     focusKey = "curate:" + curFocus.join();
   }
-  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: 16 };
+  const sel = selected ? idx.get(selected) : undefined;
+  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: sel ? 412 : 16 };
+  const shownClasses = useMemo(() => foldClasses(classes, folded), [classes, folded]);
+  const shownFocus = [...new Set(focus.map(folded.mapId))];
+  const shownAnchors = useMemo(
+    () => new Map([...prop.anchors].map(([k, v]) => [k, folded.mapId(v)])), [prop.anchors, folded]);
+  const cited = useMemo(() => {
+    const v = view === "contrast" ? full : rv;
+    const ids = new Set<string>();
+    if (!showRun) return ids;
+    v.answer?.citations.forEach((c) => c.chunk_id && ids.add(c.chunk_id));
+    v.evidence?.nodes.forEach((n) => n.cls === "Chunk" && ids.add(n.id));
+    return ids;
+  }, [view, full, rv, showRun]);
 
   const stats = useMemo(() => {
     const approved = graph.edges.filter((e) => (status.get(e.id) ?? e.graph) === "approved").length;
     const docs = graph.nodes.filter((n) => n.cls === "Document").length;
-    return { nodes: graph.nodes.length, approved, docs };
+    const chunks = graph.nodes.filter((n) => n.cls === "Chunk").length;
+    return { nodes: graph.nodes.length - chunks, approved, docs, chunks };
   }, [graph, status]);
 
-  const sel = selected ? idx.get(selected) : undefined;
   const current = pos >= 0 ? fs[pos] : undefined;
 
   return (
     <>
-      <Graph nodes={nodes} edges={edges} classes={classes} mode={mode} focus={focus} focusKey={focusKey}
-        inset={inset} flash={flash} onSelect={setSelected} />
+      <Graph nodes={folded.nodes} edges={folded.edges} classes={shownClasses} mode={mode} focus={shownFocus} focusKey={focusKey}
+        inset={inset} flash={flash} onSelect={(id) => { setSelected(id); setFocusChunk(null); }} anchors={shownAnchors} />
+      {sel && (
+        <Inspector node={sel} folded={folded} idx={idx} cited={cited} focusChunk={focusChunk}
+          onClose={() => { setSelected(null); setFocusChunk(null); }} />
+      )}
 
       <header className="topbar">
         <div className="brand glass">
@@ -202,14 +286,14 @@ export default function App() {
       )}
       {view === "contrast" && runId && <Contrast v={full} idx={idx} edges={edgeIdx} />}
       {view === "curate" && (
-        <Curate proposals={proposals} idx={idx} onDecide={decide}
-          onShow={(id) => { const p = proposals.find((x) => x.id === id); if (p) setCurFocus([p.triple.s, p.triple.o]); cite(id); }} />
+        <Curate proposals={proposals} idx={idx} ontology={ontology} mock={data.kind === "static"}
+          onDecide={decide} onCreate={create} onShow={showProposal} />
       )}
 
       {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
 
       {view === "ask" && runId && (
-        <div className="player glass" style={{ left: `calc((100% - ${inset.right}px + 16px) / 2)` }} role="toolbar" aria-label="Playback">
+        <div className="player glass" style={{ left: `calc(${inset.left}px + (100% - ${inset.left + inset.right}px) / 2)` }} role="toolbar" aria-label="Playback">
           <button className="icon-btn" aria-label="Restart" onClick={() => { setPos(0); setPlaying(true); }}><Icon name="restart" /></button>
           <button className="icon-btn" aria-label="Previous step" disabled={pos <= 0}
             onClick={() => { setPlaying(false); setPos((p) => Math.max(0, p - 1)); }}><Icon name="prev" /></button>
@@ -235,19 +319,6 @@ export default function App() {
       )}
 
       <div className="corner" style={{ bottom: view === "ask" && runId ? 92 : 16 }}>
-        {sel && (
-          <div className="inspector glass" role="dialog" aria-label={sel.label}>
-            <div className="cls">{sel.cls}</div>
-            <h4>{sel.label}</h4>
-            {sel.description && <div className="small muted">{sel.description}</div>}
-            {sel.text && <div className="text">{sel.text}</div>}
-            {Object.keys(sel.props ?? {}).length > 0 && (
-              <dl className="props">
-                {Object.entries(sel.props!).map(([k, val]) => (<><dt key={k}>{k}</dt><dd key={k + "v"}>{String(val)}</dd></>))}
-              </dl>
-            )}
-          </div>
-        )}
         {view === "twin" && !sel && (
           <div className="intro glass">
             <div className="eyebrow">The anchor</div>
@@ -257,10 +328,11 @@ export default function App() {
               <div className="stat"><b>{stats.nodes}</b><span>entities</span></div>
               <div className="stat"><b>{stats.approved}</b><span>approved relations</span></div>
               <div className="stat"><b>{stats.docs}</b><span>documents</span></div>
+              <div className="stat"><b>{stats.chunks}</b><span>passages</span></div>
             </div>
           </div>
         )}
-        <Legend mode={mode} view={view} />
+        {!sel && <Legend mode={mode} view={view} />}
       </div>
     </>
   );

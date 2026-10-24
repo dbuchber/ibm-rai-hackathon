@@ -1,6 +1,12 @@
 // Data source abstraction (plan, stream C). VITE_DATA=static reads public/data; api talks to C4.
 // The api source falls back to static files for reads, so a dead API never breaks replay.
-import type { Event, GraphExport, Proposal, RunSummary } from "./contracts";
+import type { CreateProposal, Event, GraphExport, Proposal, RunSummary } from "./contracts";
+import { nodeIri, predIri, proposalId } from "./ids";
+
+export interface Ontology {
+  classes: { name: string; description: string }[];
+  predicates: { iri: string; name: string; description: string }[];
+}
 
 export interface DataSource {
   kind: "static" | "api";
@@ -12,13 +18,30 @@ export interface DataSource {
   streamRun(id: string, onEvent: (e: Event) => void, onLost: () => void): () => void;
   listProposals(): Promise<Proposal[]>;
   decide(id: string, decision: "approve" | "reject"): Promise<Proposal>;
+  createProposal(body: CreateProposal): Promise<Proposal>;
+  /** Not part of C4: shipped as a static file next to the graph export in both modes. */
+  getOntology(): Promise<Ontology>;
+}
+
+/** What POST /api/proposals does, for static mode. */
+export function localProposal(body: CreateProposal): Proposal {
+  const kind = body.kind ?? "edge";
+  const id =
+    kind === "edge" ? proposalId("edge", { triple: [body.triple!.s, body.triple!.p, body.triple!.o] })
+    : kind === "node" ? proposalId("node", { iri: nodeIri(body.node!.cls, body.node!.local_id) })
+    : proposalId("predicate", { iri: predIri(body.predicate!.name) });
+  return { ...body, kind, id, confidence: null, proposed_by: "user", status: "proposed" };
 }
 
 const BASE = import.meta.env.BASE_URL + "data/";
 
 async function json<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
-  if (!r.ok) throw new Error(`${r.status} ${url}`);
+  if (!r.ok) {
+    const body = await r.json().catch(() => null);
+    const detail = body?.detail;
+    throw new Error(typeof detail === "string" ? detail : Array.isArray(detail) ? detail.map((d) => d.msg).join("; ") : `${r.status} ${url}`);
+  }
   return r.json() as Promise<T>;
 }
 
@@ -46,12 +69,21 @@ function staticSource(): DataSource {
       p.status = decision === "approve" ? "approved" : "rejected";
       return { ...p };
     },
+    createProposal: async (body) => {
+      const p = localProposal(body);
+      proposals = [...(proposals ?? []).filter((x) => x.id !== p.id), p];
+      return { ...p };
+    },
+    getOntology: () => json<Ontology>(BASE + "ontology.json"),
   };
 }
 
 function apiSource(): DataSource {
   const fallback = staticSource();
   const orStatic = <T,>(p: Promise<T>, f: () => Promise<T>) => p.catch(f);
+  // writes fall back only when the API is unreachable; an HTTP error (e.g. 422) must reach the user
+  const orOffline = <T,>(p: Promise<T>, f: () => Promise<T>) =>
+    p.catch((e) => (e instanceof TypeError ? f() : Promise.reject(e)));
   return {
     kind: "api",
     live: true,
@@ -83,7 +115,7 @@ function apiSource(): DataSource {
     },
     listProposals: () => orStatic(json("/api/proposals"), fallback.listProposals),
     decide: (id, decision) =>
-      orStatic(
+      orOffline(
         json(`/api/proposals/${id}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -91,6 +123,16 @@ function apiSource(): DataSource {
         }),
         () => fallback.decide(id, decision),
       ),
+    createProposal: (body) =>
+      orOffline(
+        json("/api/proposals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }),
+        () => fallback.createProposal(body),
+      ),
+    getOntology: fallback.getOntology,
   };
 }
 
