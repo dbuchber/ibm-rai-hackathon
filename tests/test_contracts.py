@@ -56,6 +56,11 @@ def test_search_finds_order(store):
     assert store.search("order PO-1003")[0][0].id == node_iri("ProductionOrder", "PO-1003")
 
 
+def test_search_prefers_exact_ids_over_long_chunks(store):
+    hits = [n.id for n, _ in store.search("Can order PO-1003 run at the sealing temperature limit of ST02_SEALING?", k=2)]
+    assert set(hits) == {node_iri("ProductionOrder", "PO-1003"), node_iri("Station", "ST02_SEALING")}
+
+
 def test_predicates_from_ontology(store):
     preds = dict(store.predicates())
     assert pred_iri("contradicts") in preds and pred_iri("supplied_by") in preds
