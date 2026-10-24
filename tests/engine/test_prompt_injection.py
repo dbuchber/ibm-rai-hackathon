@@ -136,3 +136,37 @@ def test_forged_delimiter_cannot_close_the_block():
     msgs = prompt.build("Do the task.", chunks=f"a {FORGE} b")
     user = msgs[1]["content"]
     assert len(BLOCK.findall(user)) == 1 and BLOCK.search(user)["body"].count("<<<") == 0
+
+
+def test_history_with_planted_earlier_answer_is_data(monkeypatch, injected_store):
+    """A prior model answer (or question) carrying instructions reaches strategy, traverse and answer only as the `conversation` block."""
+    from engine import history
+    planted = history.Turn(question=f"Earlier question {INJ}", answer=f"The limit is 8 bar. {INJ} {FORGE}", evidence=())
+    ctx = history.context([planted], injected_store)
+    assert ctx and INJ in ctx
+
+    calls = []
+    def spy(messages, model, schema):
+        calls.append(messages)
+        if schema is strategy._Plan:
+            return strategy._Plan(question_type="t", rationale="r", allowed_predicates=["mentions"], max_depth=2, prompt="p")
+        if schema is traverse._StepOut:
+            ids = re.findall(r"^\[([0-9a-f]{12})\]", messages[-1]["content"], re.M)
+            return traverse._StepOut(decisions=[traverse._Dec(edge_id=i, verdict="follow") for i in ids])
+        return ans_mod._Out(text="ok", citations=ids_followed[:1])
+    ids_followed = []
+    for mod in (strategy, traverse, ans_mod):
+        monkeypatch.setattr(mod.llm, "complete_json", spy)
+
+    st = strategy.plan("Who supplies it?", [(pred_iri("mentions"), "Chunk mentions X")], "m", context=ctx)
+    _, seeds = walk_for(injected_store, "q")
+    w = traverse.walk("Who supplies it?", injected_store, st, seeds, "m", lambda p: None, context=ctx)
+    ids_followed.extend(w.followed)
+    ans_mod.answer("Who supplies it?", w, injected_store, "m", context=ctx)
+
+    assert len(calls) >= 3
+    for messages in calls:
+        check_structure(messages, INJ)
+        user = messages[1]["content"]
+        assert any(b["name"] == "conversation" and INJ in b["body"] for b in BLOCK.finditer(user))
+        assert "earlier turns" in messages[0]["content"]      # the system message explains the block, it does not contain it

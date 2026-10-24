@@ -70,6 +70,27 @@ function chatSession(): string {
   return memorySession;
 }
 
+// Multi-turn chat: the server keeps the session's last turns, so a new question may follow up on the previous one.
+const LAST_KEY = "ga-chat-last";
+let memoryLast: string | null = null;
+
+/** The previous live question of this chat session, or null in a fresh chat. */
+export function chatFollowUp(): string | null {
+  try { return sessionStorage.getItem(LAST_KEY) ?? memoryLast; } catch { return memoryLast; }
+}
+
+function setFollowUp(q: string | null) {
+  memoryLast = q;
+  try { if (q === null) sessionStorage.removeItem(LAST_KEY); else sessionStorage.setItem(LAST_KEY, q); } catch { /* ignore */ }
+}
+
+/** New chat: a fresh session id, so the server starts without history (and without canary state). */
+export function newChat() {
+  memorySession = crypto.randomUUID();
+  try { sessionStorage.setItem(SESSION_KEY, memorySession); } catch { /* ignore */ }
+  setFollowUp(null);
+}
+
 /** An HTTP error answer from the API; `retryAfter` in seconds when the server sent one (429). */
 export class HttpError extends Error {
   constructor(message: string, readonly status: number, readonly retryAfter: number | null) { super(message); }
@@ -155,11 +176,11 @@ function apiSource(): DataSource {
     listRuns: () => orStatic(json("/api/runs"), fallback.listRuns),
     getRun: (id) => orStatic(json(`/api/runs/${id}`), () => fallback.getRun(id)),
     startRun: (question, invite = "", model) =>
-      json("/api/runs", {
+      json<CreateRunResponse>("/api/runs", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Invite-Code": invite, "X-Chat-Session": chatSession() },
         body: JSON.stringify({ question, model: model ?? null } satisfies CreateRun),
-      }),
+      }).then((r) => { setFollowUp(question); return r; }),
     listModels: () =>
       json<ModelInfo[]>("/api/models").then((xs) => (Array.isArray(xs) ? xs : [])).catch(() => []),
     streamRun: (id, onEvent, onLost) => {

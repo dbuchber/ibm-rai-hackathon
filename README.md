@@ -115,6 +115,7 @@ Repo layout: `contracts/` (Pydantic models, ID function, `GraphStore`, fixtures;
 - The graph: layers 1-3 are built by deterministic scripts from the iMAKS data and the company YAML. Layer-4 proposals come from an LLM with a verbatim-quote check and a second verification pass.
 - The engine: strategy, seeds, per-step LLM verdicts, answer, evidence subgraph and the RAG baseline are computed by `engine/`. The three demo runs in `runs/demo-*.jsonl` are real engine output (model `openai/mistral-large-4-openrouter`), replayed so the pitch needs no network.
 - Live mode runs the same engine on a free-text question and streams the same events.
+- Live chat is multi-turn: the server keeps the last 3 turns (question, true answer, evidence node ids) per `X-Chat-Session` in memory and passes them to the engine, so a follow-up like "Who supplies it?" resolves. The turns go into the strategy, step and answer prompts; the previous answer's entities become extra seeds. A chat-canary answer is stored with the true fact, never the planted one. No persistence; "New chat" in the UI starts a fresh session.
 
 **Mocked or limited (and labelled in the UI)**
 

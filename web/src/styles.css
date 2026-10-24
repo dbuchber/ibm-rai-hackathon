@@ -479,3 +479,8 @@ button.chip:hover { background: var(--fill2); }
 .more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent); }
 .waiting .secs { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink3); }
 .field.model { margin-top: 8px; }
+
+/* multi-turn chat: the next question may refer to the previous one */
+.follow-up { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: var(--ink2); margin: 2px 0 6px; }
+.follow-up span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.follow-up button.link { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; }

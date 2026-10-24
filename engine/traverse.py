@@ -71,7 +71,7 @@ def _node(store: GraphStore, walk: Walk, iri: str) -> Node:
 
 
 def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: SeedsPayload, model: str,
-         emit: Callable) -> Walk:
+         emit: Callable, context: str = "") -> Walk:
     w = Walk(seeds=[n.id for n in seeds.nodes])
     for i in w.seeds:
         _node(store, w, i)
@@ -102,7 +102,8 @@ def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: See
         nodes_in = {i: w.nodes[i] for e in cands for i in (e.s, e.o)}
         detail = "\n".join(f"- {_fmt_node(x)}" for x in nodes_in.values())
         messages = prompt.build(
-            SYSTEM, question=question, strategy_guidance=f"({strategy.question_type}) {strategy.prompt}",
+            SYSTEM, **({"conversation": context} if context else {}), question=question,
+            strategy_guidance=f"({strategy.question_type}) {strategy.prompt}",
             facts_collected="\n".join(facts), nodes_in_candidate_edges=detail,
             candidate_edges=f"(step {n} of max {strategy.max_depth})\n{listing}")
         failed, cand_ids = False, {e.id for e in cands}

@@ -37,10 +37,11 @@ def _resolve(name: str, known: dict[str, str]) -> str | None:
     return known.get(local_name(name.strip()))
 
 
-def plan(question: str, predicates: list[tuple[str, str]], model: str) -> StrategyPayload:
+def plan(question: str, predicates: list[tuple[str, str]], model: str, context: str = "") -> StrategyPayload:
     known = {local_name(iri): iri for iri, _ in predicates}
     listing = "\n".join(f"- {local_name(iri)}: {desc}" for iri, desc in predicates)
-    messages = prompt.build(SYSTEM, question=question, available_predicates=listing)
+    messages = prompt.build(SYSTEM, **({"conversation": context} if context else {}),
+                            question=question, available_predicates=listing)
     try:
         p = llm.complete_json(messages, model, _Plan)
     except LLMFormatError:

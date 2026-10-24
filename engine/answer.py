@@ -48,12 +48,12 @@ def context_for(walk: Walk, store: GraphStore) -> tuple[str, set[str], set[str]]
     return "\n".join(dict.fromkeys(lines)), edge_ids, chunks
 
 
-def answer(question: str, walk: Walk, store: GraphStore, model: str) -> AnswerPayload:
+def answer(question: str, walk: Walk, store: GraphStore, model: str, context: str = "") -> AnswerPayload:
     if not walk.followed:
         return AnswerPayload(text=INSUFFICIENT, justification="The traversal found no approved facts relevant to the question.",
                              citations=[])
-    context, edge_ids, chunk_ids = context_for(walk, store)
-    messages = prompt.build(SYSTEM, question=question, facts=context)
+    facts, edge_ids, chunk_ids = context_for(walk, store)
+    messages = prompt.build(SYSTEM, **({"conversation": context} if context else {}), question=question, facts=facts)
     try:
         out = llm.complete_json(messages, model, _Out)
     except LLMFormatError:

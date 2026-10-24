@@ -23,6 +23,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from api.canary import CanaryGuard
 from api.chat_canary import ChatCanary
+from api.chat_history import ChatHistory
 from engine.models import allowed_models
 from api.limits import RateLimiter, client_ip
 from api.store import CurationStore
@@ -43,7 +44,7 @@ def _now() -> str:
 
 def _stub_runner(delay: float):
     """Stand-in for the engine: replays the fixture run with 400 ms between events."""
-    def run(question: str, store, *, model: str, mode: str, emit: Emit) -> None:
+    def run(question: str, store, *, model: str, mode: str, emit: Emit, history=None) -> None:
         for line in (FIXTURES / "run_demo.jsonl").read_text().splitlines():
             ev = EventAdapter.validate_json(line)
             if ev.type == "run.started":
@@ -160,6 +161,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
 
     chat = ChatCanary(lambda: store, lambda kind, detail, pid=None: guard.log(kind, detail, pid),
                       streak=chat_streak or int(env("RAI_CHAT_CANARY_STREAK", "3")), record=keep_feedback)
+    history = app.state.chat_history = ChatHistory(window=int(env("RAI_CHAT_HISTORY", "3")))
     run_rl = RateLimiter(run_limit, clock=limit_clock)
     # strict models (engine/models.py): per IP and model, and per model across all clients
     strict_ip_rl = RateLimiter(int(env("RAI_STRICT_IP_LIMIT", "2")), clock=limit_clock)
@@ -248,12 +250,14 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         run_id = "live-" + uuid.uuid4().hex[:8]
         lr = LiveRun(run_id, runs_dir / f"{run_id}.jsonl")
         live[run_id] = lr
+        turns = history.turns(x_chat_session)
         reveal = chat.start(x_chat_session, run_id, body.question)
-        emit = chat.emit(run_id, lr.add)
+        # history sees the engine's answer before the chat canary may falsify it: a planted fact is never context
+        emit = history.capture(x_chat_session, body.question, chat.emit(run_id, lr.add), alive=lambda: not lr.done)
 
         def work():
             try:
-                runner(body.question, store, model=run_model, mode="live", emit=emit)
+                runner(body.question, store, model=run_model, mode="live", emit=emit, history=turns)
             except Exception as e:  # keep the stream well-formed
                 lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
                                         payload=RunFinished(status="error", error=str(e))))
@@ -371,6 +375,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
             f.unlink(missing_ok=True)
         load_state()
         chat.reset()
+        history.reset()
         return {"ok": True, "proposals": len(proposals)}
 
     if web_dist.is_dir():
