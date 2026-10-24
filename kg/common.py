@@ -1,6 +1,7 @@
 """Shared helpers for building the KG: a Dataset that also collects provenance."""
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,13 +21,14 @@ class KGDataset(Dataset):
     def __init__(self):
         super().__init__()
         self.prov: list[Provenance] = []
+        self.chunk_meta: dict[str, dict] = {}
 
     def graph_for(self, name: str):
         return self.graph(URIRef(GRAPH_IRIS[name]))
 
     def add_node(self, cls: str, local_id: str, label: str, comment: str | None = None,
                  graph: str = "approved", **props) -> str:
-        iri = node_iri(cls, local_id)
+        iri = node_iri(cls, safe_id(local_id))
         g = self.graph_for(graph)
         s = URIRef(iri)
         g.add((s, RDF.type, URIRef(pred_iri(cls))))
@@ -58,6 +60,11 @@ class KGDataset(Dataset):
         self.prov.append(Provenance(edge_id=eid, source=source, creator=creator,
                                     status=graph, created_at=NOW))  # type: ignore[arg-type]
         return eid
+
+
+def safe_id(local_id: str) -> str:
+    """IRI-safe local id: `Production Area` -> `Production_Area`, `R&D Lab` -> `R_D_Lab`."""
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", local_id)
 
 
 def parse_number(v: str):
