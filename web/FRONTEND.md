@@ -18,19 +18,22 @@ Against the real API (backend running on port 17080): `VITE_DATA=api npm run dev
 
 ## Presentation UI
 
-The frontend opens with the logo, a use-case slide, and the interactive workspace from
+The frontend opens with the logo, a five-scene walkthrough, and the interactive workspace from
 `demo.html` / `demo.app.html`. Click, use the presentation dots, or use arrow keys to move
-through the first two screens. Auto-play advances every four seconds; Escape returns from
-the workspace to the use-case slide.
+through the first two screens. Auto-play advances every 3.5 seconds through each walkthrough scene; Escape returns from
+the workspace to the last walkthrough scene. The scaled preview uses real events from
+`demo-contradiction`, with no new engine run or changes to the interactive workspace.
+Its captions describe existing question, traversal and evidence features; the design’s
+alarm/fix-plan/checklist concept is represented by the current evidence trail.
 
 The workspace has a collapsible graph, an evidence trail, and the answer chat.
 The trail groups discovered entities, relevant relationships, excluded evidence, source
 conflicts and supporting passages. Selecting a graph entity shows its connected facts.
 It uses the existing `frames()` / `viewAt()` state: selecting a step pauses replay
 and updates the graph to that frame. Node and relation buttons focus the graph; citations
-still open source passages. The trail comes from the selected run rather than a fixed tutorial. The controller sits at the bottom of the full screen. Play sequences the real recorded
-scenarios; Previous/Next select scenarios, and Restart begins the demo again. Mock canary
-runs remain available for manual exploration. Static mode uses the recorded runs; live questions use the existing API and invitation-code field.
+still open source passages. The trail comes from the selected run rather than a fixed tutorial. Recorded questions replay through the existing engine events; selecting an evidence item
+pauses playback and focuses that information. Mock canary runs remain available for manual
+exploration. Static mode uses the recorded runs; live questions use the existing API and invitation-code field.
 
 ## What to build
 

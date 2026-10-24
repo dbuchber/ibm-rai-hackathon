@@ -15,7 +15,6 @@ import { AlertDialog, AuditDrawer, Toast, type OversightAlert } from "./Oversigh
 import { audit, SUPERVISOR } from "./canary";
 import type { AuditEntry } from "./contracts";
 import type { Decision } from "./data";
-import { Icon } from "./bits";
 
 type View = "twin" | "ask" | "contrast" | "curate" | "roadmap";
 const VIEWS: [View, string][] = [["twin", "Twin"], ["ask", "Ask"], ["contrast", "Contrast"], ["curate", "Curate"], ["roadmap", "Roadmap"]];
@@ -27,7 +26,7 @@ const HOLD: Record<FrameKind, number> = {
 
 const EMPTY = new Map<string, string>();
 
-export default function App({ active = true }: { active?: boolean }) {
+export default function App({ active = true, walkthroughStage }: { active?: boolean; walkthroughStage?: number }) {
   const [demoPlaying, setDemoPlaying] = useState(false);
   const [showGraph, setShowGraph] = useState(true);
   const [draft, setDraft] = useState("");
@@ -70,6 +69,27 @@ export default function App({ active = true }: { active?: boolean }) {
   const rv = useMemo(() => viewAt(events, fs, pos), [events, fs, pos]);
   const full = useMemo(() => viewAt(events, fs, fs.length - 1), [events, fs]);
   const runEls = useMemo(() => runElements(events), [events]);
+
+  // The presentation previews real recorded events without starting a run or altering the interactive app.
+  const isWalkthrough = walkthroughStage !== undefined;
+  useEffect(() => {
+    if (!isWalkthrough) return;
+    let cancelled = false;
+    data.getRun("demo-contradiction").then(recorded => {
+      if (!cancelled) setEvents(recorded);
+    }).catch(() => { if (!cancelled) setQuestionError("Recorded preview could not load. You can still open the interactive demo."); });
+    return () => { cancelled = true; };
+  }, [isWalkthrough]);
+  useEffect(() => {
+    if (walkthroughStage === undefined) return;
+    setPlaying(false); setDemoPlaying(false); setLiveRun(false);
+    setSelected(null); setFocusChunk(null); setFlash(null);
+    if (walkthroughStage === 0) { setRunId(null); setPos(-1); setView("twin"); return; }
+    setRunId("demo-contradiction"); setView("ask");
+    const kind = (["question", "question", "frontier", "verdicts", "evidence"] as const)[walkthroughStage];
+    const position = fs.findIndex(frame => frame.kind === kind);
+    setPos(position);
+  }, [walkthroughStage, fs]);
 
   // proposal decisions override the graph state of their edge
   const status = useMemo(() => new Map(proposals.map((p) => [p.id, p.status])), [proposals]);
@@ -380,17 +400,6 @@ export default function App({ active = true }: { active?: boolean }) {
 
       {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
 
-
-      <div className="demo-controller glass" role="toolbar" aria-label="Demo playback">
-        <button className="icon-btn" aria-label="Restart demo" disabled={!demoRuns.length} onClick={() => { setDemoPlaying(true); if (demoRuns[0]) void pick(demoRuns[0].run_id); }}><Icon name="restart" /></button>
-        <button className="icon-btn" aria-label="Previous scenario" disabled={scenarioIndex <= 0} onClick={() => void changeScenario(scenarioIndex - 1)}><Icon name="prev" /></button>
-        <button className="icon-btn primary" aria-label={demoPlaying || playing ? "Pause demo" : "Play demo"} disabled={!demoRuns.length} onClick={playDemo}><Icon name={demoPlaying || playing ? "pause" : "play"} /></button>
-        <button className="icon-btn" aria-label="Next scenario" disabled={!demoRuns.length || scenarioIndex >= demoRuns.length - 1} onClick={() => void changeScenario(scenarioIndex + 1)}><Icon name="next" /></button>
-        <div className="demo-scenarios" aria-label="Demo scenarios">
-          {demoRuns.map((run, index) => <button key={run.run_id} aria-label={`Scenario ${index + 1}: ${run.question}`} aria-current={runId === run.run_id ? "step" : undefined} onClick={() => void changeScenario(index)}><span style={{ transform: `scaleX(${runId === run.run_id ? (pos + 1) / Math.max(fs.length, 1) : scenarioIndex > index ? 1 : 0})` }} /></button>)}
-        </div>
-        <span className="demo-progress" aria-live="polite">{scenarioIndex >= 0 ? `${scenarioIndex + 1} / ${demoRuns.length}` : "Recorded demo"}</span>
-      </div>
 
       {toast && <Toast text={toast} onDone={() => setToast(null)} />}
       {alertBox && (

@@ -28,7 +28,11 @@ export default function TraversalGuide(p: Props) {
   const current = useRef<HTMLElement>(null);
   useEffect(() => {
     if (body.current && current.current) {
-      body.current.scrollTo({ top: Math.max(0, current.current.offsetTop - body.current.offsetTop - 12), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      const panel = body.current;
+      const panelBox = panel.getBoundingClientRect();
+      const scale = panelBox.height > 0 ? panel.clientHeight / panelBox.height : 1;
+      const top = panel.scrollTop + (current.current.getBoundingClientRect().top - panelBox.top) * scale - 12;
+      panel.scrollTo({ top: Math.max(0, top), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
     }
   }, [p.position]);
 
