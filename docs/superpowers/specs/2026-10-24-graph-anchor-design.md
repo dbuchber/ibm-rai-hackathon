@@ -127,11 +127,12 @@ A run is a JSONL file of events: `{run_id, seq, ts, type, payload}`. Node and ed
 | `POST /api/runs` `{question}` | `{run_id}`, live mode |
 | `GET /api/runs/{id}/stream` | Server-Sent Events, one C3 event each |
 | `GET /api/proposals` | `[Proposal]` |
-| `POST /api/proposals/{id}` `{decision: approve\|reject}` | updated `Proposal` |
+| `POST /api/proposals` `CreateProposal` | new `Proposal` (`proposed_by="user"`, `status=proposed`) |
+| `POST /api/proposals/{id}` `{decision: approve\|reject}` | updated `Proposal`. Approving an edge moves it to `urn:g:approved`, a node adds it to the approved graph, a predicate makes it available to strategy and curation |
 
 ### C5: Proposal (curation)
 
-`{id, triple: {s, p, o}, rationale, evidence_chunk_id, quote, confidence, proposed_by, status: proposed|approved|rejected}`
+Three kinds, listed together in the curation screen: **edge** (`triple`), **node** (`node: {cls, local_id, label, description}`), **predicate** (`predicate: {name, description, domain, range}`). Common fields: `{id, kind, rationale, evidence_chunk_id?, quote?, confidence?, proposed_by: llm:<model>|analyst-seed|user, status}`. Users can add their own proposals of any kind in the curation screen (`CreateProposal`); they go through the same approve/reject step. IDs: `contracts.ids.proposal_id`.
 
 ### Workstreams
 

@@ -10,10 +10,10 @@ from pathlib import Path
 
 from rdflib import RDF, RDFS, Dataset, Literal, URIRef
 
-from contracts.ids import GRAPH_IRIS, ONT, edge_id, node_iri, pred_iri
+from contracts.ids import GRAPH_IRIS, ONT, edge_id, node_iri, pred_iri, proposal_id
 from contracts.models import (
     AnswerEvent, AnswerPayload, BaselineEvent, BaselinePayload, Citation, Contradiction, Decision,
-    EvidenceEvent, EvidencePayload, Proposal, RunFinished, RunFinishedEvent, RunStarted, RunStartedEvent,
+    EvidenceEvent, EvidencePayload, NodeSpec, PredicateSpec, Proposal, RunFinished, RunFinishedEvent, RunStarted, RunStartedEvent,
     ScoredNode, SeedsEvent, SeedsPayload, StepEvent, StepPayload, StrategyEvent, StrategyPayload, Triple,
 )
 from contracts.rdf_store import RdfGraphStore
@@ -164,7 +164,24 @@ def main() -> None:
                         rationale="SOP-001 sets 210 °C as critical for ST02 TMP; the TMP-2210 datasheet rates 200 °C continuous.",
                         evidence_chunk_id=o, quote="the rated maximum for continuous operation is 200°C",
                         confidence=0.86, proposed_by="llm:openrouter/google/gemma-4-31b-it")
-    (OUT / "proposals.json").write_text(json.dumps([proposal.model_dump()], indent=2, ensure_ascii=False))
+    ds_quote = "For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)."
+    new_model = NodeSpec(cls="SensorModel", local_id="RTD-2400", label="RTD-2400 (Series 2400 Pt100)",
+                         description="Pt100 RTD temperature sensor, rated to 250 °C continuous.")
+    node_prop = Proposal(id=proposal_id("node", iri=node_iri("SensorModel", "RTD-2400")), kind="node", node=new_model,
+                         rationale="The datasheet names a successor model that is not yet in the graph.",
+                         evidence_chunk_id=o, quote=ds_quote, confidence=0.91,
+                         proposed_by="llm:openrouter/google/gemma-4-31b-it")
+    pred = PredicateSpec(name="recommended_replacement", description="SensorModel recommended_replacement SensorModel.",
+                         domain="SensorModel", range="SensorModel")
+    pred_prop = Proposal(id=proposal_id("predicate", iri=pred_iri("recommended_replacement")), kind="predicate", predicate=pred,
+                         rationale="Vendors name successor models; no predicate can express that today.",
+                         evidence_chunk_id=o, quote=ds_quote, confidence=0.78,
+                         proposed_by="llm:openrouter/google/gemma-4-31b-it")
+    governs = (IRI["sop"], pred_iri("governs"), IRI["station"])
+    user_prop = Proposal(id=proposal_id("edge", triple=governs), kind="edge", triple=Triple(s=governs[0], p=governs[1], o=governs[2]),
+                         rationale="SOP-001 is the operating procedure for the sealing station.", proposed_by="user")
+    proposals = [proposal, node_prop, pred_prop, user_prop]
+    (OUT / "proposals.json").write_text(json.dumps([x.model_dump() for x in proposals], indent=2, ensure_ascii=False))
     (OUT / "graph_export.json").write_text(store.export({"approved", "proposed"}).model_dump_json(indent=2))
     print(f"wrote {len(events)} events")
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, Field, TypeAdapter
+from pydantic import BaseModel, Field, TypeAdapter, model_validator
 
 GraphName = Literal["approved", "proposed", "rejected"]
 
@@ -202,12 +202,48 @@ class Triple(BaseModel):
     o: str
 
 
-class Proposal(BaseModel):
-    id: str                          # = edge_id(s, p, o)
-    triple: Triple
+class NodeSpec(BaseModel):
+    cls: str                         # existing ontology class local name, e.g. "Supplier"
+    local_id: str                    # IRI = contracts.ids.node_iri(cls, local_id)
+    label: str
+    description: str | None = None
+
+
+class PredicateSpec(BaseModel):
+    name: str                        # snake_case; IRI = contracts.ids.pred_iri(name)
+    description: str                 # "Domain verb Range.", like the ontology comments
+    domain: str | None = None        # class local name
+    range: str | None = None
+
+
+ProposalKind = Literal["edge", "node", "predicate"]
+
+
+class _ProposalBody(BaseModel):
+    """Exactly the field matching `kind` is set."""
+    kind: ProposalKind = "edge"
+    triple: Triple | None = None
+    node: NodeSpec | None = None
+    predicate: PredicateSpec | None = None
     rationale: str
-    evidence_chunk_id: str
-    quote: str
-    confidence: float
-    proposed_by: str                 # "llm:<model>" | "analyst-seed"
+    evidence_chunk_id: str | None = None   # Chunk IRI the proposal is based on, if any
+    quote: str | None = None
+
+    @model_validator(mode="after")
+    def _payload_matches_kind(self):
+        given = {k for k in ("triple", "node", "predicate") if getattr(self, k) is not None}
+        expected = {"edge": "triple", "node": "node", "predicate": "predicate"}[self.kind]
+        if given != {expected}:
+            raise ValueError(f"kind={self.kind} needs exactly '{expected}', got {sorted(given)}")
+        return self
+
+
+class CreateProposal(_ProposalBody):
+    """POST /api/proposals body: a proposal entered by a user in the curation screen."""
+
+
+class Proposal(_ProposalBody):
+    id: str                          # contracts.ids.proposal_id(kind, ...)
+    confidence: float | None = None  # None for proposals entered by people
+    proposed_by: str                 # "llm:<model>" | "analyst-seed" | "user"
     status: GraphName = "proposed"

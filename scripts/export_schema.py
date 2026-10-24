@@ -15,6 +15,7 @@ SCHEMAS = {
     "Event": m.EventAdapter,
     "GraphExport": TypeAdapter(m.GraphExport),
     "Proposal": TypeAdapter(m.Proposal),
+    "CreateProposal": TypeAdapter(m.CreateProposal),
     "RunSummary": TypeAdapter(m.RunSummary),
     "CreateRun": TypeAdapter(m.CreateRun),
     "CreateRunResponse": TypeAdapter(m.CreateRunResponse),

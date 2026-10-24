@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from contracts.ids import edge_id, node_iri, pred_iri
-from contracts.models import EventAdapter, GraphExport, Proposal
+from contracts.models import CreateProposal, EventAdapter, GraphExport, Proposal
 from contracts.rdf_store import RdfGraphStore
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -79,6 +79,25 @@ def test_fixture_json_validates():
     GraphExport.model_validate_json((FIX / "graph_export.json").read_text())
     for p in json.loads((FIX / "proposals.json").read_text()):
         Proposal.model_validate(p)
+
+
+def test_fixture_has_every_proposal_kind():
+    kinds = {Proposal.model_validate(p).kind for p in json.loads((FIX / "proposals.json").read_text())}
+    assert kinds == {"edge", "node", "predicate"}
+
+
+def test_proposal_payload_must_match_kind():
+    with pytest.raises(ValueError):
+        CreateProposal(kind="node", triple={"s": "a", "p": "b", "o": "c"}, rationale="x")
+    ok = CreateProposal(kind="predicate", predicate={"name": "certified_by", "description": "Supplier certified_by Document."}, rationale="x")
+    assert ok.triple is None
+
+
+def test_real_proposals_validate():
+    path = ROOT / "data" / "proposals.json"
+    if path.exists():
+        for p in json.loads(path.read_text()):
+            Proposal.model_validate(p)
 
 
 def test_real_graph_loads_if_present():

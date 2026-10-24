@@ -30,3 +30,11 @@ def local_name(iri: str) -> str:
 
 def edge_id(s: str, p: str, o: str) -> str:
     return hashlib.sha1(f"{s}|{p}|{o}".encode()).hexdigest()[:12]
+
+
+def proposal_id(kind: str, *, triple: tuple[str, str, str] | None = None, iri: str | None = None) -> str:
+    """Edge proposals share the edge's ID, so an approved proposal and its edge are the same thing.
+    Node and predicate proposals hash their IRI: `proposal_id("node", iri=node_iri(...))`."""
+    if kind == "edge":
+        return edge_id(*triple)
+    return hashlib.sha1(f"{kind}|{iri}".encode()).hexdigest()[:12]

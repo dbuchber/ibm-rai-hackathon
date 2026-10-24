@@ -1,0 +1,28 @@
+{
+  "name": "graph-anchor-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5180",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5180",
+    "types": "node scripts/gen-types.mjs",
+    "data": "node scripts/copy-fixtures.mjs",
+    "graph": "cd .. && PYTHONPATH=. uv run python web/scripts/export_graph.py"
+  },
+  "dependencies": {
+    "cytoscape": "^3.30.2",
+    "cytoscape-fcose": "^2.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/cytoscape": "^3.21.8",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "json-schema-to-typescript": "^15.0.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}
