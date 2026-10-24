@@ -52,6 +52,8 @@ The thesis code lives on the Hetzner node under `/data/projects/ba/` (map: `/dat
 
 Every answer shows **the graph that led to the result**: the *evidence subgraph*. It contains only the nodes and edges the answer cites, plus the walked path that connects them to the seeds. It is drawn visibly distinct from the merely *explored* graph (everything the traversal looked at), which is shown dimmed. The evidence subgraph is part of the run contract below, so it is never reconstructed afterwards in the UI.
 
+**Chunks one level down.** Chunk nodes are never drawn in the twin, run or evidence views; documents are. Edges that run through a chunk (`mentions`, `defined_in`, `contradicts`) are lifted to the document for display, with a count of the chunks behind them. Clicking a node opens an inspector with its chunks (title, page, text, cited chunks highlighted). Citations in an answer jump to the document and open the cited chunk there.
+
 ## Knowledge graph construction
 
 Four layers. Only layer 4 uses an LLM, and its output is never used for answers until an analyst approves it.
