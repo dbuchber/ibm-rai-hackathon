@@ -4,6 +4,18 @@
     "question": {
       "title": "Question",
       "type": "string"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model"
     }
   },
   "required": [

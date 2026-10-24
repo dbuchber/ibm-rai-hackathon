@@ -206,6 +206,14 @@ class RunSummary(BaseModel):
 class CreateRun(BaseModel):
     """POST /api/runs body. The request also needs the header X-Invite-Code (403 without a valid one)."""
     question: str
+    model: str | None = None   # an id from GET /api/models; None = server default (RAI_MODEL)
+
+
+class ModelInfo(BaseModel):
+    """GET /api/models item: a live model the server allows."""
+    id: str
+    label: str
+    provider: str   # "gateway" | "ibm-ica"
 
 
 class CreateRunResponse(BaseModel):

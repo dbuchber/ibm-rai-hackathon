@@ -1,0 +1,33 @@
+{
+  "$defs": {
+    "ModelInfo": {
+      "description": "GET /api/models item: a live model the server allows.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "provider"
+      ],
+      "title": "ModelInfo",
+      "type": "object"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/ModelInfo"
+  },
+  "type": "array",
+  "title": "ModelInfo"
+}
