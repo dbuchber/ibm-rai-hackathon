@@ -70,9 +70,9 @@ def _extract_json(text: str) -> object:
 
 
 def complete_json(messages: list[dict], model: str, schema: type[T]) -> T:
-    """One call plus two retries (reasoning models occasionally return empty/truncated JSON); raises LLMFormatError if the output never validates."""
+    """One call plus four retries (reasoning models occasionally return empty/truncated JSON); raises LLMFormatError if the output never validates."""
     last: Exception | None = None
-    for _ in range(3):
+    for _ in range(5):
         try:
             return schema.model_validate(_extract_json(_raw(messages, model)))
         except (json.JSONDecodeError, ValidationError) as e:

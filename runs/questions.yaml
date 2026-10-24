@@ -3,4 +3,4 @@
 - id: demo-contradiction
   question: "What is the critical temperature limit at ST02_SEALING, and does the sensor datasheet support running up to that limit?"
 - id: demo-maintenance
-  question: "Who is authorized to perform maintenance on the packaging station ST04_PACKAGING, and which SOP defines the maintenance procedure?"
+  question: "Which SOP defines MAINT-01 on ST04_PACKAGING, and which sensor triggers it?"

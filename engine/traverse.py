@@ -25,9 +25,9 @@ Each step you see the question, the strategy guidance, the facts collected so fa
 For EVERY candidate edge decide:
 - "follow": the edge leads towards information needed for the question, or is itself needed evidence;
 - "prune": it is irrelevant or a detour.
-Every part of the question must be covered: if it asks who supplies, owns, operates or is authorised, follow the edge whose predicate answers that part (e.g. supplied_by, authorized_for) as soon as it appears. Be generous: when an edge could lead to a rule, limit, document passage, supplier or owner relevant to the question, follow it. Prune only edges that are clearly unrelated. Rules and document chunks (Chunk nodes carry the SOP/datasheet text) are the most valuable evidence for safety or limit questions.
+Every part of the question must be covered: if it asks who supplies, owns, operates or is authorised, follow the edge whose predicate answers that part (e.g. supplied_by, authorized_for) as soon as it appears. For questions about limits or ratings, the datasheet and SOP passages (Chunk nodes) that mention the relevant device, sensor model or station are essential: follow `mentions` and `has_chunk` edges that lead to them. Be generous: when an edge could lead to a rule, limit, document passage, supplier or owner relevant to the question, follow it. Prune only edges that are clearly unrelated. Rules and document chunks (Chunk nodes carry the SOP/datasheet text) are the most valuable evidence for safety or limit questions.
 Then decide `sufficient`: true only if the facts collected so far PLUS the edges you follow now contain everything needed to answer the question (including documents/rules that state limits, and the supplier or owner if asked). If you follow edges that lead to nodes you still need to read, sufficient is false.
-Reply with one JSON object: {"decisions": [{"edge_id": "...", "verdict": "follow"|"prune", "reason": "<one short sentence>"}], "sufficient": true|false}
+Reply with one JSON object: {"decisions": [{"edge_id": "...", "verdict": "follow"|"prune", "reason": "<max 8 words>"}], "sufficient": true|false}
 Use the edge ids exactly as given in brackets."""
 
 
@@ -109,7 +109,7 @@ def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: See
                 f"\n\nNodes in the candidate edges:\n{detail}\n\nCandidate edges (step {n} of max {strategy.max_depth}):\n{listing}")},
         ]
         failed, cand_ids = False, {e.id for e in cands}
-        for _try in range(3):   # a valid-but-empty answer (no usable edge ids) is retried too
+        for _try in range(2):   # a valid-but-empty answer (no usable edge ids) is retried too
             try:
                 out = llm.complete_json(messages, model, _StepOut)
             except LLMFormatError:
