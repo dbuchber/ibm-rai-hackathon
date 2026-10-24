@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data, type Ontology } from "./data";
+import { data, HttpError, type Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
@@ -8,6 +8,9 @@ import { Picker, RunPanel } from "./RunPanel";
 import Contrast from "./Contrast";
 import Curate, { kindOf } from "./Curate";
 import Roadmap from "./Roadmap";
+import Compare from "./Compare";
+import { runSeconds } from "./models";
+import type { RunMeta } from "./RunPanel";
 import Inspector from "./Inspector";
 import { fold, foldClasses } from "./fold";
 import { AlertDialog, AuditDrawer, Toast, type OversightAlert } from "./Oversight";
@@ -33,6 +36,9 @@ export default function App() {
   const [view, setView] = useState<View>("twin");
   const [graph, setGraph] = useState<GraphExport>({ nodes: [], edges: [] });
   const [runs, setRuns] = useState<RunSummary[]>([]);
+  // all recorded runs are small: load them once for model names, durations and the comparison
+  const [runCache, setRunCache] = useState<Map<string, Event[]>>(new Map());
+  const [compareOpen, setCompareOpen] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [pos, setPos] = useState(-1);
@@ -57,7 +63,11 @@ export default function App() {
 
   useEffect(() => {
     data.getGraph().then(setGraph);
-    data.listRuns().then(setRuns);
+    data.listRuns().then(async (rs) => {
+      setRuns(rs);
+      const all = await Promise.all(rs.map(async (r) => [r.run_id, await data.getRun(r.run_id).catch(() => [])] as const));
+      setRunCache(new Map(all));
+    });
     data.listProposals().then((p) => setProposals(p.map((x) => ({ ...x, kind: kindOf(x) }))));
     data.getOntology().then(setOntology).catch(() => {});
   }, []);
@@ -97,13 +107,14 @@ export default function App() {
 
   const { nodes, edges } = useMemo(() => {
     const n = new Map<string, Node>();
-    graph.nodes.forEach((x) => n.set(x.id, x));
+    // people (badge holders) only add a hairball of zone access edges; no run walks them
+    graph.nodes.forEach((x) => { if (x.cls !== "Person") n.set(x.id, x); });
     prop.nodes.forEach((x) => { if (!n.has(x.id)) n.set(x.id, x); });
     // run events embed nodes in full; they win so the run shows exactly what the model was given
     runEls.nodes.forEach((x) => n.set(x.id, x));
     const e = new Map<string, Edge>();
     for (const x of [...prop.edges, ...graph.edges, ...runEls.edges]) e.set(x.id, { ...x, graph: status.get(x.id) ?? x.graph });
-    return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected") };
+    return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected" && n.has(x.s) && n.has(x.o)) };
   }, [graph, runEls, status, prop]);
   const idx = useMemo(() => labelIndex(nodes), [nodes]);
   // chunks are drawn one level down: hidden in the graph, lifted onto their documents (fold.ts)
@@ -130,29 +141,39 @@ export default function App() {
     audit("supervisor_notified", `${SUPERVISOR} notified.`);
     setAlertBox({ kind: "chat", canary: c.canary, question: c.question, supervisor: SUPERVISOR });
   }, []);
-  const go = (v: View) => { if (v !== view) { moveOn(); setAuditOpen(false); } setView(v); };
+  const go = (v: View) => { if (v !== view) { moveOn(); setAuditOpen(false); setCompareOpen(false); } setView(v); };
 
   const pick = useCallback(async (id: string) => {
     moveOn();
     stopStream.current();
+    setCompareOpen(false);
     const ev = await data.getRun(id);
     setLiveRun(false); setLost(false);
     setRunId(id); setEvents(ev); setPos(0); setPlaying(true); setView("ask"); setSelected(null);
   }, []);
 
-  const ask = useCallback(async (q: string) => {
+  const ask = useCallback(async (q: string, invite: string): Promise<string | null> => {
     moveOn();
-    stopStream.current();
     try {
-      const { run_id } = await data.startRun(q);
+      const { run_id } = await data.startRun(q, invite);
+      stopStream.current();
       setLiveRun(true); setLost(false); setRunId(run_id); setEvents([]); setPos(-1); setPlaying(true);
       stopStream.current = data.streamRun(
         run_id,
         (e) => setEvents((xs) => (xs.some((x) => x.seq === e.seq) ? xs : [...xs, e])),
         () => setLost(true),
       );
+      return null;
     } catch (err) {
-      setLost(true);
+      if (err instanceof HttpError) {
+        if (err.status === 403) return "Invite code needed. Ask the presenter for one.";
+        if (err.status === 429) {
+          const s = err.retryAfter ?? 5;
+          return `Busy, try again in ${s < 90 ? `${s} s` : `${Math.ceil(s / 60)} min`}.`;
+        }
+        if (err.status === 422) return "That question is too long. Shorten it a little.";
+      }
+      return "The live engine is not reachable. Replay a recorded run instead.";
     }
   }, []);
 
@@ -256,6 +277,34 @@ export default function App() {
     }
   }, [rv, view, runId, reported]);
 
+  // ---- model comparison: recorded runs of the same question ----
+  const runMeta = useMemo(() => {
+    const m = new Map<string, RunMeta>();
+    for (const [id, ev] of runCache) {
+      const st = ev.find((e) => e.type === "run.started");
+      m.set(id, { model: st?.type === "run.started" ? st.payload.model : "", secs: runSeconds(ev) });
+    }
+    return m;
+  }, [runCache]);
+  const siblings = useMemo(() => {
+    const q = runs.find((r) => r.run_id === runId)?.question;
+    return q ? runs.filter((r) => r.question === q && !r.mock) : [];
+  }, [runs, runId]);
+  const contradictionRun = useMemo(() => runs.find((r) => {
+    const ev = runCache.get(r.run_id) ?? [];
+    return !r.mock && ev.some((e) => e.type === "answer" && (e.payload.contradictions ?? []).length > 0)
+      && ev.some((e) => e.type === "strategy" && e.payload.allowed_predicates.some((p) => /#(mentions|defined_in)$/.test(p)));
+  }), [runs, runCache]);
+  const switchModel = (id: string) => {
+    if (id === runId) return;
+    const ev = runCache.get(id);
+    if (!ev) return;
+    const atEnd = pos >= fs.length - 1;
+    setRunId(id); setEvents(ev);
+    setPos(atEnd ? frames(ev).length - 1 : 0);
+    setPlaying(!atEnd);
+  };
+
   // ---- what the graph shows ----
   const showRun = (view === "ask" || view === "contrast") && runId;
   const panelOpen = view === "ask" || view === "curate";
@@ -310,7 +359,8 @@ export default function App() {
     const approved = graph.edges.filter((e) => (status.get(e.id) ?? e.graph) === "approved").length;
     const docs = graph.nodes.filter((n) => n.cls === "Document").length;
     const chunks = graph.nodes.filter((n) => n.cls === "Chunk").length;
-    return { nodes: graph.nodes.length - chunks, approved, docs, chunks };
+    const people = graph.nodes.filter((n) => n.cls === "Person").length;
+    return { nodes: graph.nodes.length - chunks, approved, docs, chunks, people };
   }, [graph, status]);
 
   const current = pos >= 0 ? fs[pos] : undefined;
@@ -346,11 +396,22 @@ export default function App() {
         </div>
       </header>
 
-      {view === "ask" && !runId && <Picker runs={runs} live={data.live} onPick={pick} onAsk={ask} />}
-      {view === "ask" && runId && (
+      {view === "ask" && !runId && <Picker runs={runs} meta={runMeta} live={data.live} onPick={pick} onAsk={ask} />}
+      {view === "ask" && runId && compareOpen && siblings.length > 1 && (
+        <Compare
+          a={{ summary: siblings[0], events: runCache.get(siblings[0].run_id) ?? [] }}
+          b={{ summary: siblings[1], events: runCache.get(siblings[1].run_id) ?? [] }}
+          idx={idx} current={runId}
+          onShow={(id) => { switchModel(id); setCompareOpen(false); }}
+          onOpenRun={(id) => pick(id)}
+          contradictionRun={contradictionRun} />
+      )}
+      {view === "ask" && runId && !compareOpen && (
         <RunPanel view={rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
           onBack={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
-          onCite={cite} reported={!!runId && reported.has(runId)} onReport={report} />
+          onCite={cite} reported={!!runId && reported.has(runId)} onReport={report}
+          models={siblings.map((r) => ({ run_id: r.run_id, ...(runMeta.get(r.run_id) ?? { model: "", secs: null }) }))}
+          current={runId} onSwitch={switchModel} onCompare={() => setCompareOpen(true)} />
       )}
       {view === "contrast" && runId && <Contrast v={full} idx={idx} edges={edgeIdx} />}
       {view === "curate" && (
@@ -360,7 +421,7 @@ export default function App() {
 
       {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
 
-      {view === "ask" && runId && (
+      {view === "ask" && runId && !compareOpen && (
         <div className="player glass" style={{ left: `calc(${inset.left}px + (100% - ${inset.left + inset.right}px) / 2)` }} role="toolbar" aria-label="Playback">
           <button className="icon-btn" aria-label="Restart" onClick={() => { setPos(0); setPlaying(true); }}><Icon name="restart" /></button>
           <button className="icon-btn" aria-label="Previous step" disabled={pos <= 0}
@@ -391,7 +452,7 @@ export default function App() {
           <div className="intro glass">
             <div className="eyebrow">The anchor</div>
             <h1>One curated graph grounds every answer.</h1>
-            <p>Company, plant and documents in one knowledge graph. Every relation here was approved by an analyst. Models only propose.</p>
+            <p>Company, plant and documents in one knowledge graph. Every relation here is approved. Models only propose.</p>
             <div className="stats">
               <div className="stat"><b>{stats.nodes}</b><span>entities</span></div>
               <div className="stat"><b>{stats.approved}</b><span>approved relations</span></div>
@@ -400,7 +461,7 @@ export default function App() {
             </div>
           </div>
         )}
-        {!sel && !auditOpen && <Legend mode={mode} view={view} />}
+        {!sel && !auditOpen && !compareOpen && <Legend mode={mode} view={view} people={stats.people} />}
       </div>
       {toast && <Toast text={toast} onDone={() => setToast(null)} />}
       {alertBox && (
@@ -413,7 +474,7 @@ export default function App() {
   );
 }
 
-function Legend({ mode, view }: { mode: GraphMode; view: View }) {
+function Legend({ mode, view, people }: { mode: GraphMode; view: View; people: number }) {
   if (view === "contrast" || view === "roadmap") return null;
   if (mode === "twin" || view === "curate") {
     return (
@@ -422,6 +483,7 @@ function Legend({ mode, view }: { mode: GraphMode; view: View }) {
         <span><i className="sw" style={{ background: "var(--plant)" }} />Plant</span>
         <span><i className="sw sq" style={{ background: "var(--docs)" }} />Documents</span>
         <span><i className="ln" style={{ borderColor: "var(--ink2)", borderTopStyle: "dashed" }} />Proposed</span>
+        {people > 0 && <span className="muted">{people} people not drawn</span>}
       </div>
     );
   }

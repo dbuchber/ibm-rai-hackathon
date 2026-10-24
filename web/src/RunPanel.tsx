@@ -4,49 +4,82 @@ import { labelOf, readable, Triple, type Index } from "./bits";
 import type { RunView } from "./run";
 import { pretty } from "./run";
 import { FlagIcon } from "./Curate";
+import { fmtDuration, modelInfo } from "./models";
+
+export interface RunMeta { model: string; secs: number | null }
 
 interface PickerProps {
   runs: RunSummary[];
+  meta: Map<string, RunMeta>;
   live: boolean;
   onPick: (id: string) => void;
-  onAsk: (q: string) => void;
+  /** resolves to an error message for the visitor, or null once the run started */
+  onAsk: (q: string, invite: string) => Promise<string | null>;
 }
 
-export function Picker({ runs, live, onPick, onAsk }: PickerProps) {
+const INVITE_KEY = "graph-anchor.invite";
+const loadInvite = () => { try { return localStorage.getItem(INVITE_KEY) ?? ""; } catch { return ""; } };
+const saveInvite = (v: string) => { try { localStorage.setItem(INVITE_KEY, v); } catch { /* private window */ } };
+
+export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
   const [q, setQ] = useState("");
+  const [invite, setInvite] = useState(loadInvite);
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  // runs of the same question with different models share one card
+  const groups = [...runs.reduce((m, r) => m.set(r.question, [...(m.get(r.question) ?? []), r]), new Map<string, RunSummary[]>()).values()];
+  const askForm = (
+    <form
+      style={{ marginTop: live ? 0 : 22, marginBottom: live ? 22 : 0 }}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (!q.trim() || !invite.trim()) return;
+        saveInvite(invite.trim());
+        setBusy(true); setErr(null);
+        const m = await onAsk(q.trim(), invite.trim());
+        setBusy(false); setErr(m);
+      }}
+    >
+      <label className="eyebrow" htmlFor="ask">{live ? "Ask your own question" : "Or ask your own"}</label>
+      <div className="ask-field">
+        <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} disabled={!live}
+          placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
+        <button className="btn" disabled={!live || !q.trim() || !invite.trim() || busy}>{busy ? "Starting…" : "Ask"}</button>
+      </div>
+      {live && (
+        <label className="field invite">
+          <span>Invite code</span>
+          <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="From the presenter" spellCheck={false} autoComplete="off" />
+        </label>
+      )}
+      {err && <div className="hint error" role="alert">{err}</div>}
+      {live && !err && <div className="hint">A live run takes about a minute. The recorded runs below replay instantly.</div>}
+      {!live && <div className="hint">Offline replay. Live questions need the engine API.</div>}
+    </form>
+  );
   return (
     <aside className="panel glass" aria-label="Ask a question">
       <div className="panel-head">
         <div className="eyebrow">Ask the twin</div>
-        <h2 className="question">Pick a question. Watch which knowledge the model is given.</h2>
+        <h2 className="question">{live ? "Ask a question" : "Pick a question"}. Watch which knowledge the model is given.</h2>
       </div>
       <div className="panel-body">
+        {live && askForm}
+        {live && <div className="eyebrow" style={{ marginBottom: 8 }}>Or replay a recorded run</div>}
         <div className="pick">
-          {runs.map((r) => (
-            <button key={r.run_id} className="pick-q" onClick={() => onPick(r.run_id)}>
-              <div className="q">{r.question}</div>
+          {groups.map((g) => (
+            <button key={g[0].run_id} className="pick-q" onClick={() => onPick(g[0].run_id)}>
+              <div className="q">{g[0].question}</div>
               <div className="row">
-                <span className="tag neutral">Recorded run</span>
-                {r.mock && <span className="tag mock">Mock</span>}
+                {g.length > 1
+                  ? g.map((r) => <span key={r.run_id} className="tag neutral">{modelInfo(meta.get(r.run_id)?.model ?? "").name}</span>)
+                  : <span className="tag neutral">Recorded run</span>}
+                {g.some((r) => r.mock) && <span className="tag mock">Mock</span>}
               </div>
             </button>
           ))}
         </div>
-        <form
-          style={{ marginTop: 22 }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (q.trim()) onAsk(q.trim());
-          }}
-        >
-          <label className="eyebrow" htmlFor="ask">Or ask your own</label>
-          <div className="ask-field">
-            <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} disabled={!live}
-              placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
-            <button className="btn" disabled={!live || !q.trim()}>Ask</button>
-          </div>
-          {!live && <div className="hint">Offline replay. Live questions need the engine API.</div>}
-        </form>
+        {!live && askForm}
       </div>
     </aside>
   );
@@ -62,9 +95,14 @@ interface RunProps {
   onCite: (id: string) => void;
   reported: boolean;
   onReport: () => void;
+  /** other runs of the same question with a different model */
+  models: { run_id: string; model: string; secs: number | null }[];
+  current: string;
+  onSwitch: (runId: string) => void;
+  onCompare: () => void;
 }
 
-export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, reported, onReport }: RunProps) {
+export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, reported, onReport, models, current, onSwitch, onCompare }: RunProps) {
   const body = useRef<HTMLDivElement>(null);
   const cards = (v.strategy ? 1 : 0) + (v.seeds.length ? 1 : 0) + v.steps.length * 2 + (v.answer ? 1 : 0) + (v.evidence ? 1 : 0);
   useEffect(() => {
@@ -83,12 +121,26 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
         <div className="meta-row">
           <span className={"tag " + (live ? "live" : "neutral")}>{live ? "Live run" : "Replay"}</span>
           {v.started?.mock && <span className="tag mock" title="Hand-curated run, not produced by the engine">Mock run</span>}
-          {v.started && <span className="tag neutral">{v.started.model.split("/").pop()}</span>}
+          {v.started && models.length < 2 && <span className="tag neutral">{modelInfo(v.started.model).name}</span>}
         </div>
+        {models.length > 1 && (
+          <div className="model-switch">
+            <div className="segmented mini" role="group" aria-label="Model">
+              {models.map((m) => (
+                <button key={m.run_id} aria-pressed={m.run_id === current} onClick={() => onSwitch(m.run_id)}>
+                  {modelInfo(m.model).name}{m.secs != null && <span className="count"> {fmtDuration(m.secs)}</span>}
+                </button>
+              ))}
+            </div>
+            <button className="link-btn" onClick={onCompare}>Compare</button>
+          </div>
+        )}
       </div>
       <div className="panel-body" ref={body} aria-live="polite">
         {lost && <div className="banner">Connection lost. Showing the events received so far.</div>}
-        {v.finished?.status === "error" && <div className="banner">Run failed: {v.finished.error}</div>}
+        {v.finished?.status === "error" && (
+          <div className="banner" title={v.finished.error ?? undefined}>The model is not available right now. Replay one of the recorded runs.</div>
+        )}
 
         {v.strategy && (
           <section className="card">
@@ -205,7 +257,28 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
             </p>
           </section>
         )}
+        {live && !v.finished && !lost && (
+          <Waiting key={cards}
+            text={!v.strategy ? "Waiting for the model to choose a strategy…" : !v.answer ? "Waiting for the model to walk the graph…" : "Finishing…"} />
+        )}
       </div>
     </aside>
+  );
+}
+
+/** Shown while a live run is quiet; the clock restarts with each new card (remounted by key). */
+function Waiting({ text }: { text: string }) {
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    const t0 = Date.now();
+    const t = setInterval(() => setSecs(Math.floor((Date.now() - t0) / 1000)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="waiting" role="status">
+      <span className="spinner" aria-hidden="true" />
+      <span>{text}</span>
+      <span className="secs" aria-hidden="true">{secs} s</span>
+    </div>
   );
 }

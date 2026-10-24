@@ -160,6 +160,9 @@ function ProposalCard({ p, idx, onDecide, onShow, again }: {
 
 // ---------- add form ----------
 
+// Real-world entities only, as kg.propose offers them; plant, document and event nodes come from the source systems.
+const NODE_CLASSES = ["SensorModel", "Supplier", "Customer", "Company", "Role"];
+
 function AddForm({ initial, idx, ontology, onSubmit, onCancel }: {
   initial: Kind; idx: Index; ontology: Ontology;
   onSubmit: (b: CreateProposal) => Promise<void>; onCancel: () => void;
@@ -168,7 +171,7 @@ function AddForm({ initial, idx, ontology, onSubmit, onCancel }: {
   const [s, setS] = useState<Node | null>(null);
   const [o, setO] = useState<Node | null>(null);
   const [pred, setPred] = useState("");
-  const [cls, setCls] = useState(ontology.classes[0]?.name ?? "");
+  const [cls, setCls] = useState("");
   const [localId, setLocalId] = useState("");
   const [label, setLabel] = useState("");
   const [desc, setDesc] = useState("");
@@ -186,6 +189,7 @@ function AddForm({ initial, idx, ontology, onSubmit, onCancel }: {
       if (!pred) return "Pick a relation.";
     }
     if (kind === "node") {
+      if (!cls) return "Choose a class.";
       if (!/^[A-Za-z0-9_.-]+$/.test(localId)) return "ID: letters, digits, _ . - only.";
       if (idx.has(nodeIri(cls, localId))) return "A node with this ID already exists.";
       if (!label.trim()) return "Add a label.";
@@ -241,7 +245,8 @@ function AddForm({ initial, idx, ontology, onSubmit, onCancel }: {
           <label className="field">
             <span>Class</span>
             <select value={cls} onChange={(e) => setCls(e.target.value)}>
-              {ontology.classes.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+              <option value="">Choose…</option>
+              {ontology.classes.filter((c) => NODE_CLASSES.includes(c.name)).map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
             </select>
           </label>
           <div className="field-row">

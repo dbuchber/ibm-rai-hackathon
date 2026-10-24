@@ -97,18 +97,20 @@ function stylesheet(c: Palette): StylesheetStyle[] {
       style: {
         label: "data(label)", opacity: 1, "border-width": 3, "border-color": c.accent, "border-opacity": 1,
         "underlay-color": c.accentSoft, "underlay-opacity": 0.16, "underlay-padding": 9, "underlay-shape": "ellipse",
-        color: c.ink, "font-size": 12, "font-weight": 600, "min-zoomed-font-size": 0, "z-index": 20,
+        color: c.ink, "font-size": 11, "font-weight": 600, "min-zoomed-font-size": 0, "z-index": 20, "text-max-width": "110px",
       } as any,
     },
     {
       selector: "edge.evidence",
       style: {
         opacity: 1, width: 4.5, "line-color": c.accent, "target-arrow-color": c.accent, "arrow-scale": 0.9,
-        "line-style": "solid", label: "data(pred)", color: c.accent, "font-weight": 600, "font-size": 11,
+        // relation names only on hover: on the evidence graph they sit on top of the node labels
+        "line-style": "solid", label: "", color: c.accent, "font-weight": 600, "font-size": 11,
         "min-zoomed-font-size": 0, "z-index": 20,
         "underlay-color": c.accentSoft, "underlay-opacity": 0.14, "underlay-padding": 5,
       } as any,
     },
+    { selector: "edge.evidence.hover", style: { label: "data(pred)", "z-index": 30 } },
     { selector: "edge.contra-virtual", style: { display: "none" } },
     {
       selector: "edge.contra",

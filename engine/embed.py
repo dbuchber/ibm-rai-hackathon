@@ -16,9 +16,16 @@ def _model():
     return TextEmbedding(MODEL)
 
 
+_CACHE: dict[str, np.ndarray] = {}   # text -> unit vector; keyed by the text itself, so edited nodes re-embed
+
+
 def embed(texts: list[str]) -> np.ndarray:
-    vecs = np.array(list(_model().embed(texts)), dtype=np.float32)
-    return vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
+    missing = list(dict.fromkeys(t for t in texts if t not in _CACHE))
+    if missing:
+        vecs = np.array(list(_model().embed(missing)), dtype=np.float32)
+        vecs = vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
+        _CACHE.update(zip(missing, vecs))
+    return np.array([_CACHE[t] for t in texts], dtype=np.float32)
 
 
 def rank(question: str, texts: list[str]) -> list[float]:

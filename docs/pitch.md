@@ -1,17 +1,18 @@
 # Graph Anchor: 3-Minute Pitch Script
 
-IBM Responsible AI Hackathon, 24 Oct 2026, pitch at 16:00. Total **180 s** (about 2.5 spoken words per second).
-Main run: **`demo-po1003`**, replayed from the stored JSONL. No live LLM call and no network needed.
+IBM Responsible AI Hackathon, 24 Oct 2026, pitch at 16:00. Total **180 s** (about 2.7 spoken words per second).
+Main run: **`demo-po1003`**, replayed from the stored JSONL; the model contrast uses **`demo-po1003-granite`** (same question). No live LLM call and no network needed.
 
 ## Timing at a glance
 
 | # | Screen | Start | Length |
 |---|---|---|---|
-| 1 | The twin | 0:00 | 20 s |
-| 2 | Ask | 0:20 | 20 s |
-| 3 | Traverse | 0:40 | 30 s |
-| 4 | Answer | 1:10 | 25 s |
-| 5 | Contrast | 1:35 | 20 s |
+| 1 | The twin | 0:00 | 15 s |
+| 2 | Ask | 0:15 | 17 s |
+| 3 | Traverse | 0:32 | 25 s |
+| 4 | Answer | 0:57 | 23 s |
+| 4b | Model contrast: Granite vs Mistral Large | 1:20 | 20 s |
+| 5 | Contrast with vector RAG | 1:40 | 15 s |
 | 6 | Curate, with the canary moment | 1:55 | 40 s |
 | 7 | Roadmap | 2:35 | 25 s |
 
@@ -19,38 +20,47 @@ Before going on stage: open the app in replay mode (see Backup plan, level 0), p
 
 ## Script
 
-### 1. The twin (0:00 to 0:20)
+### 1. The twin (0:00 to 0:15)
 **Click:** the app opens on the full-screen graph. Slowly drag or zoom once to show documents hanging off the plant.
 
-> "Company assistants answer from text that merely *sounds like* the question. They ignore how knowledge is *connected*. This is Kelvara, a fictional packaging company running the real iMAKS plant dataset. Every dot is an entity a human curated: stations, sensors, suppliers, rules and documents. This graph is the anchor."
+> "Assistants answer from text that merely sounds like the question and ignore how knowledge connects. This is Kelvara, a fictional company running the real iMAKS plant data. Every dot is a curated entity. This graph is the anchor."
 
 *Say it, don't skip it:* the company is fictional, the plant data is real.
 
-### 2. Ask (0:20 to 0:40)
+### 2. Ask (0:15 to 0:32)
 **Click:** "Ask the twin", pick the recorded question *"Order PO-1003 runs at the sealing station. Can it run at the sealing temperature limit, and who supplies the temperature sensor?"*. Press play.
 
-> "A maintenance planner asks: can order PO-1003 run at the sealing limit, and who supplies the sensor? Before it touches the graph, the engine plans. It classifies the question as order, station, rule and sensor, then supplier. And it chooses which relations it may follow: five of them. Everything else is off limits."
+> "A planner asks: can order PO-1003 run at the sealing limit, and who supplies the sensor? First the engine plans: it classifies the question and picks which relations it may follow. Everything else is off limits."
 
 *What is on screen:* the strategy card with the allowed-predicate chips (`executed_at`, `applies_to`, `monitors`, `of_model`, `supplied_by`) and max depth 4.
 
-### 3. Traverse (0:40 to 1:10)
+### 3. Traverse (0:32 to 0:57)
 **Click:** let it play. Pause once on step 1, show a *pruned* edge and a *followed* edge.
 
-> "It starts from three entry points and walks. At every hop the model judges each candidate edge: follow or prune, with a reason. Step one follows six of nine edges. Step two reaches the sensor model, then its supplier, and the model says: enough evidence. Two steps. The path lights up in the graph; pruned edges stay dim. The model never sees the whole company, only the neighbourhood the strategy allows."
+> "From three entry points it walks. At every hop the model judges each edge: follow or prune, with a reason. Two steps reach the sensor model and its supplier, then: enough evidence. Pruned edges stay dim."
 
-*Honest note, only if asked:* the model is Mistral Large 4 via OpenRouter. Granite is on the roadmap, not in today's runs.
+*Honest note, only if asked:* the model is Mistral Large 4 via OpenRouter. the Granite run in step 4b is real (IBM ICA API); the Mistral runs go through OpenRouter.
 
-### 4. Answer (1:10 to 1:35)
+### 4. Answer (0:57 to 1:20)
 **Click:** open the answer card, then the **Evidence graph** button. Click one citation.
 
-> "The order can run at 195 degrees. Sensor TMP-2210 comes from ThermoSense. But the critical threshold of 210 exceeds its 200-degree rating. Every claim cites a triple or passage, and this evidence graph shows only what the answer relies on. We show what the model was given, not what it thought. Real conflicts between documents are flagged, not silently resolved."
+> "The order can run at 195 degrees, the sensor comes from ThermoSense, but the critical 210 exceeds its 200-degree rating. Every claim cites a triple or passage; this evidence graph shows only what the answer relies on. We show what the model was given."
 
 *Honest note:* in this run the 210 versus 200 conflict appears in the answer text but not as a contradiction badge. The badge is shown in the recorded run `demo-contradiction` (SOP versus supplier quality agreement). Switch to it for 5 seconds if time allows, otherwise just say it.
 
-### 5. Contrast (1:35 to 1:55)
+### 4b. Model contrast: Granite vs Mistral Large (1:20 to 1:40)
+**Click:** in the run picker choose the recorded run *PO-1003 · IBM Granite 4 H Small*. Let the strategy card and the evidence graph appear (do not wait for every step). Then jump back to the evidence graph of the Mistral run for a second.
+
+> "Same question with IBM Granite 4 H Small: 33 seconds instead of three minutes. But its strategy skips the document links, so it never reaches the datasheet and misses the 210 versus 200 conflict. The evidence graph shows why. That is why we route: small models for steps, large for strategy and answer."
+
+*What is on screen:* Granite's strategy card (`executed_at`, `applies_to`, `of_model`, `supplied_by`; no `mentions`, no `defined_in`) and a smaller evidence graph (6 nodes, 5 edges) without the document nodes. Granite does find the supplier ThermoSense GmbH correctly.
+
+*Honest notes:* this is one question, one run each: a contrast, not a benchmark. Do not say "Granite is worse"; say "this smaller model planned too narrowly here". The Granite call is real (IBM ICA API, model `openai/ibm/granite-4-h-small`); the Mistral runs go through OpenRouter. Which model should handle which task is the roadmap hypothesis this run motivates, not something we have measured.
+
+### 5. Contrast with vector RAG (1:40 to 1:55)
 **Click:** open the Contrast view.
 
-> "Same question through plain vector RAG, same documents, top three passages. It finds the right-sounding SOPs, then admits it knows nothing about this order or its supplier. That fact lives in the links, not in any passage. This baseline is real, not staged."
+> "Same question through plain vector RAG, top three passages. It finds right-sounding SOPs, then admits it knows nothing about this order or its supplier. That fact lives in the links. This baseline is real."
 
 *What is on screen:* the "Illustrative example" tag appears only on hand-written baselines. This run's baseline is real; do not claim otherwise either way.
 
@@ -64,7 +74,16 @@ Before going on stage: open the app in replay mode (see Backup plan, level 0), p
 ### 7. Roadmap (2:35 to 3:00)
 **Click:** open Roadmap.
 
-> "Next, clearly labelled as not running today: right-sized models on-premises. Small ones for step verdicts, a large one for planning and answers, escalation on contradictions, and a config switch to IBM Granite. Plus guardrails, chat feedback into curation, links to source systems, and node-level access control. The model proposes, people approve, the graph is the anchor."
+> "Next, labelled as not running today: right-sized models on-premises. Small ones for step verdicts, a large one for strategy and answers, escalation on contradictions, and Granite through the same gateway. Plus guardrails, chat feedback into curation, source links, node-level access. The model proposes, people approve, the graph is the anchor."
+
+### Optional: live chat moment (only if time is left, never instead of a screen)
+**Click:** open the hosted site, "Ask the twin", live mode, type a short free question (e.g. *"Who supplies the humidity sensor HUM-2250?"*). The first events (strategy, seeds) appear within seconds; the full run takes **1 to 3 minutes** with Mistral Large 4 and can be slower when the gateway is busy (one measurement today: about 9 minutes).
+
+> "This is not a recording: a free question, live, against the same approved graph. While it walks, you can already see its plan."
+
+**Fallback, decide within 15 seconds:** if the run has not reached the answer, say "this is the same engine, here is its recorded run" and switch to the replay of `demo-po1003`. Do not wait for it. Never start the live question before the Curate screen; its time budget is fixed.
+
+*Honest note:* live latency is dominated by the reasoning model (about 30 to 240 s per LLM call), not by our code. Answers on a live run can be degraded (e.g. the supplier missed in one of today's runs); that is why the pitch runs on replays.
 
 ## What is real, what is mock
 
@@ -74,6 +93,7 @@ Before going on stage: open the app in replay mode (see Backup plan, level 0), p
 | Kelvara Packaging GmbH, customers, suppliers, production orders, quality agreement and contract | **Fictional, synthetic** (written for the demo) |
 | Graph in the UI (293 nodes, 867 approved edges) | Real build output; the approved layer is script-built, not LLM-extracted |
 | Runs `demo-po1003`, `demo-contradiction`, `demo-maintenance` | **Real engine output**, Mistral Large 4, stored and replayed. `demo-contradiction` contains one step where the model returned unusable JSON and the engine fell back; the answer is still correct |
+| Run `demo-po1003-granite` (IBM Granite 4 H Small via IBM ICA API) | **Real engine output**, real Granite call, 33 s; it answers "can run at the limit" and misses the datasheet and the conflict |
 | Vector-RAG baseline in those runs | **Real**, top-k 3, same chunks and model |
 | Live mode (free-text question) | **Real**, but 45 to 150 s per question and model-dependent; never needed for the pitch |
 | Curation proposals (3 contradiction edges) | Real LLM proposals; one is a hand-seeded analyst proposal if marked so |
@@ -81,14 +101,14 @@ Before going on stage: open the app in replay mode (see Backup plan, level 0), p
 | Canary in curation | Mechanism implemented; **notification is simulated** |
 | Canary in the chat (`mock-canary-chat`) | **Mock run**, labelled; do not present as engine output |
 | Roadmap screen | **Not running**, labelled "Roadmap" |
-| Model | Mistral Large 4 via OpenRouter. No Granite/watsonx credentials exist |
+| Models | Mistral Large 4 via OpenRouter (main runs); IBM Granite 4 H Small via IBM ICA API (contrast run). Router and size ladder on the roadmap are not implemented |
 
 Do not say: "the model understood", "the model used", "100% accurate", "we evaluated accuracy". We have shown 3 questions, not an evaluation. Accuracy and faithfulness measurement is "how we would measure it" only.
 
 ## Responsible-AI arguments (one line each, to land in the speech)
 
 1. **Grounding in a curated graph.** The model proposes, analysts approve; the engine walks only the approved named graph. Hallucination risk stays out of the substrate.
-2. **A traceable evidence graph.** Every answer shows the strategy, a verdict per hop, cited triples and passages, and the subgraph behind them: we show what the model was given.
+2. **A traceable evidence graph.** Every answer shows the strategy, a verdict per hop, cited triples and passages, and the subgraph behind them: we show what the model was given, and it also makes a smaller model's gap visible (Granite's missing datasheet).
 3. **Contradiction instead of silent choice.** When an SOP and a datasheet or agreement disagree, the answer says so.
 4. **Canaries against automation bias (EU AI Act Art. 14).** Planted false items measure whether the human is still checking; a miss reverts the unchecked approvals and escalates.
 
@@ -112,7 +132,7 @@ Prepare this on the laptop **before** the session and keep the tab open. The hos
 - Switch to the pre-recorded screen capture of the full 3-minute click path (record it once during rehearsal at 15:00, with the same script). Narrate over it live.
 - If even that is unavailable, speak from this document: the story works with only the contradiction sentence and the canary sentence.
 
-**Level 4, a single screen misbehaves:** skip it and say one sentence. Order of what to drop, last first: Roadmap (say it in 10 s), Contrast, Traverse detail. Never drop Curate and the canary: it is the Responsible-AI moment.
+**Level 4, a single screen misbehaves:** skip it and say one sentence. Order of what to drop, last first: Roadmap (say it in 10 s), the Granite contrast (4b), the RAG contrast, Traverse detail. Never drop Curate and the canary: it is the Responsible-AI moment.
 
 **Prepare by 15:30 (feature freeze):**
 - [ ] `npm run preview` works from a cold terminal on the pitch laptop, offline.
@@ -125,6 +145,6 @@ Prepare this on the laptop **before** the session and keep the tab open. The hos
 
 - **Why not just a bigger RAG?** Similarity cannot tell that the sensor's supplier is linked to this order's station; the link is the knowledge. Our baseline shows the same chunks failing.
 - **Who curates at scale?** The model proposes, rule-based checks and analyst review decide; canaries keep the reviewer honest. The curation queue is a mock today.
-- **Does it work with Granite?** The gateway makes it a config change. We have not run it: no watsonx credentials today.
+- **Does it work with Granite?** Yes, one recorded run today via the IBM ICA API (33 s). It planned narrowly and missed the datasheet conflict on this question, which is why we propose routing. One question is not an evaluation.
 - **Is the accuracy measured?** No. We show 3 recorded runs and a fair baseline for contrast. Evaluating accuracy and faithfulness over many questions is the next step, using the thesis setup.
 - **What if the graph is wrong?** Then the answer cites a wrong edge and the evidence graph shows it. That is the point: the error is visible and fixable at the source, not buried in embeddings.

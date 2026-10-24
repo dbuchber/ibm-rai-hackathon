@@ -60,12 +60,19 @@ function chatSession(): string {
   return memorySession;
 }
 
+/** An HTTP error answer from the API; `retryAfter` in seconds when the server sent one (429). */
+export class HttpError extends Error {
+  constructor(message: string, readonly status: number, readonly retryAfter: number | null) { super(message); }
+}
+
 async function json<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
   if (!r.ok) {
     const body = await r.json().catch(() => null);
     const detail = body?.detail;
-    throw new Error(typeof detail === "string" ? detail : Array.isArray(detail) ? detail.map((d) => d.msg).join("; ") : `${r.status} ${url}`);
+    const retry = Number(r.headers.get("Retry-After"));
+    throw new HttpError(typeof detail === "string" ? detail : Array.isArray(detail) ? detail.map((d) => d.msg).join("; ") : `${r.status} ${url}`,
+      r.status, Number.isFinite(retry) && retry > 0 ? retry : null);
   }
   return r.json() as Promise<T>;
 }
@@ -195,7 +202,8 @@ function apiSource(): DataSource {
     // server log plus the browser-side entries of the chat canary click mock
     getAudit: () =>
       json<AuditEntry[]>("/api/audit")
-        .then((xs) => [...localAudit, ...xs].sort((a, b) => b.ts.localeCompare(a.ts)))
+        // the server lists oldest first; reverse before the stable sort so same-second entries stay newest first
+        .then((xs) => [...localAudit, ...[...xs].reverse()].sort((a, b) => b.ts.localeCompare(a.ts)))
         .catch(() => [...localAudit]),
   };
 }

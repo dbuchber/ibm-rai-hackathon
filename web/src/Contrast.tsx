@@ -48,7 +48,7 @@ export default function Contrast({ v, idx, edges }: { v: RunView; idx: Index; ed
           </div>
           <div className="col graph-side">
             <h3>Graph Anchor</h3>
-            <div className="how">Walks analyst-approved relations from the question's entities.</div>
+            <div className="how">Walks approved relations from the question's entities.</div>
             <p className="ans">{readable(v.answer?.text ?? "", idx)}</p>
             {contra.map((c, i) => (
               <div className="contra-box" key={i}>
