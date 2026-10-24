@@ -15,7 +15,7 @@ const sources = runFiles.length ? runFiles.map((f) => root + "runs/" + f) : [roo
 const index = [];
 for (const src of sources) {
   const lines = readFileSync(src, "utf8").split("\n").filter(Boolean);
-  const first = JSON.parse(lines[0]);
+  const first = lines.map((l) => JSON.parse(l)).find((e) => e.type === "run.started"); // line 0 is its beat
   copyFileSync(src, pub + "runs/" + first.run_id + ".jsonl");
   index.push({ run_id: first.run_id, question: first.payload.question, mock: !!first.payload.mock });
 }

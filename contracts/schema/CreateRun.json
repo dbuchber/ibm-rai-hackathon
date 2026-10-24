@@ -1,4 +1,5 @@
 {
+  "description": "POST /api/runs body. The request also needs the header X-Invite-Code (403 without a valid one).",
   "properties": {
     "question": {
       "title": "Question",

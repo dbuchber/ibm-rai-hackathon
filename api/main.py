@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import secrets
 import threading
 import time
 import uuid
@@ -12,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
@@ -40,6 +41,8 @@ def _stub_runner(delay: float):
             if ev.type == "run.started":
                 ev = ev.model_copy(update={"payload": ev.payload.model_copy(
                     update={"question": question, "mode": "live", "mock": True})})
+            elif ev.type == "beat" and ev.payload.act == "question":
+                ev = ev.model_copy(update={"payload": ev.payload.model_copy(update={"caption": question})})
             emit(ev)
             time.sleep(delay)
     return run
@@ -71,7 +74,8 @@ class LiveRun:
 
 def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                proposals_path: Path | None = None, proposals_seed: Path | None = None,
-               web_dist: Path | None = None, stub_delay: float = 0.4) -> FastAPI:
+               web_dist: Path | None = None, stub_delay: float = 0.4,
+               invite_codes: list[str] | None = None) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
     graph_path = Path(graph_path or env("RAI_GRAPH") or kg)
@@ -82,6 +86,9 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     proposals_seed = Path(proposals_seed or FIXTURES / "proposals.json")
     web_dist = Path(web_dist or ROOT / "web" / "dist")
     runs_dir.mkdir(parents=True, exist_ok=True)
+    # Live runs cost LLM calls, so they need an invitation. No codes configured = live mode closed.
+    if invite_codes is None:
+        invite_codes = [c.strip() for c in env("RAI_INVITE_CODES", "").split(",") if c.strip()]
 
     app = FastAPI(title="Graph Anchor API")
     store = CurationStore(graph_path)
@@ -128,10 +135,10 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     def runs() -> list[RunSummary]:
         out = []
         for f in sorted(runs_dir.glob("*.jsonl")):
-            first = f.read_text().split("\n", 1)[0]
+            first = next((l for l in f.read_text().splitlines()[:2] if '"run.started"' in l), None)
             if not first:
                 continue
-            ev = EventAdapter.validate_json(first)
+            ev = EventAdapter.validate_json(first)  # line 0 is its beat
             if ev.type == "run.started" and ev.payload.mode != "live":
                 out.append(RunSummary(run_id=f.stem, question=ev.payload.question, mock=ev.payload.mock))
         return out
@@ -141,7 +148,9 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         return read_run(run_id)
 
     @app.post("/api/runs")
-    async def create_run(body: CreateRun) -> CreateRunResponse:
+    async def create_run(body: CreateRun, x_invite_code: str = Header("")) -> CreateRunResponse:
+        if not any(secrets.compare_digest(x_invite_code.encode(), c.encode()) for c in invite_codes):
+            raise HTTPException(403, "invite code required")
         run_id = "live-" + uuid.uuid4().hex[:8]
         lr = LiveRun(run_id, runs_dir / f"{run_id}.jsonl")
         live[run_id] = lr
