@@ -24,11 +24,12 @@ class CurationStore(RdfGraphStore):
             self._adj.setdefault(o, []).append(e)
         return e
 
-    def add_node(self, spec: NodeSpec) -> Node:
+    def add_node(self, spec: NodeSpec, graph: GraphName = "approved") -> Node:
         iri = node_iri(spec.cls, spec.local_id)
-        n = Node(id=iri, cls=spec.cls, label=spec.label, description=spec.description)
-        self._nodes[iri] = n
-        return n
+        self._facets.setdefault(iri, {})[graph] = {"cls": spec.cls, "label": spec.label,
+                                                  **({"description": spec.description} if spec.description else {})}
+        self._refresh(iri)
+        return self._nodes[iri]
 
     def add_predicate(self, spec: PredicateSpec) -> str:
         iri = URIRef(pred_iri(spec.name))
@@ -40,7 +41,8 @@ class CurationStore(RdfGraphStore):
         return str(iri)
 
     def remove_node(self, iri: str) -> None:
-        self._nodes.pop(iri, None)
+        self._facets.get(iri, {}).pop("approved", None)
+        self._refresh(iri)
 
     def remove_predicate(self, name: str) -> None:
         self._ont.remove((URIRef(pred_iri(name)), None, None))

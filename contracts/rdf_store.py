@@ -19,6 +19,9 @@ def _tokens(text: str) -> set[str]:
     return {t for t in _TOKEN.findall(text.lower().replace("_", " ")) if t not in _STOP}
 
 
+_PRIORITY: tuple[GraphName, ...] = ("approved", "proposed", "rejected")
+
+
 class RdfGraphStore:
     def __init__(self, path: str | Path, ontology: str | Path = ONTOLOGY):
         self.ds = Dataset()
@@ -31,21 +34,22 @@ class RdfGraphStore:
 
     def _load(self) -> None:
         graph_of = {URIRef(iri): name for name, iri in GRAPH_IRIS.items()}
-        raw: dict[str, dict] = {}
+        # per node and per named graph: what that graph says about it (membership = the graph declares its class)
+        raw: dict[str, dict[str, dict]] = {}
         for s, p, o, g in self.ds.quads((None, None, None, None)):
             gname: GraphName | None = graph_of.get(g)
             if gname is None or not str(s).startswith(KG):
                 continue
             sid = str(s)
+            entry = raw.setdefault(sid, {}).setdefault(gname, {})
             if p == RDF.type:
-                raw.setdefault(sid, {})["cls"] = local_name(str(o))
+                entry["cls"] = local_name(str(o))
             elif p == RDFS.label:
-                raw.setdefault(sid, {})["label"] = str(o)
+                entry["label"] = str(o)
             elif p == RDFS.comment:
-                raw.setdefault(sid, {})["description"] = str(o)
+                entry["description"] = str(o)
             elif isinstance(o, Literal) and str(p).startswith(ONT):
                 key = local_name(str(p))
-                entry = raw.setdefault(sid, {})
                 if key == "text":
                     entry["text"] = str(o)
                 else:
@@ -53,16 +57,34 @@ class RdfGraphStore:
             elif isinstance(o, URIRef) and str(o).startswith(KG) and str(p).startswith(ONT):
                 eid = edge_id(sid, str(p), str(o))
                 self._edges[eid] = Edge(id=eid, s=sid, p=str(p), o=str(o), graph=gname)
-        for sid, d in raw.items():
-            if "cls" in d:
-                self._nodes[sid] = Node(id=sid, cls=d["cls"], label=d.get("label", local_name(sid)),
-                                        description=d.get("description"), text=d.get("text"),
-                                        props=d.get("props", {}))
+        self._facets = raw
+        for sid in raw:
+            self._refresh(sid)
         self._adj: dict[str, list[Edge]] = {}
         for e in self._edges.values():
             if e.graph == "approved":
                 self._adj.setdefault(e.s, []).append(e)
                 self._adj.setdefault(e.o, []).append(e)
+
+    def _merge(self, sid: str, graphs: set[GraphName]) -> Node | None:
+        """The node as the given graphs describe it; None unless one of them declares it. Approved wins over proposed over rejected."""
+        facets = [self._facets[sid][g] for g in _PRIORITY if g in graphs and g in self._facets.get(sid, {})]
+        if not any("cls" in f for f in facets):
+            return None
+        def first(key):
+            return next((f[key] for f in facets if key in f), None)
+        props: dict = {}
+        for f in reversed(facets):
+            props.update(f.get("props", {}))
+        return Node(id=sid, cls=first("cls"), label=first("label") or local_name(sid),
+                    description=first("description"), text=first("text"), props=props)
+
+    def _refresh(self, sid: str) -> None:
+        n = self._merge(sid, set(_PRIORITY))
+        if n is None:
+            self._nodes.pop(sid, None)
+        else:
+            self._nodes[sid] = n
 
     def node(self, id: str) -> Node:
         return self._nodes[id]
@@ -73,7 +95,7 @@ class RdfGraphStore:
             return []
         lowered = text.lower()
         scored = []
-        for n in self._nodes.values():
+        for n in self._visible({"approved"}):
             # An entity named verbatim in the question (PO-1003, ST02_SEALING) beats any token overlap.
             lid = local_name(n.id).lower()
             if len(lid) >= 4 and re.search(rf"(?<![a-z0-9_-]){re.escape(lid)}(?![a-z0-9_-])", lowered):
@@ -99,7 +121,10 @@ class RdfGraphStore:
 
     def export(self, graphs: set[GraphName]) -> GraphExport:
         edges = [e for e in self._edges.values() if e.graph in graphs]
-        return GraphExport(nodes=list(self._nodes.values()), edges=edges)
+        return GraphExport(nodes=self._visible(graphs), edges=edges)
+
+    def _visible(self, graphs: set[GraphName]) -> list[Node]:
+        return [n for sid in self._facets if (n := self._merge(sid, graphs)) is not None]
 
     # Not part of the protocol: used by the API for curation decisions.
     def set_edge_graph(self, eid: str, graph: GraphName) -> Edge:
