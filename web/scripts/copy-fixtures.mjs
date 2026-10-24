@@ -19,5 +19,10 @@ for (const src of sources) {
   copyFileSync(src, pub + "runs/" + first.run_id + ".jsonl");
   index.push({ run_id: first.run_id, question: first.payload.question, mock: !!first.payload.mock });
 }
+// pitch order: runs/questions.yaml first, then the rest; mock runs last
+const qy = existsSync(root + "runs/questions.yaml") ? readFileSync(root + "runs/questions.yaml", "utf8") : "";
+const order = [...qy.matchAll(/^- id: *(\S+)/gm)].map((m) => m[1]);
+const rank = (r) => (r.mock ? 1000 : 0) + (order.includes(r.run_id) ? order.indexOf(r.run_id) : 500);
+index.sort((a, b) => rank(a) - rank(b));
 writeFileSync(pub + "runs/index.json", JSON.stringify(index, null, 2));
 console.log("graph, proposals (" + proposals + "), runs:", index.map((r) => r.run_id).join(", "));
