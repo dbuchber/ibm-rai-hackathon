@@ -21,6 +21,10 @@ SCHEMAS = {
     "CreateRun": TypeAdapter(m.CreateRun),
     "CreateRunResponse": TypeAdapter(m.CreateRunResponse),
     "ProposalDecision": TypeAdapter(m.ProposalDecision),
+    "ChatCanaryReveal": TypeAdapter(m.ChatCanaryReveal),
+    "Feedback": TypeAdapter(m.Feedback),
+    "FeedbackResponse": TypeAdapter(m.FeedbackResponse),
+    "SourceOpened": TypeAdapter(m.SourceOpened),
 }
 
 if __name__ == "__main__":

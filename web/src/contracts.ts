@@ -17,6 +17,7 @@ export type Event =
 
 export interface Contracts {
   AuditEntry?: AuditEntry;
+  ChatCanaryReveal?: ChatCanaryReveal;
   NodeSpec?: NodeSpec;
   PredicateSpec?: PredicateSpec;
   Triple?: Triple;
@@ -49,11 +50,14 @@ export interface Contracts {
   StrategyEvent?: StrategyEvent;
   StrategyPayload?: StrategyPayload;
   Event?: Event;
+  Feedback?: Feedback;
+  FeedbackResponse?: FeedbackResponse;
   GraphExport?: GraphExport;
   CanaryAlert?: CanaryAlert;
   Proposal?: Proposal;
   ProposalDecision?: ProposalDecision;
   RunSummary?: RunSummary;
+  SourceOpened?: SourceOpened;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -61,9 +65,22 @@ export interface Contracts {
  */
 export interface AuditEntry {
   ts: string;
-  kind: "decision" | "canary_planted" | "canary_passed" | "canary_failed" | "reverted" | "supervisor_notified";
+  kind:
+    "decision" | "canary_planted" | "canary_passed" | "canary_failed" | "reverted" | "supervisor_notified" | "feedback";
   proposal_id?: string | null;
   detail: string;
+}
+/**
+ * Resolution of a live chat canary: one planted false fact in a real answer. Never written to the graph.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "ChatCanaryReveal".
+ */
+export interface ChatCanaryReveal {
+  run_id: string;
+  claim: string;
+  truth: string;
+  outcome: "caught" | "missed";
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -124,6 +141,7 @@ export interface CreateRun {
  */
 export interface CreateRunResponse {
   run_id: string;
+  reveal?: ChatCanaryReveal | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -391,6 +409,22 @@ export interface StrategyPayload {
   prompt: string;
 }
 /**
+ * POST /api/runs/{id}/feedback body (header X-Chat-Session): the user flags an answer.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "Feedback".
+ */
+export interface Feedback {
+  text?: string | null;
+}
+/**
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "FeedbackResponse".
+ */
+export interface FeedbackResponse {
+  reveal?: ChatCanaryReveal | null;
+}
+/**
  * This interface was referenced by `Contracts`'s JSON-Schema
  * via the `definition` "GraphExport".
  */
@@ -442,4 +476,13 @@ export interface RunSummary {
   run_id: string;
   question: string;
   mock: boolean;
+}
+/**
+ * POST /api/runs/{id}/opened body (204): the user looked at a source of the answer.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "SourceOpened".
+ */
+export interface SourceOpened {
+  target: string;
 }

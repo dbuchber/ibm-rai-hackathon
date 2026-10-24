@@ -4,7 +4,8 @@ from pathlib import Path
 import pytest
 
 from contracts.ids import edge_id, node_iri, pred_iri
-from contracts.models import CreateProposal, EventAdapter, GraphExport, Proposal
+from contracts.models import (AuditEntry, ChatCanaryReveal, CreateProposal, CreateRunResponse, EventAdapter, Feedback,
+                              GraphExport, Proposal)
 from contracts.rdf_store import RdfGraphStore
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -118,3 +119,12 @@ def test_real_graph_loads_if_present():
         pytest.skip("stream A has not produced kg.trig yet")
     store = RdfGraphStore(path)
     assert store.export({"approved"}).edges
+
+
+def test_chat_canary_contract():
+    assert CreateRunResponse(run_id="r").reveal is None
+    r = ChatCanaryReveal(run_id="r", claim="a", truth="b", outcome="missed")
+    assert CreateRunResponse(run_id="r", reveal=r).reveal.outcome == "missed"
+    with pytest.raises(ValueError):
+        Feedback(text="x" * 2001)
+    AuditEntry(ts="t", kind="feedback", detail="run live-1: wrong supplier")

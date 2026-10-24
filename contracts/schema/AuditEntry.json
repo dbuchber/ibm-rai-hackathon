@@ -11,7 +11,8 @@
         "canary_passed",
         "canary_failed",
         "reverted",
-        "supervisor_notified"
+        "supervisor_notified",
+        "feedback"
       ],
       "title": "Kind",
       "type": "string"
