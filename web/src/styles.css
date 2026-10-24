@@ -477,3 +477,4 @@ button.chip:hover { background: var(--fill2); }
 .field.invite { margin-top: 8px; max-width: 220px; }
 .hint.error { color: var(--contra); }
 .more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent); }
+.waiting .secs { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink3); }

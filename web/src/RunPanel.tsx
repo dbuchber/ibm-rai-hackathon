@@ -28,13 +28,44 @@ export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
   const [busy, setBusy] = useState(false);
   // runs of the same question with different models share one card
   const groups = [...runs.reduce((m, r) => m.set(r.question, [...(m.get(r.question) ?? []), r]), new Map<string, RunSummary[]>()).values()];
+  const askForm = (
+    <form
+      style={{ marginTop: live ? 0 : 22, marginBottom: live ? 22 : 0 }}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (!q.trim() || !invite.trim()) return;
+        saveInvite(invite.trim());
+        setBusy(true); setErr(null);
+        const m = await onAsk(q.trim(), invite.trim());
+        setBusy(false); setErr(m);
+      }}
+    >
+      <label className="eyebrow" htmlFor="ask">{live ? "Ask your own question" : "Or ask your own"}</label>
+      <div className="ask-field">
+        <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} disabled={!live}
+          placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
+        <button className="btn" disabled={!live || !q.trim() || !invite.trim() || busy}>{busy ? "Starting…" : "Ask"}</button>
+      </div>
+      {live && (
+        <label className="field invite">
+          <span>Invite code</span>
+          <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="From the presenter" spellCheck={false} autoComplete="off" />
+        </label>
+      )}
+      {err && <div className="hint error" role="alert">{err}</div>}
+      {live && !err && <div className="hint">A live run takes about a minute. The recorded runs below replay instantly.</div>}
+      {!live && <div className="hint">Offline replay. Live questions need the engine API.</div>}
+    </form>
+  );
   return (
     <aside className="panel glass" aria-label="Ask a question">
       <div className="panel-head">
         <div className="eyebrow">Ask the twin</div>
-        <h2 className="question">Pick a question. Watch which knowledge the model is given.</h2>
+        <h2 className="question">{live ? "Ask a question" : "Pick a question"}. Watch which knowledge the model is given.</h2>
       </div>
       <div className="panel-body">
+        {live && askForm}
+        {live && <div className="eyebrow" style={{ marginBottom: 8 }}>Or replay a recorded run</div>}
         <div className="pick">
           {groups.map((g) => (
             <button key={g[0].run_id} className="pick-q" onClick={() => onPick(g[0].run_id)}>
@@ -48,33 +79,7 @@ export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
             </button>
           ))}
         </div>
-        <form
-          style={{ marginTop: 22 }}
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!q.trim() || !invite.trim()) return;
-            saveInvite(invite.trim());
-            setBusy(true); setErr(null);
-            const m = await onAsk(q.trim(), invite.trim());
-            setBusy(false); setErr(m);
-          }}
-        >
-          <label className="eyebrow" htmlFor="ask">Or ask your own</label>
-          <div className="ask-field">
-            <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} disabled={!live}
-              placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
-            <button className="btn" disabled={!live || !q.trim() || !invite.trim() || busy}>{busy ? "Starting…" : "Ask"}</button>
-          </div>
-          {live && (
-            <label className="field invite">
-              <span>Invite code</span>
-              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="From the presenter" spellCheck={false} autoComplete="off" />
-            </label>
-          )}
-          {err && <div className="hint error" role="alert">{err}</div>}
-          {live && !err && <div className="hint">A live run takes about a minute. The recorded runs above replay instantly.</div>}
-          {!live && <div className="hint">Offline replay. Live questions need the engine API.</div>}
-        </form>
+        {!live && askForm}
       </div>
     </aside>
   );
@@ -253,12 +258,27 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
           </section>
         )}
         {live && !v.finished && !lost && (
-          <div className="waiting" role="status">
-            <span className="spinner" aria-hidden="true" />
-            {!v.strategy ? "Waiting for the model to choose a strategy…" : !v.answer ? "Waiting for the model to walk the graph…" : "Finishing…"}
-          </div>
+          <Waiting key={cards}
+            text={!v.strategy ? "Waiting for the model to choose a strategy…" : !v.answer ? "Waiting for the model to walk the graph…" : "Finishing…"} />
         )}
       </div>
     </aside>
+  );
+}
+
+/** Shown while a live run is quiet; the clock restarts with each new card (remounted by key). */
+function Waiting({ text }: { text: string }) {
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    const t0 = Date.now();
+    const t = setInterval(() => setSecs(Math.floor((Date.now() - t0) / 1000)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="waiting" role="status">
+      <span className="spinner" aria-hidden="true" />
+      <span>{text}</span>
+      <span className="secs" aria-hidden="true">{secs} s</span>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data, type Ontology } from "./data";
+import { data, HttpError, type Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
 import Graph, { type GraphMode } from "./Graph";
 import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
@@ -165,11 +165,14 @@ export default function App() {
       );
       return null;
     } catch (err) {
-      const m = (err as Error).message;
-      if (/invite/i.test(m)) return "That invite code is not valid.";
-      if (/in progress/i.test(m)) return "Another live run is in progress. Try again in a minute.";
-      if (/limit|slow down/i.test(m)) return "Live run limit reached. Replay a recorded run instead.";
-      if (/longer than/i.test(m)) return "That question is too long. Shorten it a little.";
+      if (err instanceof HttpError) {
+        if (err.status === 403) return "Invite code needed. Ask the presenter for one.";
+        if (err.status === 429) {
+          const s = err.retryAfter ?? 5;
+          return `Busy, try again in ${s < 90 ? `${s} s` : `${Math.ceil(s / 60)} min`}.`;
+        }
+        if (err.status === 422) return "That question is too long. Shorten it a little.";
+      }
       return "The live engine is not reachable. Replay a recorded run instead.";
     }
   }, []);
