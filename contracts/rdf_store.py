@@ -71,12 +71,19 @@ class RdfGraphStore:
         q = _tokens(text)
         if not q:
             return []
+        lowered = text.lower()
         scored = []
         for n in self._nodes.values():
-            hay = _tokens(" ".join(filter(None, [n.label, local_name(n.id), n.description, n.text])))
-            hit = len(q & hay)
-            if hit:
-                scored.append((n, hit / len(q)))
+            # An entity named verbatim in the question (PO-1003, ST02_SEALING) beats any token overlap.
+            lid = local_name(n.id).lower()
+            if len(lid) >= 4 and re.search(rf"(?<![a-z0-9_-]){re.escape(lid)}(?![a-z0-9_-])", lowered):
+                scored.append((n, 2.0))
+                continue
+            name_hit = len(q & _tokens(" ".join(filter(None, [n.label, local_name(n.id)]))))
+            body_hit = len(q & _tokens(" ".join(filter(None, [n.description, n.text]))))
+            score = (name_hit + 0.5 * body_hit) / len(q)
+            if score:
+                scored.append((n, score))
         scored.sort(key=lambda t: (-t[1], t[0].id))
         return scored[:k]
 
