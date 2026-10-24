@@ -1,0 +1,189 @@
+{
+ "classes": [
+  {
+   "name": "AnomalyEvent",
+   "description": "Detected sensor anomaly."
+  },
+  {
+   "name": "Chunk",
+   "description": "Section or table row of a document (props text, page)."
+  },
+  {
+   "name": "Company",
+   "description": "The fictional company Kelvara Packaging GmbH."
+  },
+  {
+   "name": "Customer",
+   "description": ""
+  },
+  {
+   "name": "Document",
+   "description": "SOP, datasheet or company document."
+  },
+  {
+   "name": "Maintenance",
+   "description": "Maintenance action."
+  },
+  {
+   "name": "Person",
+   "description": "Employee from the iMAKS person registry."
+  },
+  {
+   "name": "ProductionOrder",
+   "description": ""
+  },
+  {
+   "name": "Role",
+   "description": ""
+  },
+  {
+   "name": "Rule",
+   "description": "Operational / maintenance / alarm rule from an SOP (ground_truth.csv)."
+  },
+  {
+   "name": "SafetyEvent",
+   "description": "Safety incident involving persons."
+  },
+  {
+   "name": "Sensor",
+   "description": "Sensor with thresholds (props warnHi, critHi, warnLo, critLo, unit, sensorType)."
+  },
+  {
+   "name": "SensorModel",
+   "description": "Vendor product, e.g. TMP-2210."
+  },
+  {
+   "name": "Station",
+   "description": "Production station or room (iMAKS 'Component'), e.g. ST02_SEALING."
+  },
+  {
+   "name": "Supplier",
+   "description": ""
+  },
+  {
+   "name": "System",
+   "description": "The production system / plant (iMAKS line A)."
+  },
+  {
+   "name": "Zone",
+   "description": "Physical area of the plant."
+  }
+ ],
+ "predicates": [
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#applies_to",
+   "name": "applies_to",
+   "description": "Rule applies_to Station or Sensor."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#authorized_for",
+   "name": "authorized_for",
+   "description": "Person authorized_for Zone."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#contains",
+   "name": "contains",
+   "description": "System contains Zone; Zone contains Station."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#contradicts",
+   "name": "contradicts",
+   "description": "Chunk contradicts Chunk (conflicting values or instructions)."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#correlates_with",
+   "name": "correlates_with",
+   "description": "Sensor correlates_with Sensor."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#defined_in",
+   "name": "defined_in",
+   "description": "Rule defined_in Chunk."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#detected_in",
+   "name": "detected_in",
+   "description": "SafetyEvent detected_in Zone."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#executed_at",
+   "name": "executed_at",
+   "description": "ProductionOrder executed_at Station."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#feeds_into",
+   "name": "feeds_into",
+   "description": "Station feeds_into next Station."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#governs",
+   "name": "governs",
+   "description": "Document governs Station/Sensor/SensorModel."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#has_chunk",
+   "name": "has_chunk",
+   "description": "Document has_chunk Chunk."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#has_role",
+   "name": "has_role",
+   "description": "Person has_role Role."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#involves",
+   "name": "involves",
+   "description": "SafetyEvent involves Person."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#mentions",
+   "name": "mentions",
+   "description": "Chunk mentions Station/Sensor/SensorModel/Rule (exact ID match or approved proposal)."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#monitors",
+   "name": "monitors",
+   "description": "Sensor monitors Station (canonical direction; the reverse iMAKS duplicates are dropped)."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#of_model",
+   "name": "of_model",
+   "description": "Sensor of_model SensorModel."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#operates",
+   "name": "operates",
+   "description": "Company operates System."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#ordered_by",
+   "name": "ordered_by",
+   "description": "ProductionOrder ordered_by Customer."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#part_of",
+   "name": "part_of",
+   "description": "Station part_of System."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#party_to",
+   "name": "party_to",
+   "description": "Supplier/Company party_to Document (contract, agreement)."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#resolves",
+   "name": "resolves",
+   "description": "Maintenance resolves Sensor issue."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#supplied_by",
+   "name": "supplied_by",
+   "description": "SensorModel supplied_by Supplier."
+  },
+  {
+   "iri": "https://rai-hackathon.bbger.at/ont#triggers",
+   "name": "triggers",
+   "description": "Sensor triggers AnomalyEvent or Maintenance."
+  }
+ ]
+}

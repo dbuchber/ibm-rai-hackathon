@@ -15,6 +15,10 @@ export type Event =
   | RunFinishedEvent;
 
 export interface Contracts {
+  NodeSpec?: NodeSpec;
+  PredicateSpec?: PredicateSpec;
+  Triple?: Triple;
+  CreateProposal?: CreateProposal;
   CreateRun?: CreateRun;
   CreateRunResponse?: CreateRunResponse;
   AnswerEvent?: AnswerEvent;
@@ -41,10 +45,53 @@ export interface Contracts {
   StrategyPayload?: StrategyPayload;
   Event?: Event;
   GraphExport?: GraphExport;
-  Triple?: Triple;
   Proposal?: Proposal;
   ProposalDecision?: ProposalDecision;
   RunSummary?: RunSummary;
+}
+/**
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "NodeSpec".
+ */
+export interface NodeSpec {
+  cls: string;
+  local_id: string;
+  label: string;
+  description?: string | null;
+}
+/**
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "PredicateSpec".
+ */
+export interface PredicateSpec {
+  name: string;
+  description: string;
+  domain?: string | null;
+  range?: string | null;
+}
+/**
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "Triple".
+ */
+export interface Triple {
+  s: string;
+  p: string;
+  o: string;
+}
+/**
+ * POST /api/proposals body: a proposal entered by a user in the curation screen.
+ *
+ * This interface was referenced by `Contracts`'s JSON-Schema
+ * via the `definition` "CreateProposal".
+ */
+export interface CreateProposal {
+  kind?: "edge" | "node" | "predicate";
+  triple?: Triple | null;
+  node?: NodeSpec | null;
+  predicate?: PredicateSpec | null;
+  rationale: string;
+  evidence_chunk_id?: string | null;
+  quote?: string | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -300,24 +347,18 @@ export interface GraphExport {
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
- * via the `definition` "Triple".
- */
-export interface Triple {
-  s: string;
-  p: string;
-  o: string;
-}
-/**
- * This interface was referenced by `Contracts`'s JSON-Schema
  * via the `definition` "Proposal".
  */
 export interface Proposal {
-  id: string;
-  triple: Triple;
+  kind?: "edge" | "node" | "predicate";
+  triple?: Triple | null;
+  node?: NodeSpec | null;
+  predicate?: PredicateSpec | null;
   rationale: string;
-  evidence_chunk_id: string;
-  quote: string;
-  confidence: number;
+  evidence_chunk_id?: string | null;
+  quote?: string | null;
+  id: string;
+  confidence?: number | null;
   proposed_by: string;
   status?: "approved" | "proposed" | "rejected";
 }

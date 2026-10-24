@@ -119,7 +119,13 @@ function stylesheet(c: Palette): StylesheetStyle[] {
       } as any,
     },
     { selector: "node.contra-node", style: { "border-color": c.contra, "underlay-color": c.contra, "underlay-opacity": 0.16 } as any },
-    { selector: ".flash", style: { "underlay-color": c.accent, "underlay-opacity": 0.35, "underlay-padding": 14, "z-index": 40 } as any },
+    {
+      selector: "node.proposed-node",
+      style: { "background-opacity": 0.25, "border-width": 2, "border-style": "dashed", "border-color": c.ink, "border-opacity": 0.8 } as any,
+    },
+    { selector: "node.approved-node", style: { "border-width": 3, "border-color": c.accent, "underlay-color": c.accent, "underlay-opacity": 0.18, "underlay-padding": 8, "underlay-shape": "ellipse" } as any },
+    { selector: ".leaving", style: { opacity: 0, "transition-duration": 450 } as any },
+    { selector: ".flash", style: { "underlay-color": c.accent, "underlay-opacity": 0.35, "underlay-padding": 14, "underlay-shape": "ellipse", "z-index": 40 } as any },
     { selector: "node:selected", style: { "border-width": 3, "border-color": c.ink } },
   ];
 }
@@ -158,6 +164,8 @@ interface Props {
   /** px covered by floating chrome; the camera frames the remaining area */
   inset: { top: number; right: number; bottom: number; left: number };
   flash: string | null;
+  /** new node id -> existing node to place it next to (e.g. a proposed node near its source chunk) */
+  anchors?: Map<string, string>;
   onSelect: (id: string | null) => void;
 }
 
@@ -190,7 +198,13 @@ export default function Graph(p: Props) {
     const cy = cyRef.current!;
     const els = toElements(p.nodes, p.edges);
     const wanted = new Set(els.map((e) => e.data.id!));
-    cy.elements().filter((e) => !wanted.has(e.id())).remove();
+    // removed elements (e.g. a rejected proposal) fade out before they go
+    const gone = cy.elements().filter((e) => !wanted.has(e.id()) && !e.hasClass("leaving"));
+    if (gone.nonempty()) {
+      gone.addClass("leaving");
+      gone.forEach((e) => known.current.delete(e.id()));
+      setTimeout(() => gone.remove(), reducedMotion() ? 0 : 500);
+    }
     // keep data of existing elements current (e.g. a proposal approved: graph proposed -> approved)
     cy.batch(() => {
       for (const el of els) {
@@ -206,7 +220,8 @@ export default function Graph(p: Props) {
         if (el.group === "nodes") {
           // start new nodes next to an existing neighbour so the relayout stays calm
           const nb = p.edges.find((e) => e.s === el.data.id || e.o === el.data.id);
-          const other = nb && cy.getElementById(nb.s === el.data.id ? nb.o : nb.s);
+          const hint = p.anchors?.get(el.data.id!) ?? (nb && (nb.s === el.data.id ? nb.o : nb.s));
+          const other = hint ? cy.getElementById(hint) : undefined;
           const at = other && other.nonempty() ? other.position() : { x: 0, y: 0 };
           cy.add({ ...el, position: { x: at.x + Math.random() * 40 - 20, y: at.y + Math.random() * 40 - 20 } });
         }
@@ -214,7 +229,8 @@ export default function Graph(p: Props) {
       for (const el of fresh) if (el.group === "edges") cy.add(el);
     });
     fresh.forEach((e) => known.current.add(e.data.id!));
-    const newNodes = fresh.some((e) => e.group === "nodes");
+    // nodes placed next to an anchor need no relayout; that keeps the twin still while curating
+    const newNodes = fresh.some((e) => e.group === "nodes" && !p.anchors?.has(e.data.id!));
     if (newNodes) {
       cy.layout({ ...LAYOUT, randomize: first, animate: !first && !reducedMotion(), animationDuration: 600 } as any).run();
       if (first) fitTo(cy, cy.elements(), p.inset, false);
@@ -226,7 +242,7 @@ export default function Graph(p: Props) {
   useEffect(() => {
     const cy = cyRef.current!;
     cy.batch(() => {
-      cy.elements().removeClass("quiet dim seed walked explored frontier follow prune current evidence contra contra-node");
+      cy.elements().removeClass("quiet dim seed walked explored frontier follow prune current evidence contra contra-node proposed-node approved-node");
       for (const [id, cls] of p.classes) cy.getElementById(id).addClass(cls);
       if (p.mode === "run") cy.elements().filter((e) => !p.classes.has(e.id())).addClass("quiet");
       if (p.mode === "evidence") {
