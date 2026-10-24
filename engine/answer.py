@@ -20,7 +20,7 @@ Reply with one JSON object:
  "justification": "<which facts support it and how they connect>",
  "citations": ["<edge_id or chunk_id exactly as given>", ...],
  "contradictions": [{"a": "<chunk_id>", "b": "<chunk_id>", "note": "<what disagrees, with the numbers>"}]}
-Rules: cite every edge and passage the answer relies on, using ids exactly as given. If two passages give conflicting values or limits (for example an SOP allows more than a datasheet rates), report it in `contradictions` and say so in the answer instead of picking one silently. If the facts do not suffice, say so in `text` and leave citations empty."""
+Compare SOP/rule passages against datasheet passages for the same device explicitly. Rules: cite every edge and passage the answer relies on, using ids exactly as given. If two passages give conflicting values or limits (for example an SOP tolerates or sets a threshold above what a datasheet rates the device for), report it in `contradictions` and say so in the answer instead of picking one silently. If the facts do not suffice, say so in `text` and leave citations empty."""
 
 
 class _Out(BaseModel):

@@ -25,7 +25,7 @@ Each step you see the question, the strategy guidance, the facts collected so fa
 For EVERY candidate edge decide:
 - "follow": the edge leads towards information needed for the question, or is itself needed evidence;
 - "prune": it is irrelevant or a detour.
-Be generous: when an edge could lead to a rule, limit, document passage, supplier or owner relevant to the question, follow it. Prune only edges that are clearly unrelated. Rules and document chunks (Chunk nodes carry the SOP/datasheet text) are the most valuable evidence for safety or limit questions.
+Every part of the question must be covered: if it asks who supplies, owns, operates or is authorised, follow the edge whose predicate answers that part (e.g. supplied_by, authorized_for) as soon as it appears. Be generous: when an edge could lead to a rule, limit, document passage, supplier or owner relevant to the question, follow it. Prune only edges that are clearly unrelated. Rules and document chunks (Chunk nodes carry the SOP/datasheet text) are the most valuable evidence for safety or limit questions.
 Then decide `sufficient`: true only if the facts collected so far PLUS the edges you follow now contain everything needed to answer the question (including documents/rules that state limits, and the supplier or owner if asked). If you follow edges that lead to nodes you still need to read, sufficient is false.
 Reply with one JSON object: {"decisions": [{"edge_id": "...", "verdict": "follow"|"prune", "reason": "<one short sentence>"}], "sufficient": true|false}
 Use the edge ids exactly as given in brackets."""
@@ -108,15 +108,22 @@ def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: See
                 f"Facts collected so far:\n" + "\n".join(facts) +
                 f"\n\nNodes in the candidate edges:\n{detail}\n\nCandidate edges (step {n} of max {strategy.max_depth}):\n{listing}")},
         ]
-        try:
-            out = llm.complete_json(messages, model, _StepOut)
-        except LLMFormatError:
-            out = _StepOut(decisions=[], sufficient=True)
-        by_id = {d.edge_id: d for d in out.decisions if d.edge_id in {e.id for e in cands}}
+        failed, cand_ids = False, {e.id for e in cands}
+        for _try in range(3):   # a valid-but-empty answer (no usable edge ids) is retried too
+            try:
+                out = llm.complete_json(messages, model, _StepOut)
+            except LLMFormatError:
+                out, failed = _StepOut(decisions=[], sufficient=True), True
+                break
+            for d in out.decisions:
+                d.edge_id = d.edge_id.strip().strip("[]")
+            if sum(d.edge_id in cand_ids for d in out.decisions) >= max(1, len(cands) // 2):
+                break
+        by_id = {d.edge_id: d for d in out.decisions if d.edge_id in cand_ids}
         decisions = [
             Decision(edge_id=e.id,
                      verdict=by_id[e.id].verdict if e.id in by_id else "prune",
-                     reason=by_id[e.id].reason if e.id in by_id else "No verdict returned; pruned.")
+                     reason=by_id[e.id].reason if e.id in by_id else "Step evaluation failed (unusable LLM output); pruned." if failed else "No verdict returned; pruned.")
             for e in cands
         ]
         emit(StepPayload(n=n, frontier=cands, nodes=list(nodes_in.values()), decisions=decisions,

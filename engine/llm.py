@@ -43,6 +43,7 @@ def _raw(messages: list[dict], model: str, json_mode: bool = True) -> str:
         api_base=os.environ.get("LITELLM_BASE_URL"),
         api_key=os.environ.get("LITELLM_API_KEY"),
         temperature=0,
+        max_tokens=8000,   # reasoning models spend tokens before the JSON; a low cap yields empty content
     )
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}
@@ -69,9 +70,9 @@ def _extract_json(text: str) -> object:
 
 
 def complete_json(messages: list[dict], model: str, schema: type[T]) -> T:
-    """One call plus one retry; raises LLMFormatError if the output never validates."""
+    """One call plus two retries (reasoning models occasionally return empty/truncated JSON); raises LLMFormatError if the output never validates."""
     last: Exception | None = None
-    for _ in range(2):
+    for _ in range(3):
         try:
             return schema.model_validate(_extract_json(_raw(messages, model)))
         except (json.JSONDecodeError, ValidationError) as e:
