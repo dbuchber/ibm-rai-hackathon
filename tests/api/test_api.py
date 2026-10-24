@@ -562,6 +562,14 @@ async def test_models_allowlist(tmp_path, monkeypatch):
     assert all(m["provider"] == "ibm-ica" for m in ms[1:])
 
 
+async def test_models_ica_default_listed_once_first(tmp_path, monkeypatch):
+    monkeypatch.setenv("RAI_MODEL", "openai/ibm/granite-4-h-small")
+    ms = (await _client(_app(tmp_path)).get("/api/models")).json()
+    assert ms[0] == {"id": "openai/ibm/granite-4-h-small", "label": "IBM Granite 4 H Small", "provider": "ibm-ica"}
+    assert [m["id"] for m in ms].count("openai/ibm/granite-4-h-small") == 1
+    assert "openai/mistral-large-4-openrouter" in [m["id"] for m in ms]
+
+
 async def test_run_model_choice(tmp_path, monkeypatch):
     monkeypatch.setenv("RAI_MODEL", "openai/mistral-large-4-openrouter")
     c = _client(_app(tmp_path))

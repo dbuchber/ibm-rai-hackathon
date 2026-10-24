@@ -29,8 +29,9 @@ ICA_MODELS = [
 def allowed_models() -> list[ModelInfo]:
     """Default model first (RAI_MODEL, usually the gateway one), then the ICA models."""
     default = os.environ.get("RAI_MODEL") or GATEWAY_DEFAULT.id
-    first = next((m for m in [GATEWAY_DEFAULT] if m.id == default), ModelInfo(default, default.split("/", 1)[-1], "gateway"))
-    return [first, *ICA_MODELS]
+    known = [GATEWAY_DEFAULT, *ICA_MODELS]
+    first = next((m for m in known if m.id == default), ModelInfo(default, default.split("/", 1)[-1], "gateway"))
+    return [first, *(m for m in known if m.id != first.id)]
 
 
 def route(model: str) -> dict:
