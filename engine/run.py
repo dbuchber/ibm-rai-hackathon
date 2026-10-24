@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Callable, Literal
 
@@ -25,6 +26,9 @@ def run_question(question: str, store: GraphStore, *, model: str, mode: Literal[
         em(strat)
         sd = seeds_mod.find(question, store)
         em(sd)
+        # the baseline is independent of the walk: compute it concurrently, emit it in contract order below
+        pool = ThreadPoolExecutor(max_workers=1)
+        base = pool.submit(baseline.rag, question, store, model)
         w = traverse.walk(question, store, strat, sd, model, em)
         if sd.nodes:
             ans = answer_mod.answer(question, w, store, model)
@@ -35,7 +39,8 @@ def run_question(question: str, store: GraphStore, *, model: str, mode: Literal[
             ev = EvidencePayload(nodes=[], edges=[])
         em(ans)
         em(ev)
-        em(baseline.rag(question, store, model))
+        em(base.result())
+        pool.shutdown()
         em(RunFinished(status="ok"))
     except Exception as e:  # the run must always terminate with run.finished
         em(RunFinished(status="error", error=f"{type(e).__name__}: {e}"))
