@@ -5,7 +5,8 @@ const root = new URL("../../", import.meta.url).pathname;
 const pub = new URL("../public/data/", import.meta.url).pathname;
 mkdirSync(pub + "runs", { recursive: true });
 
-copyFileSync(root + "contracts/fixtures/graph_export.json", pub + "graph_export.json");
+// The real graph is exported by `npm run graph` (scripts/export_graph.py); fixtures only without kg.trig.
+if (!existsSync(root + "data/graph/kg.trig")) copyFileSync(root + "contracts/fixtures/graph_export.json", pub + "graph_export.json");
 const proposals = existsSync(root + "data/proposals.json") ? "data/proposals.json" : "contracts/fixtures/proposals.json";
 copyFileSync(root + proposals, pub + "proposals.json");
 

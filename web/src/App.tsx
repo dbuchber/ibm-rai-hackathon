@@ -55,7 +55,8 @@ export default function App() {
   const { nodes, edges } = useMemo(() => {
     const n = new Map<string, Node>();
     graph.nodes.forEach((x) => n.set(x.id, x));
-    runEls.nodes.forEach((x) => { if (!n.has(x.id)) n.set(x.id, x); });
+    // run events embed nodes in full; they win so the run shows exactly what the model was given
+    runEls.nodes.forEach((x) => n.set(x.id, x));
     const e = new Map<string, Edge>();
     for (const x of [...graph.edges, ...runEls.edges]) e.set(x.id, { ...x, graph: status.get(x.id) ?? x.graph });
     return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected") };

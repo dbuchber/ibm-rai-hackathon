@@ -16,9 +16,13 @@ export const LAYER: Record<string, "company" | "plant" | "docs"> = {
   Document: "docs", Chunk: "docs",
 };
 
+// Many small nodes (persons, rules, chunks, events) stay quiet until a run or hover touches them.
+const MINOR = new Set(["Person", "Rule", "Chunk", "AnomalyEvent", "SafetyEvent", "Maintenance", "Role", "Sensor"]);
+
 const SIZE: Record<string, number> = {
   Company: 34, System: 30, Zone: 22, Station: 20, Document: 20, Supplier: 18, Customer: 18,
-  ProductionOrder: 15, SensorModel: 15, Sensor: 13, Rule: 13, Person: 11, Role: 11, Chunk: 11,
+  ProductionOrder: 15, SensorModel: 15, Sensor: 10, Rule: 8, Person: 7, Role: 9, Chunk: 8,
+  AnomalyEvent: 8, SafetyEvent: 8, Maintenance: 8,
 };
 
 interface Palette {
@@ -53,6 +57,9 @@ function stylesheet(c: Palette): StylesheetStyle[] {
         "transition-duration": 450,
       } as any,
     },
+    { selector: "node[?minor]", style: { label: "", opacity: 0.55 } },
+    { selector: 'node[cls = "Rule"]', style: { shape: "diamond" } },
+    { selector: "edge[?minor]", style: { opacity: 0.35, "target-arrow-shape": "none" } as any },
     { selector: 'node[layer = "company"]', style: { "background-color": c.company } },
     { selector: 'node[layer = "docs"]', style: { "background-color": c.docs, shape: "round-rectangle" } },
     {
@@ -68,13 +75,13 @@ function stylesheet(c: Palette): StylesheetStyle[] {
       } as any,
     },
     { selector: 'edge[graph = "proposed"]', style: { "line-style": "dashed", "line-dash-pattern": [5, 4], "line-color": c.ink2, "target-arrow-color": c.ink2, width: 1.5, label: "proposed", color: c.ink2 } as any },
-    { selector: ".hover", style: { "font-weight": 600, color: c.ink, "z-index": 30 } as any },
+    { selector: ".hover", style: { label: "data(label)", opacity: 1, "min-zoomed-font-size": 0, "font-weight": 600, color: c.ink, "z-index": 30 } as any },
     { selector: "edge.hover", style: { label: "data(pred)" } },
 
     // --- run walk ---
-    { selector: ".quiet", style: { opacity: 0.3 } },
-    { selector: "node.explored", style: { opacity: 1 } },
-    { selector: "node.walked", style: { opacity: 1, color: c.ink, "font-weight": 600, "min-zoomed-font-size": 0 } as any },
+    { selector: ".quiet", style: { opacity: 0.14 } },
+    { selector: "node.explored", style: { opacity: 1, label: "data(label)" } },
+    { selector: "node.walked", style: { label: "data(label)", opacity: 1, color: c.ink, "font-weight": 600, "min-zoomed-font-size": 0 } as any },
     { selector: "node.seed", style: { "border-width": 3, "border-color": c.ink, "border-opacity": 0.85 } as any },
     { selector: "edge.frontier", style: { opacity: 1, width: 2.5, "line-color": c.ink, "target-arrow-color": c.ink, "line-style": "dashed", "line-dash-pattern": [6, 4], label: "data(pred)", color: c.ink } as any },
     { selector: "edge.follow", style: { opacity: 1, width: 3, "line-style": "solid", "line-color": c.accent, "target-arrow-color": c.accent, label: "data(pred)", color: c.accent } as any },
@@ -87,7 +94,7 @@ function stylesheet(c: Palette): StylesheetStyle[] {
     {
       selector: "node.evidence",
       style: {
-        opacity: 1, "border-width": 3, "border-color": c.accent, "border-opacity": 1,
+        label: "data(label)", opacity: 1, "border-width": 3, "border-color": c.accent, "border-opacity": 1,
         "underlay-color": c.accentSoft, "underlay-opacity": 0.16, "underlay-padding": 9, "underlay-shape": "ellipse",
         color: c.ink, "font-size": 12, "font-weight": 600, "min-zoomed-font-size": 0, "z-index": 20,
       } as any,
@@ -119,16 +126,17 @@ function stylesheet(c: Palette): StylesheetStyle[] {
 
 function toElements(nodes: Node[], edges: Edge[]): ElementDefinition[] {
   const ids = new Set(nodes.map((n) => n.id));
+  const minor = new Set(nodes.filter((n) => MINOR.has(n.cls)).map((n) => n.id));
   return [
     ...nodes.map((n) => ({
       group: "nodes" as const,
-      data: { id: n.id, label: n.label, cls: n.cls, layer: LAYER[n.cls] ?? "plant", size: SIZE[n.cls] ?? 13 },
+      data: { id: n.id, label: n.label, cls: n.cls, layer: LAYER[n.cls] ?? "plant", size: SIZE[n.cls] ?? 13, minor: MINOR.has(n.cls) },
     })),
     ...edges
       .filter((e) => ids.has(e.s) && ids.has(e.o))
       .map((e) => ({
         group: "edges" as const,
-        data: { id: e.id, source: e.s, target: e.o, pred: pretty(e.p), graph: e.graph },
+        data: { id: e.id, source: e.s, target: e.o, pred: pretty(e.p), graph: e.graph, minor: minor.has(e.s) || minor.has(e.o) },
         classes: e.id.startsWith("contra:") ? "contra-virtual" : "",
       })),
   ];
@@ -136,7 +144,8 @@ function toElements(nodes: Node[], edges: Edge[]): ElementDefinition[] {
 
 const LAYOUT = {
   name: "fcose", quality: "proof", animate: false, randomize: true, nodeSeparation: 90,
-  idealEdgeLength: 80, nodeRepulsion: 9000, gravity: 0.25, numIter: 3000, padding: 40,
+  idealEdgeLength: 70, nodeRepulsion: 22000, gravity: 0.35, gravityRange: 2.4, numIter: 4000, padding: 40,
+  edgeElasticity: 0.3, nodeDimensionsIncludeLabels: false,
 };
 
 interface Props {
