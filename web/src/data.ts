@@ -1,7 +1,9 @@
 // Data source abstraction (plan, stream C). VITE_DATA=static reads public/data; api talks to C4.
 // The api source falls back to static files for reads, so a dead API never breaks replay.
-import type { AuditEntry, CreateProposal, Event, GraphExport, Proposal, RunSummary } from "./contracts";
-import { CanaryEngine, localAudit } from "./canary";
+import type {
+  AuditEntry, CreateProposal, CreateRunResponse, Event, FeedbackResponse, GraphExport, Proposal, RunSummary,
+} from "./contracts";
+import { audit, CanaryEngine, localAudit } from "./canary";
 import { nodeIri, predIri, proposalId } from "./ids";
 
 export interface Ontology {
@@ -18,7 +20,11 @@ export interface DataSource {
   listRuns(): Promise<RunSummary[]>;
   getRun(id: string): Promise<Event[]>;
   /** Live questions need an invitation code; the API answers 403 "invite code required" without a valid one. */
-  startRun(question: string, invite?: string): Promise<{ run_id: string }>;
+  startRun(question: string, invite?: string): Promise<CreateRunResponse>;
+  /** Flag an answer (thumbs down, optional text). `reveal` is set when it was the session's chat canary. */
+  feedback(runId: string, text?: string): Promise<FeedbackResponse>;
+  /** Tell the server the user looked at a source: an edge id, a chunk IRI or "evidence". */
+  opened(runId: string, target: string): Promise<void>;
   streamRun(id: string, onEvent: (e: Event) => void, onLost: () => void): () => void;
   listProposals(): Promise<Proposal[]>;
   /** On a failed canary the result carries `alert`; its `reverted` ids are back to "proposed". */
@@ -40,6 +46,19 @@ export function localProposal(body: CreateProposal): Proposal {
 }
 
 const BASE = import.meta.env.BASE_URL + "data/";
+
+// One chat session per browser tab: chat canary state on the server is kept per session.
+const SESSION_KEY = "ga-chat-session";
+let memorySession: string | null = null;
+function chatSession(): string {
+  try {
+    const s = sessionStorage.getItem(SESSION_KEY);
+    if (s) return s;
+  } catch { /* storage blocked: fall back to memory */ }
+  memorySession ??= crypto.randomUUID();
+  try { sessionStorage.setItem(SESSION_KEY, memorySession); } catch { /* ignore */ }
+  return memorySession;
+}
 
 async function json<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
@@ -67,6 +86,11 @@ function staticSource(): DataSource {
     listRuns: () => json<RunSummary[]>(BASE + "runs/index.json"),
     getRun: async (id) => parseJsonl(await (await fetch(BASE + `runs/${id}.jsonl`)).text()),
     startRun: () => Promise.reject(new Error("Live mode needs the API.")),
+    feedback: async (runId, text) => {
+      audit("feedback", `run ${runId}: ${text || "(no text)"}`);
+      return { reveal: null };
+    },
+    opened: async () => {},
     streamRun: (_id, _on, onLost) => {
       onLost();
       return () => {};
@@ -114,7 +138,7 @@ function apiSource(): DataSource {
     startRun: (question, invite = "") =>
       json("/api/runs", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-Invite-Code": invite },
+        headers: { "Content-Type": "application/json", "X-Invite-Code": invite, "X-Chat-Session": chatSession() },
         body: JSON.stringify({ question }),
       }),
     streamRun: (id, onEvent, onLost) => {
@@ -144,6 +168,20 @@ function apiSource(): DataSource {
         }),
         () => fallback.decide(id, decision),
       ),
+    feedback: (runId, text) =>
+      json(`/api/runs/${runId}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Chat-Session": chatSession() },
+        body: JSON.stringify({ text: text || null }),
+      }),
+    opened: async (runId, target) => {
+      const r = await fetch(`/api/runs/${runId}/opened`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Chat-Session": chatSession() },
+        body: JSON.stringify({ target }),
+      });
+      if (!r.ok) throw new Error(`${r.status} opened`);
+    },
     createProposal: (body) =>
       orOffline(
         json("/api/proposals", {
