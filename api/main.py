@@ -17,9 +17,10 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
 
-from contracts.models import (CreateRun, CreateRunResponse, EventAdapter, GraphExport,
+from api.store import CurationStore
+from contracts.ids import edge_id, node_iri, pred_iri, proposal_id
+from contracts.models import (CreateProposal, CreateRun, CreateRunResponse, EventAdapter, GraphExport,
                               Proposal, ProposalDecision, RunSummary)
-from contracts.rdf_store import RdfGraphStore
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "contracts" / "fixtures"
@@ -83,13 +84,23 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     runs_dir.mkdir(parents=True, exist_ok=True)
 
     app = FastAPI(title="Graph Anchor API")
-    store = RdfGraphStore(graph_path)
+    store = CurationStore(graph_path)
     src = proposals_path if proposals_path.exists() else proposals_seed
     proposals = {p.id: p for p in (Proposal.model_validate(x) for x in json.loads(src.read_text()))}
-    # reflect already-decided proposals in the in-memory graph
-    for p in proposals.values():
-        if p.status != "proposed" and p.id in store._edges:
-            store.set_edge_graph(p.id, p.status)
+    def apply(p: Proposal, status: str) -> None:
+        """Mirror a proposal's status into the in-memory graph/ontology."""
+        if p.kind == "edge":
+            t = p.triple
+            if status != "proposed" or edge_id(t.s, t.p, t.o) not in store._edges:
+                store.add_edge(t.s, t.p, t.o, status)
+        elif status == "approved" and p.kind == "node":
+            store.add_node(p.node)
+        elif status == "approved" and p.kind == "predicate":
+            store.add_predicate(p.predicate)
+
+    for p in proposals.values():  # replay persisted decisions after a restart
+        if p.status == "approved" or p.kind == "edge":
+            apply(p, p.status)
     live: dict[str, LiveRun] = {}
     runner = _real_runner() or _stub_runner(stub_delay)
     model = env("RAI_MODEL", "stub")
@@ -167,18 +178,49 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     def list_proposals() -> list[Proposal]:
         return list(proposals.values())
 
+    def save() -> None:
+        proposals_path.parent.mkdir(parents=True, exist_ok=True)
+        proposals_path.write_text(json.dumps([x.model_dump() for x in proposals.values()], indent=2))
+
+    @app.post("/api/proposals")
+    def create_proposal(body: CreateProposal) -> Proposal:
+        if body.kind == "edge":
+            t = body.triple
+            pid = proposal_id("edge", triple=(t.s, t.p, t.o))
+            if t.s not in store._nodes or t.o not in store._nodes:
+                raise HTTPException(422, "triple endpoints must be existing nodes")
+            if t.p not in {iri for iri, _ in store.predicates()}:
+                raise HTTPException(422, "unknown predicate")
+        elif body.kind == "node":
+            n = body.node
+            if not store.has_class(n.cls):
+                raise HTTPException(422, "unknown class")
+            pid = proposal_id("node", iri=node_iri(n.cls, n.local_id))
+            if node_iri(n.cls, n.local_id) in store._nodes:
+                raise HTTPException(409, "node already exists")
+        else:
+            iri = pred_iri(body.predicate.name)
+            pid = proposal_id("predicate", iri=iri)
+            if iri in {i for i, _ in store.predicates()}:
+                raise HTTPException(409, "predicate already exists")
+        if pid in proposals:
+            raise HTTPException(409, "proposal already exists")
+        p = Proposal(**body.model_dump(), id=pid, proposed_by="user", status="proposed")
+        proposals[pid] = p
+        apply(p, "proposed")  # edges show up dashed in the graph
+        save()
+        return p
+
     @app.post("/api/proposals/{pid}")
     def decide(pid: str, body: ProposalDecision) -> Proposal:
         p = proposals.get(pid)
         if p is None:
             raise HTTPException(404, "unknown proposal")
-        status = "approved" if body.decision == "approve" else "rejected"
+        status = "approved" if body.decision == "approve" else "rejected"  # flag = reject
         p = p.model_copy(update={"status": status})
         proposals[pid] = p
-        if pid in store._edges:
-            store.set_edge_graph(pid, status)
-        proposals_path.parent.mkdir(parents=True, exist_ok=True)
-        proposals_path.write_text(json.dumps([x.model_dump() for x in proposals.values()], indent=2))
+        apply(p, status)
+        save()
         return p
 
     if web_dist.is_dir():

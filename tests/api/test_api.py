@@ -103,3 +103,78 @@ async def test_reject_removes_edge(client):
     g = GraphExport.model_validate((await client.get("/api/graph")).json())
     assert p["id"] not in {e.id for e in g.edges}
     assert (await client.post("/api/proposals/zzz", json={"decision": "reject"})).status_code == 404
+
+
+async def _by_kind(client, kind):
+    return next(p for p in (await client.get("/api/proposals")).json() if p["kind"] == kind)
+
+
+async def test_approve_node_creates_approved_node(client, app):
+    p = await _by_kind(client, "node")
+    r = await client.post(f"/api/proposals/{p['id']}", json={"decision": "approve"})
+    assert r.json()["status"] == "approved"
+    n = app.state.store.node("https://rai-hackathon.bbger.at/kg/sensormodel/RTD-2400")
+    assert (n.cls, n.label) == ("SensorModel", "RTD-2400 (Series 2400 Pt100)")
+    assert n.description.startswith("Pt100")
+    g = GraphExport.model_validate((await client.get("/api/graph")).json())
+    assert n.id in {x.id for x in g.nodes}
+
+
+async def test_reject_node_adds_nothing(client, app):
+    p = await _by_kind(client, "node")
+    await client.post(f"/api/proposals/{p['id']}", json={"decision": "reject"})
+    assert "https://rai-hackathon.bbger.at/kg/sensormodel/RTD-2400" not in app.state.store._nodes
+
+
+async def test_approve_predicate_available_to_strategy(client, app):
+    iri = "https://rai-hackathon.bbger.at/ont#recommended_replacement"
+    assert iri not in dict(app.state.store.predicates())
+    p = await _by_kind(client, "predicate")
+    await client.post(f"/api/proposals/{p['id']}", json={"decision": "approve"})
+    assert dict(app.state.store.predicates())[iri].startswith("SensorModel recommended_replacement")
+
+
+async def test_create_user_proposals_of_each_kind(client, app):
+    ont = "https://rai-hackathon.bbger.at/ont#"
+    kg = "https://rai-hackathon.bbger.at/kg/"
+    node = {"kind": "node", "node": {"cls": "Supplier", "local_id": "Acme", "label": "Acme AG"}, "rationale": "x"}
+    r = await client.post("/api/proposals", json=node)
+    assert r.status_code == 200, r.text
+    p = Proposal.model_validate(r.json())
+    assert (p.proposed_by, p.status, p.confidence) == ("user", "proposed", None)
+    assert (await client.post("/api/proposals", json=node)).status_code == 409
+    await client.post(f"/api/proposals/{p.id}", json={"decision": "approve"})
+    assert kg + "supplier/Acme" in app.state.store._nodes
+
+    pred = {"kind": "predicate", "predicate": {"name": "audited_by", "description": "Supplier audited_by Company."}, "rationale": "x"}
+    p2 = (await client.post("/api/proposals", json=pred)).json()
+    await client.post(f"/api/proposals/{p2['id']}", json={"decision": "approve"})
+    assert ont + "audited_by" in dict(app.state.store.predicates())
+
+    edge = {"kind": "edge", "triple": {"s": kg + "supplier/Acme", "p": ont + "governs", "o": kg + "supplier/Acme"}, "rationale": "x"}
+    p3 = (await client.post("/api/proposals", json=edge)).json()
+    g = GraphExport.model_validate((await client.get("/api/graph")).json())
+    assert next(e for e in g.edges if e.id == p3["id"]).graph == "proposed"
+    await client.post(f"/api/proposals/{p3['id']}", json={"decision": "approve"})
+    assert app.state.store.neighbors(kg + "supplier/Acme")
+
+
+async def test_create_validates(client):
+    bad = {"kind": "node", "node": {"cls": "Nope", "local_id": "x", "label": "x"}, "rationale": "x"}
+    assert (await client.post("/api/proposals", json=bad)).status_code == 422
+    mismatch = {"kind": "node", "triple": {"s": "a", "p": "b", "o": "c"}, "rationale": "x"}
+    assert (await client.post("/api/proposals", json=mismatch)).status_code == 422
+    kg = "https://rai-hackathon.bbger.at/kg/"
+    ghost = {"kind": "edge", "triple": {"s": kg + "x/none", "p": "https://rai-hackathon.bbger.at/ont#governs", "o": kg + "x/none"}, "rationale": "x"}
+    assert (await client.post("/api/proposals", json=ghost)).status_code == 422
+
+
+async def test_decisions_survive_restart(client, app, tmp_path):
+    p = await _by_kind(client, "node")
+    await client.post(f"/api/proposals/{p['id']}", json={"decision": "approve"})
+    pred = await _by_kind(client, "predicate")
+    await client.post(f"/api/proposals/{pred['id']}", json={"decision": "approve"})
+    app2 = create_app(graph_path=FIX / "mini_graph.trig", runs_dir=tmp_path / "runs",
+                      proposals_path=app.state.proposals_path, web_dist=tmp_path / "nodist")
+    assert "https://rai-hackathon.bbger.at/kg/sensormodel/RTD-2400" in app2.state.store._nodes
+    assert "https://rai-hackathon.bbger.at/ont#recommended_replacement" in dict(app2.state.store.predicates())
