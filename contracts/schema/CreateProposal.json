@@ -1,0 +1,183 @@
+{
+  "$defs": {
+    "NodeSpec": {
+      "properties": {
+        "cls": {
+          "title": "Cls",
+          "type": "string"
+        },
+        "local_id": {
+          "title": "Local Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "cls",
+        "local_id",
+        "label"
+      ],
+      "title": "NodeSpec",
+      "type": "object"
+    },
+    "PredicateSpec": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Range"
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "title": "PredicateSpec",
+      "type": "object"
+    },
+    "Triple": {
+      "properties": {
+        "s": {
+          "title": "S",
+          "type": "string"
+        },
+        "p": {
+          "title": "P",
+          "type": "string"
+        },
+        "o": {
+          "title": "O",
+          "type": "string"
+        }
+      },
+      "required": [
+        "s",
+        "p",
+        "o"
+      ],
+      "title": "Triple",
+      "type": "object"
+    }
+  },
+  "description": "POST /api/proposals body: a proposal entered by a user in the curation screen.",
+  "properties": {
+    "kind": {
+      "default": "edge",
+      "enum": [
+        "edge",
+        "node",
+        "predicate"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "triple": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Triple"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "node": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NodeSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "predicate": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PredicateSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "evidence_chunk_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Chunk Id"
+    },
+    "quote": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quote"
+    }
+  },
+  "required": [
+    "rationale"
+  ],
+  "title": "CreateProposal",
+  "type": "object"
+}

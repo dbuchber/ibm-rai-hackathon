@@ -1,16 +1,72 @@
 [
   {
-    "id": "bad079674282",
+    "kind": "edge",
     "triple": {
       "s": "https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2",
       "p": "https://rai-hackathon.bbger.at/ont#contradicts",
       "o": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1"
     },
+    "node": null,
+    "predicate": null,
     "rationale": "SOP-001 sets 210 °C as critical for ST02 TMP; the TMP-2210 datasheet rates 200 °C continuous.",
     "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
     "quote": "the rated maximum for continuous operation is 200°C",
+    "id": "bad079674282",
     "confidence": 0.86,
     "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
+    "status": "proposed"
+  },
+  {
+    "kind": "node",
+    "triple": null,
+    "node": {
+      "cls": "SensorModel",
+      "local_id": "RTD-2400",
+      "label": "RTD-2400 (Series 2400 Pt100)",
+      "description": "Pt100 RTD temperature sensor, rated to 250 °C continuous."
+    },
+    "predicate": null,
+    "rationale": "The datasheet names a successor model that is not yet in the graph.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous).",
+    "id": "4d4a65cfc41b",
+    "confidence": 0.91,
+    "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
+    "status": "proposed"
+  },
+  {
+    "kind": "predicate",
+    "triple": null,
+    "node": null,
+    "predicate": {
+      "name": "recommended_replacement",
+      "description": "SensorModel recommended_replacement SensorModel.",
+      "domain": "SensorModel",
+      "range": "SensorModel"
+    },
+    "rationale": "Vendors name successor models; no predicate can express that today.",
+    "evidence_chunk_id": "https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1",
+    "quote": "For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous).",
+    "id": "483c64af59a2",
+    "confidence": 0.78,
+    "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
+    "status": "proposed"
+  },
+  {
+    "kind": "edge",
+    "triple": {
+      "s": "https://rai-hackathon.bbger.at/kg/document/SOP-001",
+      "p": "https://rai-hackathon.bbger.at/ont#governs",
+      "o": "https://rai-hackathon.bbger.at/kg/station/ST02_SEALING"
+    },
+    "node": null,
+    "predicate": null,
+    "rationale": "SOP-001 is the operating procedure for the sealing station.",
+    "evidence_chunk_id": null,
+    "quote": null,
+    "id": "c3fd595c36f2",
+    "confidence": null,
+    "proposed_by": "user",
     "status": "proposed"
   }
 ]

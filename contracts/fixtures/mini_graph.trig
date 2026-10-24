@@ -73,11 +73,11 @@
         ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> .
 }
 
-<urn:g:rejected> {
-    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> ns1:governs <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> .
-}
-
 <urn:g:proposed> {
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
+}
+
+<urn:g:rejected> {
+    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> ns1:governs <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> .
 }
 
