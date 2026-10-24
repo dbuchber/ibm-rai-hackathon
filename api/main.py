@@ -150,6 +150,10 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         app.state.store = store
 
     load_state()
+    if env("RAI_WARMUP") == "1":
+        # the first live run after a restart otherwise spends minutes embedding the whole graph
+        from engine import embed
+        threading.Thread(target=embed.warm, args=(store,), daemon=True).start()
     live: dict[str, LiveRun] = {}
     # lambdas: load_state() rebuilds store and guard, chat canaries share the curation audit log
     feedback_path = proposals_path.parent / "feedback.jsonl"   # feedback text: never served

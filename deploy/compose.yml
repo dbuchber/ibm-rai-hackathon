@@ -25,6 +25,7 @@ services:
       RAI_MAX_LIVE: ${RAI_MAX_LIVE:-1}      # live runs at once; further questions queue (4 in parallel were OOM-killed at 12g on a cold embedding cache)
       RAI_MAX_QUEUE: ${RAI_MAX_QUEUE:-20}   # queued questions before "live mode is full"
       RAI_RUN_LIMIT: ${RAI_RUN_LIMIT:-60}   # live runs per client IP and hour (one Wi-Fi = one IP)
+      RAI_WARMUP: ${RAI_WARMUP:-1}          # embed the graph at startup: the first question then takes ~25 s, not ~3.5 min
     read_only: true
     tmpfs:
       - /tmp
