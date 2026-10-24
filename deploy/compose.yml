@@ -28,7 +28,7 @@ services:
     cap_drop: [ALL]
     security_opt:
       - no-new-privileges:true
-    mem_limit: 2g
+    mem_limit: 12g   # embedding the larger graph (seeds plus RAG baseline in parallel) was OOM-killed at 2g and 4g
     cpus: 2
     pids_limit: 256
     volumes:
