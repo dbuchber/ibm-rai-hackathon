@@ -1,0 +1,43 @@
+# Layer 3: fictional company overlay. All names are invented; the data is synthetic.
+company:
+  id: Kelvara
+  label: Kelvara Packaging GmbH
+  comment: Fictional food-packaging company. Operates the iMAKS production line A.
+  operates: iMAKS
+
+customers:
+  - {id: Velora, label: Velora Foods AG, comment: Fictional dairy customer.}
+  - {id: Nordmilch, label: Nordmilch eG, comment: Fictional dairy cooperative.}
+
+suppliers:
+  - {id: ThermoSense, label: ThermoSense GmbH, comment: "Vendor of thermal sensors, datasheet DS-THERM-2200."}
+  - {id: MechSens, label: MechSens Italia S.r.l., comment: "Vendor of mechanical sensors, datasheet DS-MECH-4400."}
+  - {id: ElectroMeasure, label: ElectroMeasure AG, comment: "Vendor of electrical sensors, datasheet DS-ELEC-3300."}
+
+sensor_models:
+  - {id: TMP-2210, supplier: ThermoSense, type: TMP, comment: "Thermocouple temperature sensor, rated 200 °C continuous."}
+  - {id: HUM-2250, supplier: ThermoSense, type: HUM, comment: Humidity sensor, Series 2200.}
+  - {id: PRS-4410, supplier: MechSens, type: PRS, comment: Pressure transmitter, 0 to 10 bar.}
+  - {id: FLW-4450, supplier: MechSens, type: FLW, comment: Electromagnetic flowmeter, 0 to 500 L/min.}
+  - {id: VIB-4480, supplier: MechSens, type: VIB, comment: Piezoelectric accelerometer.}
+  - {id: SPD-4490, supplier: MechSens, type: SPD, comment: Inductive speed encoder.}
+  - {id: CT-3300, supplier: ElectroMeasure, type: CUR, comment: "Current transformer Series 3300, 14 A continuous."}
+
+production_orders:
+  - {id: PO-1001, station: ST01_FILLING, customer: Velora, comment: "Yoghurt cups 150 g, 60,000 units."}
+  - {id: PO-1002, station: ST01_FILLING, customer: Nordmilch, comment: "Milk pouches 1 L, 25,000 units."}
+  - {id: PO-1003, station: ST02_SEALING, customer: Velora, comment: "Sealed yoghurt cups, 40,000 units."}
+  - {id: PO-1004, station: ST03_LABELLING, customer: Nordmilch, comment: "Labelled milk pouches, 25,000 units."}
+  - {id: PO-1005, station: ST04_PACKAGING, customer: Velora, comment: "Packed yoghurt trays, 5,000 trays."}
+  - {id: PO-1006, station: ST02_SEALING, customer: Nordmilch, comment: "Sealed dessert cups, 18,000 units."}
+
+roles:
+  operator: Line operator on a production shift.
+  technician: Maintenance and process technician.
+  supervisor: Shift supervisor.
+  manager: Plant management.
+  security: Site security.
+
+documents:
+  - {id: SQA-THERMO-001, file: SQA_ThermoSense.md, title: Supplier Quality Agreement with ThermoSense GmbH, parties: [ThermoSense, Kelvara]}
+  - {id: MC-2026-01, file: MaintenanceContract.md, title: Maintenance Contract Line A, parties: [Kelvara]}
