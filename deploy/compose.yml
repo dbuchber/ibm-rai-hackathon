@@ -1,0 +1,21 @@
+# Run from the repo root: docker compose -f deploy/compose.yml up -d --build
+services:
+  rai:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: rai-hackathon
+    restart: unless-stopped
+    # host network: the BA gateway only listens on 127.0.0.1:14000. The app binds 127.0.0.1:17080 itself.
+    network_mode: host
+    env_file: ../.env
+    environment:
+      LITELLM_BASE_URL: http://127.0.0.1:14000/v1
+      RAI_GRAPH: data/graph/kg.trig
+    volumes:
+      - ../runs:/app/runs
+      - ../data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:17080/healthz')"]
+      interval: 15s
+      retries: 3
