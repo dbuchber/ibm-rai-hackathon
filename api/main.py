@@ -165,7 +165,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     # per client IP and hour; an audience on one Wi-Fi shares one public IP, so raise it for live demos
     run_rl = RateLimiter(int(env("RAI_RUN_LIMIT", str(run_limit))), clock=limit_clock)
     # live runs mostly wait on the LLM: several run at once, the rest queue for a slot instead of being refused
-    max_live = max_live if max_live is not None else int(env("RAI_MAX_LIVE", "4"))
+    max_live = max_live if max_live is not None else int(env("RAI_MAX_LIVE", "1"))
     max_queue = max_queue if max_queue is not None else int(env("RAI_MAX_QUEUE", "20"))
     slots = threading.BoundedSemaphore(max_live)
     # strict models (engine/models.py): per IP and model, and per model across all clients

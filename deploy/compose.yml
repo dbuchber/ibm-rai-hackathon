@@ -22,7 +22,7 @@ services:
       ICA_API_KEY: ${ICA_API_KEY:?set in .env}   # IBM ICA models for live runs (approved by the user)
       RAI_INVITE_CODES: ${RAI_INVITE_CODES:-}   # empty = live mode closed
       RAI_REVIEWER_CODES: ${RAI_REVIEWER_CODES:-}   # empty = curation writes closed (read-only demo)
-      RAI_MAX_LIVE: ${RAI_MAX_LIVE:-4}      # live runs at once; further questions queue
+      RAI_MAX_LIVE: ${RAI_MAX_LIVE:-1}      # live runs at once; further questions queue (4 in parallel were OOM-killed at 12g on a cold embedding cache)
       RAI_MAX_QUEUE: ${RAI_MAX_QUEUE:-20}   # queued questions before "live mode is full"
       RAI_RUN_LIMIT: ${RAI_RUN_LIMIT:-60}   # live runs per client IP and hour (one Wi-Fi = one IP)
     read_only: true
