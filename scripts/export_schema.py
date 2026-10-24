@@ -16,6 +16,7 @@ SCHEMAS = {
     "GraphExport": TypeAdapter(m.GraphExport),
     "Proposal": TypeAdapter(m.Proposal),
     "CreateProposal": TypeAdapter(m.CreateProposal),
+    "AuditEntry": TypeAdapter(m.AuditEntry),
     "RunSummary": TypeAdapter(m.RunSummary),
     "CreateRun": TypeAdapter(m.CreateRun),
     "CreateRunResponse": TypeAdapter(m.CreateRunResponse),

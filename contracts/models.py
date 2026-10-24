@@ -94,11 +94,18 @@ class Contradiction(BaseModel):
     note: str
 
 
+class Canary(BaseModel):
+    """A deliberately false statement planted to detect automation bias. Never written to the graph."""
+    claim: str                       # the false statement as shown
+    truth: str                       # what the approved graph actually says
+
+
 class AnswerPayload(BaseModel):
     text: str
     justification: str
     citations: list[Citation]
     contradictions: list[Contradiction] = []
+    canary: Canary | None = None     # set only in planted chat canaries (click mock)
 
 
 class EvidencePayload(BaseModel):
@@ -191,7 +198,21 @@ class CreateRunResponse(BaseModel):
 
 
 class ProposalDecision(BaseModel):
-    decision: Literal["approve", "reject"]
+    decision: Literal["approve", "reject", "flag"]   # flag = "this is wrong", report it
+
+
+class CanaryAlert(BaseModel):
+    """Returned with the decision that approved a planted canary."""
+    message: str
+    reverted: list[str]              # proposal IDs approved since the last passed canary, now back to "proposed"
+    supervisor_notified: str         # who was notified, e.g. "Quality lead (mock)"
+
+
+class AuditEntry(BaseModel):
+    ts: str
+    kind: Literal["decision", "canary_planted", "canary_passed", "canary_failed", "reverted", "supervisor_notified"]
+    proposal_id: str | None = None
+    detail: str
 
 
 # --- C5: curation -----------------------------------------------------------
@@ -247,3 +268,5 @@ class Proposal(_ProposalBody):
     confidence: float | None = None  # None for proposals entered by people
     proposed_by: str                 # "llm:<model>" | "analyst-seed" | "user"
     status: GraphName = "proposed"
+    # Only on the response of POST /api/proposals/{id}. Whether a proposal is a canary is never sent before the decision.
+    alert: CanaryAlert | None = None

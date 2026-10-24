@@ -1,0 +1,43 @@
+{
+  "properties": {
+    "ts": {
+      "title": "Ts",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "decision",
+        "canary_planted",
+        "canary_passed",
+        "canary_failed",
+        "reverted",
+        "supervisor_notified"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "proposal_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proposal Id"
+    },
+    "detail": {
+      "title": "Detail",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ts",
+    "kind",
+    "detail"
+  ],
+  "title": "AuditEntry",
+  "type": "object"
+}

@@ -126,9 +126,10 @@ A run is a JSONL file of events: `{run_id, seq, ts, type, payload}`. Node and ed
 | `GET /api/runs/{id}` | all events of a stored run |
 | `POST /api/runs` `{question}` | `{run_id}`, live mode |
 | `GET /api/runs/{id}/stream` | Server-Sent Events, one C3 event each |
-| `GET /api/proposals` | `[Proposal]` |
+| `GET /api/proposals` | `[Proposal]` (may contain one canary, see Canaries) |
+| `GET /api/audit` | `[AuditEntry]` |
 | `POST /api/proposals` `CreateProposal` | new `Proposal` (`proposed_by="user"`, `status=proposed`) |
-| `POST /api/proposals/{id}` `{decision: approve\|reject}` | updated `Proposal`. Approving an edge moves it to `urn:g:approved`, a node adds it to the approved graph, a predicate makes it available to strategy and curation |
+| `POST /api/proposals/{id}` `{decision: approve\|reject\|flag}` | updated `Proposal`. Approving an edge moves it to `urn:g:approved`, a node adds it to the approved graph, a predicate makes it available to strategy and curation |
 
 ### C5: Proposal (curation)
 
@@ -144,6 +145,20 @@ Three kinds, listed together in the curation screen: **edge** (`triple`), **node
 | D: API + deploy | FastAPI over C4, Docker, Caddy/NPM route | C3, C4, C5 |
 
 Build order is UI first, so stream C starts immediately on the fixtures.
+
+## Canaries against automation bias
+
+People who approve many proposals or accept many answers in a row stop checking (automation bias, EU AI Act Art. 14). Canaries are planted, **obviously false** items. Missing one raises an alarm. Canaries are never written to the graph.
+
+**Curation (real, streams D + C):**
+- The server tracks consecutive approvals (single demo user, in memory). After `RAI_CANARY_STREAK` (default 4) approvals in a row, or once the average decision time drops below 3 s, the next `GET /api/proposals` contains one canary among the first three items. Canaries look like normal proposals (e.g. `ST02_SEALING supplied_by Velora Foods AG`, a station "supplied" by a customer, with a plausible rationale and quote). Generate them from the approved graph by swapping an endpoint to a node of an implausible class, or use a small hand-written pool. Whether an item is a canary is stored server-side only and never sent before the decision.
+- `reject` or the new `flag` decision on a canary = **passed**: a quiet toast "Good catch, that was a test proposal" plus an audit entry.
+- `approve` on a canary = **failed**: the canary is not written. The response carries `alert: CanaryAlert`. Every approval since the last passed canary goes back to `proposed` (removed from `urn:g:approved`). A supervisor notification is recorded ("Quality lead (mock)"). The UI shows a calm but unmistakable alert with the reverted items, and an audit log drawer.
+- New endpoint `GET /api/audit` → `[AuditEntry]`. Static mode implements the same logic in the browser.
+
+**Chat (click mock, stream C):** fixture run `contracts/fixtures/run_canary_chat.jsonl`, where `answer.canary` holds the false claim and the truth. The answer card has a "Report" action. If the user reports, it shows "Good catch". If the user moves on (next question or screen) without reporting, the alert appears: user notice, audit entry, supervisor notified (mock). The run is labelled `mock`.
+
+**Pitch:** in the curation screen, approve quickly 4 times, then approve the canary → alert → reverted items. This is the Responsible AI moment for human oversight.
 
 ## Non-goals (today)
 

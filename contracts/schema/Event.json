@@ -57,6 +57,17 @@
           },
           "title": "Contradictions",
           "type": "array"
+        },
+        "canary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Canary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -124,6 +135,25 @@
         "answer"
       ],
       "title": "BaselinePayload",
+      "type": "object"
+    },
+    "Canary": {
+      "description": "A deliberately false statement planted to detect automation bias. Never written to the graph.",
+      "properties": {
+        "claim": {
+          "title": "Claim",
+          "type": "string"
+        },
+        "truth": {
+          "title": "Truth",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim",
+        "truth"
+      ],
+      "title": "Canary",
       "type": "object"
     },
     "Citation": {

@@ -2,15 +2,19 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+<urn:g:rejected> {
+    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> ns1:governs <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> .
+}
+
+<urn:g:proposed> {
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
+}
+
 <urn:g:approved> {
     <https://rai-hackathon.bbger.at/kg/company/Kelvara> a ns1:Company ;
         rdfs:label "Kelvara Packaging GmbH" ;
         rdfs:comment "Fictional company operating iMAKS line A." ;
         ns1:operates <https://rai-hackathon.bbger.at/kg/system/iMAKS> .
-
-    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> a ns1:Document ;
-        rdfs:label "DS-THERM-2200 Thermal Sensors Datasheet" ;
-        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
 
     <https://rai-hackathon.bbger.at/kg/document/SOP-001> a ns1:Document ;
         rdfs:label "SOP-001 Operating Procedures" ;
@@ -28,15 +32,13 @@
         ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP> ;
         ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
-        rdfs:label "DS-THERM-2200 §1 TMP-2210" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
-        ns1:page 1 ;
-        ns1:text "DS-THERM-2200 Temperature Sensor TMP-2210. Measurement range -40 to +200°C. Note 1: the rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours." .
-
     <https://rai-hackathon.bbger.at/kg/customer/Velora> a ns1:Customer ;
         rdfs:label "Velora Foods AG" ;
         rdfs:comment "Fictional customer." .
+
+    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> a ns1:Document ;
+        rdfs:label "DS-THERM-2200 Thermal Sensors Datasheet" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
 
     <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP> a ns1:Sensor ;
         rdfs:label "ST02_SEALING_TMP" ;
@@ -53,11 +55,11 @@
     <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> a ns1:Supplier ;
         rdfs:label "ThermoSense GmbH" .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> a ns1:Chunk ;
-        rdfs:label "SOP-001 §2 Sealing" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
+        rdfs:label "DS-THERM-2200 §1 TMP-2210" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
         ns1:page 1 ;
-        ns1:text "SOP-001 Operating Procedures, Station ST02_SEALING. RULE-ST02-01: TMP MUST remain between 175°C and 195°C. Warning above 195°C, critical above 210°C: inspect and notify maintenance." .
+        ns1:text "DS-THERM-2200 Temperature Sensor TMP-2210. Measurement range -40 to +200°C. Note 1: the rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours." .
 
     <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> a ns1:SensorModel ;
         rdfs:label "TMP-2210" ;
@@ -67,17 +69,15 @@
     <https://rai-hackathon.bbger.at/kg/system/iMAKS> a ns1:System ;
         rdfs:label "iMAKS Line A" .
 
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2 Sealing" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "SOP-001 Operating Procedures, Station ST02_SEALING. RULE-ST02-01: TMP MUST remain between 175°C and 195°C. Warning above 195°C, critical above 210°C: inspect and notify maintenance." .
+
     <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> a ns1:Station ;
         rdfs:label "ST02_SEALING" ;
         rdfs:comment "Heat sealing station." ;
         ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> .
-}
-
-<urn:g:proposed> {
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
-}
-
-<urn:g:rejected> {
-    <https://rai-hackathon.bbger.at/kg/document/DS-THERM-2200> ns1:governs <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> .
 }
 

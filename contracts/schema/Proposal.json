@@ -1,5 +1,32 @@
 {
   "$defs": {
+    "CanaryAlert": {
+      "description": "Returned with the decision that approved a planted canary.",
+      "properties": {
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "reverted": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reverted",
+          "type": "array"
+        },
+        "supervisor_notified": {
+          "title": "Supervisor Notified",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "reverted",
+        "supervisor_notified"
+      ],
+      "title": "CanaryAlert",
+      "type": "object"
+    },
     "NodeSpec": {
       "properties": {
         "cls": {
@@ -202,6 +229,17 @@
       ],
       "title": "Status",
       "type": "string"
+    },
+    "alert": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanaryAlert"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [
