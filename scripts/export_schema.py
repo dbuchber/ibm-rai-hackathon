@@ -19,6 +19,7 @@ SCHEMAS = {
     "AuditEntry": TypeAdapter(m.AuditEntry),
     "RunSummary": TypeAdapter(m.RunSummary),
     "CreateRun": TypeAdapter(m.CreateRun),
+    "ModelInfo": TypeAdapter(list[m.ModelInfo]),
     "CreateRunResponse": TypeAdapter(m.CreateRunResponse),
     "ProposalDecision": TypeAdapter(m.ProposalDecision),
 }
