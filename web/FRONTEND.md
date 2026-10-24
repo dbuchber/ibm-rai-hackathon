@@ -76,6 +76,28 @@ Where you keep the code is up to you; it is not a secret worth protecting from t
 In static mode `startRun` always rejects ("Live mode needs the API"). Use the recorded
 `demo-canary-chat` run to design the chat without a backend.
 
+## Chat canary (live chat)
+
+After a visitor trusted three live answers in a row without looking at a source, the server plants **one false
+fact** into the next real answer (it swaps one cited detail, e.g. the supplier). The citations still show the
+true triple. The visitor is expected to flag the answer. Spec:
+`docs/superpowers/specs/2026-10-24-chat-canary-design.md`.
+
+What the chat needs, all through `data` (the session header is added for you):
+
+| UI | call | then |
+|---|---|---|
+| Flag on every assistant message (thumbs down) + optional text, like ChatGPT/Claude | `feedback(runId, text)` | `reveal == null`: "Thanks, an analyst will review this answer." `reveal.outcome == "caught"`: quiet "Good catch" + false vs. true fact |
+| Visitor opens a citation, a passage or the evidence graph | `opened(runId, target)` (edge id, chunk IRI or `"evidence"`), fire and forget | nothing visible |
+| Next question | `startRun(question, invite)` returns `{run_id, reveal}` | `reveal?.outcome == "missed"`: show it **before** the new run: "Your last answer contained a deliberately false fact", false vs. true, link to `reveal.run_id` |
+
+Rules:
+
+- Nothing in the stream tells a canary apart from a normal answer. Do not try to, and never hint at it.
+- Use the same visual family as the curation canary alert: calm, unmistakable.
+- Static mode: `feedback` answers `{reveal: null}`, `opened` does nothing. The recorded `demo-canary-chat` run and
+  its click mock in `App.tsx` stay as they are for the pitch.
+
 ## Rules
 
 - `src/contracts.ts` is generated (`npm run types`). Never edit it.
