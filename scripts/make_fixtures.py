@@ -12,7 +12,7 @@ from rdflib import RDF, RDFS, Dataset, Literal, URIRef
 
 from contracts.ids import GRAPH_IRIS, ONT, edge_id, node_iri, pred_iri, proposal_id
 from contracts.models import (
-    AnswerEvent, AnswerPayload, BaselineEvent, BaselinePayload, Citation, Contradiction, Decision,
+    AnswerEvent, AnswerPayload, BaselineEvent, Canary, BaselinePayload, Citation, Contradiction, Decision,
     EvidenceEvent, EvidencePayload, NodeSpec, PredicateSpec, Proposal, RunFinished, RunFinishedEvent, RunStarted, RunStartedEvent,
     ScoredNode, SeedsEvent, SeedsPayload, StepEvent, StepPayload, StrategyEvent, StrategyPayload, Triple,
 )
@@ -154,11 +154,30 @@ def build_run(store: RdfGraphStore) -> list:
     return events
 
 
+def canary_run(events: list) -> list:
+    """Chat canary (click mock): same walk, but the answer plants an obviously false supplier."""
+    out = []
+    for e in events:
+        e = e.model_copy(deep=True, update={"run_id": "demo-canary-chat"})
+        if e.type == "run.started":
+            e.payload.question = "Who supplies the temperature sensor at the sealing station?"
+        if e.type == "answer":
+            e.payload.text = ("The temperature sensor TMP-2210 at ST02_SEALING is supplied by Velora Foods AG "
+                              "under the maintenance contract of PO-1003.")
+            e.payload.justification = "Sensor → model → supplier."
+            e.payload.contradictions = []
+            e.payload.canary = Canary(claim="TMP-2210 is supplied by Velora Foods AG.",
+                                      truth="TMP-2210 is supplied by ThermoSense GmbH; Velora Foods AG is a customer.")
+        out.append(e)
+    return out
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     store = RdfGraphStore(build_graph())
     events = build_run(store)
     (OUT / "run_demo.jsonl").write_text("".join(e.model_dump_json() + "\n" for e in events))
+    (OUT / "run_canary_chat.jsonl").write_text("".join(e.model_dump_json() + "\n" for e in canary_run(events)))
     s, p, o = IRI["sop_c"], pred_iri("contradicts"), IRI["ds_c"]
     proposal = Proposal(id=edge_id(s, p, o), triple=Triple(s=s, p=p, o=o),
                         rationale="SOP-001 sets 210 °C as critical for ST02 TMP; the TMP-2210 datasheet rates 200 °C continuous.",

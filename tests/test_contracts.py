@@ -68,6 +68,14 @@ def test_predicates_from_ontology(store):
 
 def test_fixture_run_validates():
     _check_run(FIX / "run_demo.jsonl")
+    _check_run(FIX / "run_canary_chat.jsonl")
+
+
+def test_chat_canary_fixture_is_marked():
+    events = [EventAdapter.validate_json(l) for l in (FIX / "run_canary_chat.jsonl").read_text().splitlines()]
+    answer = next(e for e in events if e.type == "answer").payload
+    assert answer.canary and "Velora" in answer.canary.claim
+    assert next(e for e in events if e.type == "run.started").payload.mock
 
 
 def test_runs_validate():

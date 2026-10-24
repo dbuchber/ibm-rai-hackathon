@@ -14,7 +14,8 @@
     "id": "bad079674282",
     "confidence": 0.86,
     "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
-    "status": "proposed"
+    "status": "proposed",
+    "alert": null
   },
   {
     "kind": "node",
@@ -32,7 +33,8 @@
     "id": "4d4a65cfc41b",
     "confidence": 0.91,
     "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
-    "status": "proposed"
+    "status": "proposed",
+    "alert": null
   },
   {
     "kind": "predicate",
@@ -50,7 +52,8 @@
     "id": "483c64af59a2",
     "confidence": 0.78,
     "proposed_by": "llm:openrouter/google/gemma-4-31b-it",
-    "status": "proposed"
+    "status": "proposed",
+    "alert": null
   },
   {
     "kind": "edge",
@@ -67,6 +70,7 @@
     "id": "c3fd595c36f2",
     "confidence": null,
     "proposed_by": "user",
-    "status": "proposed"
+    "status": "proposed",
+    "alert": null
   }
 ]
