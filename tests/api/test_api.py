@@ -595,3 +595,21 @@ def test_route_ica_vs_gateway(monkeypatch):
     monkeypatch.setenv("LITELLM_BASE_URL", "http://gw/v1")
     assert route("openai/ibm/granite-4-h-small") == {"api_base": ICA_BASE, "api_key": "ica-k"}
     assert route("openai/mistral-large-4-openrouter") == {"api_base": "http://gw/v1", "api_key": "gw-k"}
+
+
+def test_temperature_per_model_reaches_litellm(monkeypatch):
+    import sys, types
+    from engine import llm
+    from engine.models import temperature
+    assert temperature("openai/claude-haiku-5-5") == 1.0 and temperature("openai/gpt-6-luna") == 1.0
+    assert temperature("openai/ibm/granite-4-h-small") == 0.0 and temperature("openai/mistral-large-4-openrouter") == 0.0
+    seen = {}
+
+    def fake_completion(**kw):
+        seen[kw["model"]] = kw["temperature"]
+        msg = types.SimpleNamespace(content='{"ok": true}')
+        return types.SimpleNamespace(choices=[types.SimpleNamespace(message=msg)])
+    monkeypatch.setitem(sys.modules, "litellm", types.SimpleNamespace(completion=fake_completion))
+    for m in ("openai/claude-haiku-5-5", "openai/gpt-6-luna", "openai/ibm/granite-4-h-small"):
+        llm._raw([{"role": "user", "content": "x"}], m)
+    assert seen == {"openai/claude-haiku-5-5": 1.0, "openai/gpt-6-luna": 1.0, "openai/ibm/granite-4-h-small": 0.0}

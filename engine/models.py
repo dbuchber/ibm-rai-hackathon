@@ -13,6 +13,7 @@ class ModelInfo:
     id: str
     label: str
     provider: str          # "gateway" | "ibm-ica"
+    temperature: float = 0.0   # Haiku and Luna reject anything but 1.0
     strict: bool = False   # premium model: own tight per-IP and global hourly budget (api/main.py)
 
 
@@ -21,8 +22,8 @@ ICA_MODELS = [
     ModelInfo("openai/ibm/granite-4-h-small", "IBM Granite 4 H Small", "ibm-ica"),
     ModelInfo("openai/watsonx/mistralai/mistral-medium-2505", "Mistral Medium (watsonx)", "ibm-ica"),
     ModelInfo("openai/meta-llama/llama-3-3-70b-instruct", "Llama 3.3 70B", "ibm-ica"),
-    ModelInfo("openai/claude-haiku-5-5", "Claude Haiku 5.5", "ibm-ica", strict=True),
-    ModelInfo("openai/gpt-6-luna", "GPT-6 Luna", "ibm-ica", strict=True),
+    ModelInfo("openai/claude-haiku-5-5", "Claude Haiku 5.5", "ibm-ica", temperature=1.0, strict=True),
+    ModelInfo("openai/gpt-6-luna", "GPT-6 Luna", "ibm-ica", temperature=1.0, strict=True),
 ]
 
 
@@ -39,3 +40,7 @@ def route(model: str) -> dict:
     if any(m.id == model for m in ICA_MODELS):
         return {"api_base": ICA_BASE, "api_key": os.environ.get("ICA_API_KEY")}
     return {"api_base": os.environ.get("LITELLM_BASE_URL"), "api_key": os.environ.get("LITELLM_API_KEY")}
+
+
+def temperature(model: str) -> float:
+    return next((m.temperature for m in [GATEWAY_DEFAULT, *ICA_MODELS] if m.id == model), 0.0)
