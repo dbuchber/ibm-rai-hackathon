@@ -140,3 +140,20 @@ Rules:
 | `src/canary.ts` | click mock for the chat canary |
 
 Replace freely. The contract is fixed, the components are not.
+
+### Rebuilt maintenance data and recorded examples
+
+The current graph includes the ST01 pressure, ST02 temperature and ST04 vibration scenarios
+from commit `28e8516`. These are independent synthetic incident snapshots, not live machine
+streams. The stored runs predate that rebuild and retain their original answers and embedded
+evidence. Replay is labelled accordingly; it does not imply a newly generated maintenance
+checklist. Live questions continue to use the configured engine API against the current graph.
+
+Recorded questions remain on their final answer instead of automatically changing scenarios.
+While the graph is hidden, replay advances quickly to the answer with status updates. Earlier
+source chunks embedded in a recording remain inspectable even when their parent document
+is no longer present in the rebuilt graph.
+
+The Emergency Checklist opens on its first entity item once the answer is available.
+Playback and navigation do not mark items complete. Each item has an independent checkbox
+that the user explicitly checks or unchecks; completion does not change the graph selection.

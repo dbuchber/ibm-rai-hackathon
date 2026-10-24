@@ -87,7 +87,7 @@
 .guide-questions button:hover, .guide-questions button.chosen { background: #1d2a3d; border-color: #2f8cff; }
 .guide-questions button:disabled { opacity: .5; cursor: default; }
 .guide-questions .tag { display: block; width: fit-content; margin-top: 6px; }
-.graph-toggle { position: absolute; top: 50%; left: -20px; z-index: 5; transform: translateY(-50%); width: 28px; height: 28px; display: grid; place-items: center; padding: 0 0 3px; border-radius: 50%; border: 1px solid #2f8cff; background: #0b0b0c; color: #3d9bff; font-size: 24px; cursor: pointer; }
+.graph-toggle { position: absolute; top: 50%; left: -20px; z-index: 5; transform: translateY(-50%); width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid #2f8cff; background: #0b0b0c; color: #3d9bff; font-size: 24px; cursor: pointer; }
 .graph-collapsed { grid-template-columns: minmax(300px,1fr) minmax(240px,.9fr); }
 .graph-collapsed .graph-pane { display: none; }
 .graph-collapsed .graph-toggle { left: -10px; }
@@ -237,3 +237,13 @@
   .demo-workspace.chat-first .chat-pane { flex: 1; }
   .walkthrough-tool .demo-workspace.chat-first { display: grid; }
 }
+
+.walkthrough-context { margin: -8px auto 0; max-width: 900px; text-align: center; font-size: 12px; line-height: 1.45; color: var(--ink2); }
+.replay-note { margin: 0 0 12px; border-left: 2px solid var(--ink3); padding-left: 10px; color: var(--ink2); font-size: 11px; line-height: 1.5; }
+
+.timeline-heading { display: flex; align-items: center; gap: 0; padding-left: 14px; }
+.timeline-heading .timeline-step { min-width: 0; flex: 1; padding-left: 10px; }
+.checklist-checkbox { flex-shrink: 0; width: 18px; height: 18px; margin: 0; accent-color: #5ec4a6; cursor: pointer; }
+
+.graph-toggle svg { display: block; }
+.graph-toggle[aria-pressed="false"] svg { transform: rotate(180deg); }

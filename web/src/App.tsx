@@ -30,7 +30,6 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   const [revealedRun, setRevealedRun] = useState<string | null>(null);
   const chatBox = useRef<HTMLElement>(null);
   const previousChatBox = useRef<DOMRect | null>(null);
-  const [demoPlaying, setDemoPlaying] = useState(false);
   const [showGraph, setShowGraph] = useState(true);
   const [draft, setDraft] = useState("");
   const [invite, setInvite] = useState("");
@@ -85,21 +84,27 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   }, [isWalkthrough]);
   useEffect(() => {
     if (walkthroughStage === undefined) return;
-    setPlaying(false); setDemoPlaying(false); setLiveRun(false);
+    setPlaying(false); setLiveRun(false);
     setSelected(null); setFocusChunk(null); setFlash(null);
     if (walkthroughStage === 0) { setRunId(null); setPos(-1); setView("twin"); return; }
     setRunId("demo-contradiction"); setView("ask");
-    const kind = (["question", "question", "frontier", "answer", "evidence"] as const)[walkthroughStage];
+    const kind = (["question", "question", "frontier", "seeds", "evidence"] as const)[walkthroughStage];
     const position = fs.findIndex(frame => frame.kind === kind);
     setPos(position);
   }, [walkthroughStage, fs]);
 
   const panelsVisible = !!runId && (walkthroughStage !== undefined
-    ? walkthroughStage >= 3 && !!rv.answer
+    ? walkthroughStage >= 3 && !!full.answer
     : !!rv.answer || revealedRun === runId);
   useEffect(() => {
-    if (runId && rv.answer) setRevealedRun(runId);
-  }, [runId, rv.answer]);
+    if (!runId || !rv.answer || revealedRun === runId) return;
+    setRevealedRun(runId);
+    if (walkthroughStage === undefined) {
+      const firstItem = fs.findIndex(frame => frame.kind === "seeds");
+      setPlaying(false);
+      if (firstItem >= 0) setPos(firstItem);
+    }
+  }, [runId, rv.answer, revealedRun, walkthroughStage, fs]);
   useLayoutEffect(() => {
     const element = chatBox.current;
     if (!element) return;
@@ -165,9 +170,10 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
       if (!liveRun || full.finished) setPlaying(false);
       return;
     }
-    const t = setTimeout(() => setPos((p) => p + 1), pos < 0 ? 200 : HOLD[fs[pos].kind]);
+    const delay = pos < 0 ? 200 : !liveRun && !panelsVisible ? 450 : HOLD[fs[pos].kind];
+    const t = setTimeout(() => setPos((p) => p + 1), delay);
     return () => clearTimeout(t);
-  }, [playing, pos, fs, view, liveRun, full.finished, active]);
+  }, [playing, pos, fs, view, liveRun, full.finished, active, panelsVisible]);
 
   // Chat canary (click mock): leaving a planted false answer without reporting it raises the alert.
   const moveOn = useCallback(() => {
@@ -184,35 +190,25 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
     setRevealedRun(null);
     moveOn();
     stopStream.current();
-    const ev = await data.getRun(id);
+    setQuestionError("");
+    let ev: Event[];
+    try { ev = await data.getRun(id); }
+    catch (error) { setPlaying(false); setQuestionError(error instanceof Error ? error.message : "Could not open this recording. Try another question."); return; }
     setLiveRun(false); setLost(false);
     setRunId(id); setEvents(ev); setPos(0); setPlaying(true); setView("ask"); setSelected(null);
   }, []);
 
   const demoRuns = useMemo(() => runs.filter(run => !run.mock), [runs]);
   const scenarioIndex = demoRuns.findIndex(run => run.run_id === runId);
-  useEffect(() => {
-    if (!active || !demoPlaying || !runId || pos < fs.length - 1 || !fs.length || (liveRun && !full.finished)) return;
-    const timer = window.setTimeout(() => {
-      const next = demoRuns[scenarioIndex + 1];
-      if (next) void pick(next.run_id);
-      else { setDemoPlaying(false); setPlaying(false); }
-    }, 4000);
-    return () => window.clearTimeout(timer);
-  }, [active, demoPlaying, runId, pos, fs.length, liveRun, full.finished, demoRuns, scenarioIndex, pick]);
-
   const playDemo = () => {
-    if (demoPlaying || playing) { setDemoPlaying(false); setPlaying(false); return; }
-    setDemoPlaying(true);
-    if (scenarioIndex < 0 || (scenarioIndex === demoRuns.length - 1 && pos >= fs.length - 1)) {
-      if (demoRuns[0]) void pick(demoRuns[0].run_id);
-    } else setPlaying(true);
+    if (playing) { setPlaying(false); return; }
+    if (!runId && demoRuns[0]) { void pick(demoRuns[0].run_id); return; }
+    if (pos >= fs.length - 1) setPos(0);
+    setPlaying(true);
   };
   const changeScenario = async (index: number) => {
     const next = demoRuns[Math.max(0, Math.min(demoRuns.length - 1, index))];
-    if (!next) return;
-    await pick(next.run_id);
-    if (!demoPlaying) setPlaying(false);
+    if (next) await pick(next.run_id);
   };
 
   const ask = useCallback(async (q: string) => {
@@ -220,7 +216,7 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
     moveOn();
     stopStream.current();
     try {
-      setDemoPlaying(false);
+
       setQuestionError("");
       const { run_id } = await data.startRun(q, invite || undefined);
       setView("ask"); setDraft("");
@@ -309,6 +305,7 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   const cite = (id: string) => {
     const doc = folded.docOf.get(id);
     if (doc) { setSelected(doc); setFocusChunk(id); }
+    else if (idx.get(id)?.cls === "Chunk") { setSelected(id); setFocusChunk(id); }
     setFlash(null);
     requestAnimationFrame(() => setFlash(folded.mapId(id)));
   };
@@ -399,20 +396,20 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
 
       </div>
       <aside className="guide-pane">
-        <button className="graph-toggle" aria-label="Toggle knowledge graph" aria-pressed={showGraph} onClick={() => setShowGraph(value => !value)}>{showGraph ? "‹" : "›"}</button>
-        <div className="workspace-heading"><div className="eyebrow">Connected knowledge</div><h2>Evidence trail</h2></div>
-        <TraversalGuide runs={runs} runId={runId} events={events} frames={fs} position={pos} idx={idx}
+        <button className="graph-toggle" aria-label="Toggle knowledge graph" aria-pressed={showGraph} onClick={() => setShowGraph(value => !value)}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+        <div className="workspace-heading"><div className="eyebrow">Connected knowledge</div><h2>Emergency Checklist</h2></div>
+        <TraversalGuide key={runId ?? "empty"} runs={runs} runId={runId} events={events} frames={fs} position={pos} idx={idx}
           contextNode={sel} contextEdges={selected ? folded.edges.filter(edge => edge.s === selected || edge.o === selected) : []}
-          onPick={id => { setDemoPlaying(!runs.find(run => run.run_id === id)?.mock); void pick(id); }} onStep={index => { setDemoPlaying(false); setPlaying(false); setPos(index); setView("ask"); }} onCite={cite} />
+          onPick={id => { void pick(id); }} onStep={index => { setPlaying(false); setPos(index); setView("ask"); }} onCite={cite} />
 
       </aside>
       <section ref={chatBox} className="chat-pane" aria-label="Ask the twin">
-        <div className="workspace-heading"><div><div className="eyebrow">Ask the twin</div><h2>Open chat</h2></div><button className="clear-chat" onClick={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); setDemoPlaying(false); setDraft(""); setQuestionError(""); setSelected(null); setFocusChunk(null); setView("twin"); }}>Clear</button></div>
+        <div className="workspace-heading"><div><div className="eyebrow">Ask the twin</div><h2>Open chat</h2></div><button className="clear-chat" onClick={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); setDraft(""); setQuestionError(""); setSelected(null); setFocusChunk(null); setView("twin"); }}>Clear</button></div>
         {!runId && <div className="chat-empty"><strong>No questions yet</strong><span>{"Ask about stations, sensors, suppliers and source documents."}</span></div>}
         {runId && <RunPanel answerOnly view={panelsVisible ? { ...rv, answer: full.answer } : rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
-          onBack={() => { setDemoPlaying(false); moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
+          onBack={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
           onCite={cite} reported={reported.has(runId)} onReport={report} />}
-        {!runId && <details className="chat-recordings" open={!data.live}><summary>Explore a recorded question</summary><div className="guide-questions">{runs.map(run => <button key={run.run_id} onClick={() => { setDemoPlaying(!run.mock); void pick(run.run_id); }}>{run.question}{run.mock && <span className="tag mock">Mock canary</span>}</button>)}</div></details>}
+        {!runId && <details className="chat-recordings" open={!data.live}><summary>Explore a recorded question</summary><div className="guide-questions">{runs.map(run => <button key={run.run_id} onClick={() => { void pick(run.run_id); }}>{run.question}{run.mock && <span className="tag mock">Mock canary</span>}</button>)}</div></details>}
         <form className="chat-form" onSubmit={event => { event.preventDefault(); if (draft.trim() && data.live) ask(draft.trim()); }}>
           {data.live && <input className="invite-field" aria-label="Invitation code" placeholder="Invitation code" value={invite} onChange={event => setInvite(event.target.value)} />}
           {questionError && <div className="chat-error" role="alert">{questionError}</div>}

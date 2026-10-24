@@ -5,11 +5,11 @@ const App = lazy(() => import("./App"));
 document.documentElement.dataset.presentationTheme = "dark";
 const labels = ["Logo", "Walkthrough", "Demo"];
 const captions = [
-  ["Start in chat", "Every investigation starts with a question."],
-  ["Step 1 · Question sent", "Ask about the sealing station’s temperature limit."],
-  ["Step 2 · Search", "The agent gathers evidence while you stay in chat."],
-  ["Step 3 · Answer", "The answer arrives with its graph and evidence trail."],
-  ["Step 4 · Check the sources", "Compare the evidence. Conflicting sources stay visible."],
+  ["Start in chat", "An alarm starts the question. Evidence guides the response."],
+  ["Step 1 · Question sent", "Can sealing continue? Check the operating limits."],
+  ["Step 2 · Search", "Connect the station, its sensor and the applicable sources."],
+  ["Step 3 · Answer", "Read the answer. Inspect the evidence behind it."],
+  ["Step 4 · Check the sources", "An alarm threshold is not an operating limit."],
 ];
 
 function Mark() {
@@ -117,6 +117,7 @@ export default function Presentation() {
             <h2 ref={element => { if (index === sub) headings.current[1] = element; }} tabIndex={-1}>{title}</h2>
           </div>)}
         </div>
+        <p className="walkthrough-context">{sub === 0 ? "Current dataset: filling pressure · sealing temperature · packaging vibration. Synthetic incident replays." : "Earlier recorded sealing example · the rebuilt maintenance graph is available in the interactive app."}</p>
         {screen === 1 && <WalkthroughPreview stage={sub} />}
       </div>
       <button className="walkthrough-back" aria-label="Previous walkthrough scene" onClick={event => { event.stopPropagation(); previous(); }}>← Back</button>

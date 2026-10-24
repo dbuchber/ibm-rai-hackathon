@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Edge, Event, Node, RunSummary } from "./contracts";
 import type { Frame } from "./run";
 import { pretty } from "./run";
@@ -24,6 +24,7 @@ interface Props {
 }
 
 export default function TraversalGuide(p: Props) {
+  const [completed, setCompleted] = useState<Set<number>>(() => new Set());
   const body = useRef<HTMLDivElement>(null);
   const current = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function TraversalGuide(p: Props) {
 
   // Keep the engine's frame positions, but group the UI around the information discovered.
   const trail = p.frames.flatMap((frame, index) => {
-    if (frame.kind === "strategy") return [];
+    if (frame.kind === "question" || frame.kind === "strategy") return [];
     if (frame.kind === "frontier") return p.frames[index + 1]?.kind === "verdicts" ? [] : [{ frame, index }];
     if (frame.kind === "verdicts" && p.position === index - 1) return [{ frame: p.frames[index - 1], index: index - 1 }];
     return [{ frame, index }];
@@ -59,7 +60,7 @@ export default function TraversalGuide(p: Props) {
     </section>}
     <details className="question-picker" open={!p.runId}>
       <summary>{p.runId ? "Explore another question" : "Explore the graph’s evidence"}</summary>
-      <div className="guide-questions">{p.runs.map(run => <button key={run.run_id} className={p.runId === run.run_id ? "chosen" : ""} onClick={() => p.onPick(run.run_id)}>{run.question}{run.mock && <span className="tag mock">Mock canary</span>}</button>)}</div>
+      <div className="guide-questions">{p.runs.map(run => <button key={run.run_id} className={p.runId === run.run_id ? "chosen" : ""} onClick={() => { setCompleted(new Set()); p.onPick(run.run_id); }}>{run.question}{run.mock && <span className="tag mock">Mock canary</span>}</button>)}</div>
     </details>
     {!p.runId && !p.contextNode && <div className="guide-welcome">
       <span className="guide-path" aria-hidden="true">● ── ● ── ●</span>
@@ -72,16 +73,20 @@ export default function TraversalGuide(p: Props) {
     <ol className="traversal-timeline">
       {trail.map(({ frame, index }, trailIndex) => {
         const event = p.events[frame.event];
-        const active = index === p.position || (frame.kind === "question" && p.frames[p.position]?.kind === "strategy");
-        const done = index < p.position && !active;
+        const active = index === p.position;
+        const done = completed.has(index);
         const title = evidenceTitle(event, frame, p.idx);
         return <li key={`${frame.event}:${frame.kind}`}>
           <section ref={active ? current : undefined} className={`guide-step${active ? " current" : ""}${done ? " completed" : ""}`} aria-label={title}>
-            <button className="timeline-step" aria-current={active ? "step" : undefined} onClick={() => p.onStep(index)}>
-              <span className={`step-number${done ? " done" : ""}`}>{done ? "✓" : trailIndex + 1}</span>
-              <span>{title}</span>
-              <span className="timeline-state">{active ? "In view" : "Explore"}</span>
-            </button>
+            <div className="timeline-heading">
+              <input className="checklist-checkbox" type="checkbox" aria-label={`Mark ${title} complete`} checked={done}
+                onChange={event => { const checked = event.target.checked; setCompleted(previous => { const next = new Set(previous); if (checked) next.add(index); else next.delete(index); return next; }); }} />
+              <button className="timeline-step" aria-current={active ? "step" : undefined} onClick={() => p.onStep(index)}>
+                <span className={`step-number${done ? " done" : ""}`}>{trailIndex + 1}</span>
+                <span>{title}</span>
+                <span className="timeline-state">{active ? "In view" : "Explore"}</span>
+              </button>
+            </div>
             {(active || done) && <div className="frame-content">
               <FrameContent event={event} frame={frame} idx={p.idx} onCite={p.onCite} />
             </div>}
@@ -94,7 +99,6 @@ export default function TraversalGuide(p: Props) {
 
 function evidenceTitle(event: Event, frame: Frame, idx: Index): string {
   switch (event.type) {
-    case "run.started": return "The question";
     case "seeds": return event.payload.nodes.slice(0, 2).map(node => node.label).join(" · ") || "Starting entities";
     case "step": {
       const followed = new Set(event.payload.decisions.filter(decision => decision.verdict === "follow").map(decision => decision.edge_id));
@@ -111,8 +115,6 @@ function evidenceTitle(event: Event, frame: Frame, idx: Index): string {
 
 function FrameContent({ event, frame, idx, onCite }: { event: Event; frame: Frame; idx: Index; onCite: (id: string) => void }) {
   switch (event.type) {
-    case "run.started":
-      return <><p>{event.payload.question}</p></>;
     case "strategy":
       return <><p><strong>{event.payload.question_type}</strong></p><p>{event.payload.rationale}</p><div className="eyebrow">Allowed relations · depth {event.payload.max_depth}</div><div className="chips">{event.payload.allowed_predicates.map(predicate => <span className="chip pred" key={predicate}>{pretty(predicate)}</span>)}</div><div className="frame-note">These relations constrain which graph paths the engine can explore.</div></>;
     case "seeds":

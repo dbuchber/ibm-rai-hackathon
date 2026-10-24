@@ -17,7 +17,7 @@ interface Props {
 
 export default function Inspector({ node, folded, idx, cited, focusChunk, onClose }: Props) {
   const isDoc = node.cls === "Document";
-  const chunks = (isDoc ? folded.chunksOf.get(node.id) : folded.chunksAbout.get(node.id)) ?? [];
+  const chunks = node.cls === "Chunk" ? [node] : (isDoc ? folded.chunksOf.get(node.id) : folded.chunksAbout.get(node.id)) ?? [];
   // cited passages first, then reading order
   const ordered = [...chunks].sort((a, b) => Number(cited.has(b.id)) - Number(cited.has(a.id)));
   const nCited = chunks.filter((c) => cited.has(c.id)).length;

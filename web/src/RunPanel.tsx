@@ -91,6 +91,8 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
         {lost && <div className="banner">Connection lost. Showing the events received so far.</div>}
         {v.finished?.status === "error" && <div className="banner">Run failed: {v.finished.error}</div>}
 
+        {!live && !v.started?.mock && <p className="replay-note">Earlier recorded example. The maintenance dataset has since been rebuilt; this answer retains its original evidence.</p>}
+
         {!answerOnly && <>
         {v.strategy && (
           <section className="card">
@@ -153,7 +155,7 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
 
         </>}
 
-        {answerOnly && !v.answer && <div className="chat-traversing" role="status"><span className="traversing-dot" />Traversing the knowledge graph…<p>The evidence trail shows the entities, relationships and sources being considered.</p></div>}
+        {answerOnly && !v.answer && <div className="chat-traversing" role="status"><span className="traversing-dot" />{v.steps.length ? `Checking relationships · hop ${v.steps[v.steps.length - 1]?.payload.n}` : v.seeds.length ? "Locating relevant entities…" : v.strategy ? "Preparing the evidence search…" : "Opening the recorded question…"}<p>The graph and evidence trail appear with the answer.</p></div>}
 
         {v.answer && (
           <section className="card answer">
