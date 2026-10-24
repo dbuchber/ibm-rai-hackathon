@@ -5,6 +5,7 @@ import type { RunView } from "./run";
 import { pretty } from "./run";
 import { FlagIcon } from "./Curate";
 import { fmtDuration, modelInfo } from "./models";
+import { chatFollowUp, newChat } from "./data";
 
 export interface RunMeta { model: string; secs: number | null }
 
@@ -33,6 +34,7 @@ export function Picker({ runs, meta, live, models, onPick, onAsk }: PickerProps)
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState(loadModel);
+  const [follow, setFollow] = useState(chatFollowUp);
   const choice = models.length > 1;
   const model = choice ? (models.find((m) => m.id === picked) ?? models[0]).id : undefined;
   // runs of the same question with different models share one card
@@ -50,6 +52,12 @@ export function Picker({ runs, meta, live, models, onPick, onAsk }: PickerProps)
       }}
     >
       <label className="eyebrow" htmlFor="ask">{live ? "Ask your own question" : "Or ask your own"}</label>
+      {live && follow && (
+        <div className="follow-up">
+          <span>Follows up on <q>{follow}</q></span>
+          <button type="button" className="link" onClick={() => { newChat(); setFollow(null); }}>New chat</button>
+        </div>
+      )}
       <div className="ask-field">
         <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} disabled={!live}
           placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
