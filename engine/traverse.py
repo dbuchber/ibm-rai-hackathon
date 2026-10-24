@@ -15,6 +15,7 @@ from contracts.ids import local_name
 from contracts.models import Decision, Edge, Node, SeedsPayload, StepPayload, StrategyPayload
 from contracts.store import GraphStore
 from engine import embed, llm
+from engine.history import with_context
 from engine.llm import LLMFormatError
 
 FRONTIER_CAP = 25
@@ -71,7 +72,7 @@ def _node(store: GraphStore, walk: Walk, iri: str) -> Node:
 
 
 def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: SeedsPayload, model: str,
-         emit: Callable) -> Walk:
+         emit: Callable, context: str = "") -> Walk:
     w = Walk(seeds=[n.id for n in seeds.nodes])
     for i in w.seeds:
         _node(store, w, i)
@@ -103,7 +104,7 @@ def walk(question: str, store: GraphStore, strategy: StrategyPayload, seeds: See
         detail = "\n".join(f"- {_fmt_node(x)}" for x in nodes_in.values())
         messages = [
             {"role": "system", "content": SYSTEM},
-            {"role": "user", "content": (
+            {"role": "user", "content": with_context(context,
                 f"Question: {question}\n\nStrategy guidance ({strategy.question_type}): {strategy.prompt}\n\n"
                 f"Facts collected so far:\n" + "\n".join(facts) +
                 f"\n\nNodes in the candidate edges:\n{detail}\n\nCandidate edges (step {n} of max {strategy.max_depth}):\n{listing}")},

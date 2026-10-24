@@ -48,7 +48,7 @@ def test_evidence_includes_path_to_seed(store, monkeypatch):
 
 def test_no_seeds_answers_insufficient(store, monkeypatch):
     monkeypatch.setattr(run.seeds_mod, "find", lambda q, s: SeedsPayload(nodes=[]))
-    monkeypatch.setattr(run.strategy, "plan", lambda q, p, m: StrategyPayload(question_type="t", rationale="r", prompt="p", max_depth=2, allowed_predicates=[]))
+    monkeypatch.setattr(run.strategy, "plan", lambda q, p, m, **k: StrategyPayload(question_type="t", rationale="r", prompt="p", max_depth=2, allowed_predicates=[]))
     monkeypatch.setattr(run.baseline, "rag", lambda *a, **k: __import__("contracts.models", fromlist=["x"]).BaselinePayload(chunks=[], answer="-"))
     events = []
     run.run_question("zzz", store, model="m", mode="live", emit=events.append, run_id="t")

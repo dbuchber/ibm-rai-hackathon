@@ -8,6 +8,7 @@ from contracts.ids import local_name
 from contracts.models import AnswerPayload, Citation, Contradiction
 from contracts.store import GraphStore
 from engine import llm
+from engine.history import with_context
 from engine.llm import LLMFormatError
 from engine.traverse import Walk
 
@@ -48,13 +49,14 @@ def context_for(walk: Walk, store: GraphStore) -> tuple[str, set[str], set[str]]
     return "\n".join(dict.fromkeys(lines)), edge_ids, chunks
 
 
-def answer(question: str, walk: Walk, store: GraphStore, model: str) -> AnswerPayload:
+def answer(question: str, walk: Walk, store: GraphStore, model: str, context: str = "") -> AnswerPayload:
     if not walk.followed:
         return AnswerPayload(text=INSUFFICIENT, justification="The traversal found no approved facts relevant to the question.",
                              citations=[])
-    context, edge_ids, chunk_ids = context_for(walk, store)
+    facts, edge_ids, chunk_ids = context_for(walk, store)
+    conversation = context
     messages = [{"role": "system", "content": SYSTEM},
-                {"role": "user", "content": f"Question: {question}\n\nFacts:\n{context}"}]
+                {"role": "user", "content": with_context(conversation, f"Question: {question}\n\nFacts:\n{facts}")}]
     try:
         out = llm.complete_json(messages, model, _Out)
     except LLMFormatError:
