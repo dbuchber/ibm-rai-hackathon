@@ -177,6 +177,8 @@ interface Props {
   /** new node id -> existing node to place it next to (e.g. a proposed node near its source chunk) */
   anchors?: Map<string, string>;
   onSelect: (id: string | null) => void;
+  /** defaults to the full-screen backdrop */
+  className?: string;
 }
 
 export default function Graph(p: Props) {
@@ -301,7 +303,7 @@ export default function Graph(p: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [p.flash]);
 
-  return <div ref={box} className="graph" aria-label="Knowledge graph" role="img" />;
+  return <div ref={box} className={p.className ?? "graph"} aria-label="Knowledge graph" role="img" />;
 }
 
 /** Like cy.fit, but frames the area not covered by floating panels. */

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import "./presentation.css";
+import Imprint from "./Imprint";
 
 const App = lazy(() => import("./App"));
 const initialTheme = (() => {
@@ -147,6 +148,7 @@ export default function Presentation() {
     <nav className="presentation-nav" aria-label="Presentation screens">
       {labels.map((label, index) => <button key={label} aria-label={label} aria-current={screen === index ? "step" : undefined} onClick={() => go(index)}><span /></button>)}
     </nav>
+    <Imprint className="imprint-corner" />
     <div className="screen-reader-status" aria-live="polite">Screen {screen + 1} of 3: {labels[screen]}</div>
   </main>;
 }
