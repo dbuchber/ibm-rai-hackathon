@@ -5,6 +5,13 @@ export type Index = Map<string, Node>;
 
 export const labelOf = (idx: Index, iri: string) => idx.get(iri)?.label ?? local(iri);
 
+/** Engine text may carry raw citation tokens: "[<edge id>]" and "{<node IRI>}". Show them as people read them. */
+export function readable(text: string, idx: Index) {
+  return text
+    .replace(/\s*\[[0-9a-f]{12}\]/g, "")
+    .replace(/\{(https?:\/\/[^}\s]+)\}/g, (_, iri: string) => labelOf(idx, iri));
+}
+
 export function Triple({ edge, idx }: { edge: Pick<Edge, "s" | "p" | "o">; idx: Index }) {
   return (
     <span className="triple">

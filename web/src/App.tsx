@@ -10,6 +10,10 @@ import Curate, { kindOf } from "./Curate";
 import Roadmap from "./Roadmap";
 import Inspector from "./Inspector";
 import { fold, foldClasses } from "./fold";
+import { AlertDialog, AuditDrawer, Toast, type OversightAlert } from "./Oversight";
+import { audit, SUPERVISOR } from "./canary";
+import type { AuditEntry } from "./contracts";
+import type { Decision } from "./data";
 import { Icon, Mark } from "./bits";
 
 type View = "twin" | "ask" | "contrast" | "curate" | "roadmap";
@@ -38,6 +42,14 @@ export default function App() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [focusChunk, setFocusChunk] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [alertBox, setAlertBox] = useState<OversightAlert | null>(null);
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [reverted, setReverted] = useState<string[]>([]);
+  const [ghosts, setGhosts] = useState<Proposal[]>([]); // failed canaries, kept only to label the audit log
+  const [reported, setReported] = useState<Set<string>>(new Set());
+  const chatPending = useRef<{ runId: string; question: string; canary: NonNullable<ReturnType<typeof canaryOf>> } | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
   const [curFocus, setCurFocus] = useState<string[]>([]);
   const [baseOntology, setOntology] = useState<Ontology>({ classes: [], predicates: [] });
@@ -109,7 +121,19 @@ export default function App() {
     return () => clearTimeout(t);
   }, [playing, pos, fs, view, liveRun, full.finished]);
 
+  // Chat canary (click mock): leaving a planted false answer without reporting it raises the alert.
+  const moveOn = useCallback(() => {
+    const c = chatPending.current;
+    chatPending.current = null;
+    if (!c) return;
+    audit("canary_failed", `Planted false answer not reported: "${c.canary.claim}"`);
+    audit("supervisor_notified", `${SUPERVISOR} notified.`);
+    setAlertBox({ kind: "chat", canary: c.canary, question: c.question, supervisor: SUPERVISOR });
+  }, []);
+  const go = (v: View) => { if (v !== view) { moveOn(); setAuditOpen(false); } setView(v); };
+
   const pick = useCallback(async (id: string) => {
+    moveOn();
     stopStream.current();
     const ev = await data.getRun(id);
     setLiveRun(false); setLost(false);
@@ -117,6 +141,7 @@ export default function App() {
   }, []);
 
   const ask = useCallback(async (q: string) => {
+    moveOn();
     stopStream.current();
     try {
       const { run_id } = await data.startRun(q);
@@ -144,7 +169,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).tagName === "INPUT") return;
-      if (e.key >= "1" && e.key <= "5") setView(VIEWS[+e.key - 1][0]);
+      if (e.key >= "1" && e.key <= "5") go(VIEWS[+e.key - 1][0]);
       if (view !== "ask" || !runId) return;
       if (e.key === " ") { e.preventDefault(); setPlaying((p) => !p); }
       if (e.key === "ArrowRight") { setPlaying(false); setPos((p) => Math.min(fs.length - 1, p + 1)); }
@@ -152,11 +177,30 @@ export default function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [view, runId, fs.length]);
+  });
 
-  const decide = async (id: string, d: "approve" | "reject") => {
+  const decide = async (id: string, d: Decision) => {
+    const before = proposals;
     const p = await data.decide(id, d);
-    setProposals((xs) => xs.map((x) => (x.id === id ? { ...x, status: p.status } : x)));
+    if (p.alert) {
+      const rev = p.alert.reverted;
+      setReverted(rev);
+      setGhosts((g) => [...g, p]);
+      setAlertBox({ kind: "curation", alert: p.alert, canary: p, reverted: before.filter((x) => rev.includes(x.id)) });
+    } else if (d !== "approve") {
+      const log = await data.getAudit();
+      if (log.some((e) => e.kind === "canary_passed" && e.proposal_id === id)) setToast("Good catch. That was a test proposal.");
+    }
+    // the server (or the static engine) may revert items or plant a test proposal: take its list
+    const fresh = await data.listProposals();
+    setProposals(fresh.map((x) => ({ ...x, kind: kindOf(x) })));
+    if (auditOpen) setAuditLog(await data.getAudit());
+  };
+
+  const openAudit = async () => {
+    setSelected(null);
+    setAuditLog(await data.getAudit());
+    setAuditOpen(true);
   };
 
   const targets = (p: Proposal): string[] => {
@@ -190,6 +234,27 @@ export default function App() {
     setFlash(null);
     requestAnimationFrame(() => setFlash(folded.mapId(id)));
   };
+
+  // the answer card's Report action; on a planted chat canary this is the "good catch"
+  const report = () => {
+    if (!runId) return;
+    setReported((r) => new Set(r).add(runId));
+    const c = canaryOf(full);
+    if (c && chatPending.current?.runId === runId) {
+      chatPending.current = null;
+      audit("canary_passed", `Planted false answer reported: "${c.claim}"`);
+      setToast("Good catch. That answer was a test: " + c.truth);
+    } else {
+      audit("decision", `Answer reported for review: "${full.started?.question ?? runId}"`);
+      setToast("Reported. An analyst will review this answer.");
+    }
+  };
+  useEffect(() => {
+    const c = canaryOf(rv);
+    if (view === "ask" && runId && c && !reported.has(runId) && !chatPending.current) {
+      chatPending.current = { runId, question: rv.started?.question ?? "", canary: c };
+    }
+  }, [rv, view, runId, reported]);
 
   // ---- what the graph shows ----
   const showRun = (view === "ask" || view === "contrast") && runId;
@@ -226,8 +291,8 @@ export default function App() {
     focus = curFocus.length ? curFocus : proposals.filter((p) => p.status !== "rejected").flatMap(targets);
     focusKey = "curate:" + curFocus.join();
   }
-  const sel = selected ? idx.get(selected) : undefined;
-  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: sel ? 412 : 16 };
+  const sel = selected && !auditOpen ? idx.get(selected) : undefined;
+  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: sel || auditOpen ? 412 : 16 };
   const shownClasses = useMemo(() => foldClasses(classes, folded), [classes, folded]);
   const shownFocus = [...new Set(focus.map(folded.mapId))];
   const shownAnchors = useMemo(
@@ -253,7 +318,10 @@ export default function App() {
   return (
     <>
       <Graph nodes={folded.nodes} edges={folded.edges} classes={shownClasses} mode={mode} focus={shownFocus} focusKey={focusKey}
-        inset={inset} flash={flash} onSelect={(id) => { setSelected(id); setFocusChunk(null); }} anchors={shownAnchors} />
+        inset={inset} flash={flash} onSelect={(id) => { setAuditOpen(false); setSelected(id); setFocusChunk(null); }} anchors={shownAnchors} />
+      {auditOpen && (
+        <AuditDrawer entries={auditLog} proposals={[...proposals, ...ghosts]} idx={idx} onClose={() => setAuditOpen(false)} />
+      )}
       {sel && (
         <Inspector node={sel} folded={folded} idx={idx} cited={cited} focusChunk={focusChunk}
           onClose={() => { setSelected(null); setFocusChunk(null); }} />
@@ -267,7 +335,7 @@ export default function App() {
         </div>
         <nav className="segmented glass" aria-label="Views">
           {VIEWS.map(([k, label]) => (
-            <button key={k} aria-pressed={view === k} onClick={() => setView(k)}>{label}</button>
+            <button key={k} aria-pressed={view === k} onClick={() => go(k)}>{label}</button>
           ))}
         </nav>
         <div className="top-right">
@@ -281,13 +349,13 @@ export default function App() {
       {view === "ask" && !runId && <Picker runs={runs} live={data.live} onPick={pick} onAsk={ask} />}
       {view === "ask" && runId && (
         <RunPanel view={rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
-          onBack={() => { stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
-          onCite={cite} />
+          onBack={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
+          onCite={cite} reported={!!runId && reported.has(runId)} onReport={report} />
       )}
       {view === "contrast" && runId && <Contrast v={full} idx={idx} edges={edgeIdx} />}
       {view === "curate" && (
         <Curate proposals={proposals} idx={idx} ontology={ontology} mock={data.kind === "static"}
-          onDecide={decide} onCreate={create} onShow={showProposal} />
+          onDecide={decide} onCreate={create} onShow={showProposal} onAudit={openAudit} reverted={reverted} />
       )}
 
       {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
@@ -332,8 +400,15 @@ export default function App() {
             </div>
           </div>
         )}
-        {!sel && <Legend mode={mode} view={view} />}
+        {!sel && !auditOpen && <Legend mode={mode} view={view} />}
       </div>
+      {toast && <Toast text={toast} onDone={() => setToast(null)} />}
+      {alertBox && (
+        <AlertDialog a={alertBox} idx={idx}
+          onClose={() => setAlertBox(null)}
+          onAudit={() => { setAlertBox(null); openAudit(); }}
+          onReview={() => { setAlertBox(null); setView("curate"); }} />
+      )}
     </>
   );
 }
@@ -358,4 +433,8 @@ function Legend({ mode, view }: { mode: GraphMode; view: View }) {
       <span><i className="ln" style={{ borderColor: "var(--contra)", borderTopStyle: "dashed" }} />Contradiction</span>
     </div>
   );
+}
+
+function canaryOf(v: { answer?: { canary?: { claim: string; truth: string } | null } }) {
+  return v.answer?.canary ?? null;
 }

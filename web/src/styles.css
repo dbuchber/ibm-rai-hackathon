@@ -410,3 +410,52 @@ button.chip:hover { background: var(--fill2); }
 .chunk-meta { font-size: 12px; color: var(--ink2); margin-top: 2px; }
 .chunk-text { font-size: 13px; line-height: 1.5; margin: 8px 0 0; }
 @media (max-width: 900px) { .panel.left { width: auto; right: 16px; } }
+
+/* ---------- canaries: flag, toast, alert, audit ---------- */
+.actions .btn.flag { flex: none; width: 44px; padding: 0; display: grid; place-items: center; }
+.report-btn {
+  display: inline-flex; align-items: center; gap: 5px; border: 0; background: var(--fill); color: var(--ink2);
+  font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 14px; cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.report-btn:hover:not(:disabled) { background: var(--fill2); color: var(--ink); }
+.report-btn.done { background: var(--accent-tint); color: var(--accent); cursor: default; }
+.revert-note { margin: 0 0 10px; padding: 10px 12px; border-radius: 12px; background: var(--contra-tint); color: var(--contra); font-size: 13px; font-weight: 500; }
+.card.proposal.again { box-shadow: 0 0 0 1.5px var(--contra); }
+.again-tag { margin-left: 8px; color: var(--contra); text-transform: none; letter-spacing: 0; font-weight: 600; }
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 30; border-radius: 22px;
+  padding: 12px 20px; font-size: 14px; font-weight: 500; max-width: min(560px, calc(100% - 32px));
+  animation: rise 0.45s var(--ease) both;
+}
+.scrim {
+  position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 16px;
+  background: rgba(0, 0, 0, 0.28); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  animation: fade 0.3s var(--ease) both;
+}
+@keyframes fade { from { opacity: 0; } }
+.alert-sheet {
+  width: min(520px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: var(--solid); border-radius: 26px;
+  padding: 26px 26px 22px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  animation: card-in 0.45s var(--ease) both;
+}
+.alert-icon {
+  width: 40px; height: 40px; border-radius: 20px; background: var(--contra-tint); color: var(--contra);
+  display: grid; place-items: center; font-weight: 800; font-size: 20px; margin-bottom: 12px;
+}
+.alert-sheet h2 { margin: 4px 0 6px; font-size: 21px; letter-spacing: -0.015em; line-height: 1.25; }
+.alert-sheet p { margin: 0 0 12px; font-size: 14px; }
+.alert-sheet h5 { margin: 14px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink2); }
+.alert-claim { background: var(--contra-tint); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-top: 8px; }
+.alert-claim.truth { background: var(--accent-tint); }
+.alert-claim .label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--contra); margin-bottom: 3px; }
+.alert-claim.truth .label { color: var(--accent); }
+.notify { color: var(--ink2); margin-top: 14px !important; }
+.audit { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.audit li { background: var(--solid); border: 0.5px solid var(--hair); border-radius: 14px; padding: 10px 12px; animation: card-in 0.35s var(--ease) both; }
+.a-top { display: flex; justify-content: space-between; font-size: 12px; }
+.a-kind { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink2); }
+.audit time { color: var(--ink3); font-variant-numeric: tabular-nums; }
+.a-detail { font-size: 13px; margin-top: 3px; }
+.a-what { font-size: 12px; color: var(--ink2); margin-top: 2px; }
+.audit .a-canary_failed .a-kind, .audit .a-reverted .a-kind, .audit .a-supervisor_notified .a-kind { color: var(--contra); }
+.audit .a-canary_passed .a-kind { color: var(--accent); }

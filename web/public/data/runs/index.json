@@ -1,7 +1,22 @@
 [
   {
+    "run_id": "demo-contradiction",
+    "question": "What is the critical temperature limit at ST02_SEALING, and does the sensor datasheet support running up to that limit?",
+    "mock": false
+  },
+  {
+    "run_id": "demo-maintenance",
+    "question": "Which SOP defines MAINT-01 on ST04_PACKAGING, and which sensor triggers it?",
+    "mock": false
+  },
+  {
     "run_id": "demo-po1003",
-    "question": "Can order PO-1003 run safely at the sealing temperature limit, and who supplies the temperature sensor?",
+    "question": "Order PO-1003 runs at the sealing station. Can it run at the sealing temperature limit, and who supplies the temperature sensor?",
+    "mock": false
+  },
+  {
+    "run_id": "demo-canary-chat",
+    "question": "Who supplies the temperature sensor at the sealing station?",
     "mock": true
   }
 ]
