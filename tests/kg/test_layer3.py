@@ -36,12 +36,12 @@ def test_supplier_path(ds):
 def test_company_doc_links_to_plant(ds):
     g = ds.graph(URIRef(GRAPH_IRIS["approved"]))
     p = lambda n: URIRef(pred_iri(n))
-    doc = URIRef(node_iri("Document", "SQA-THERMO-001"))
+    doc = URIRef(node_iri("Document", "EQ-ST04-001"))
     chunks = list(g.objects(doc, p("has_chunk")))
     assert chunks
     mentioned = {o for c in chunks for o in g.objects(c, p("mentions"))}
-    assert URIRef(node_iri("SensorModel", "TMP-2210")) in mentioned
-    assert URIRef(node_iri("Station", "ST02_SEALING")) in mentioned
+    assert URIRef(node_iri("SensorModel", "VIB-4480")) in mentioned
+    assert URIRef(node_iri("Station", "ST04_PACKAGING")) in mentioned
 
 
 def test_datasheet_chunk_mentions_model(ds):

@@ -39,5 +39,30 @@ roles:
   security: Site security.
 
 documents:
-  - {id: SQA-THERMO-001, file: SQA_ThermoSense.md, title: Supplier Quality Agreement with ThermoSense GmbH, parties: [ThermoSense, Kelvara]}
-  - {id: MC-2026-01, file: MaintenanceContract.md, title: Maintenance Contract Line A, parties: [Kelvara]}
+  - {id: EQ-ST04-001, file: ST04_EquipmentGuide.md, title: ST04 Packaging Conveyor Equipment Guide, parties: [Kelvara]}
+  - {id: ALM-ST04-001, file: ST04_AlarmReference.md, title: ST04 Vibration Alarm Reference, parties: [Kelvara]}
+  - {id: TRB-ST04-001, file: ST04_VibrationTroubleshooting.md, title: ST04 Vibration Troubleshooting, parties: [Kelvara]}
+  - {id: HIST-ST04-001, file: ST04_MaintenanceHistory.md, title: ST04 Maintenance History, parties: [Kelvara]}
+  - {id: REC-ST04-001, file: ST04_RecoveryAndRestart.md, title: ST04 Recovery and Restart Conditions, parties: [Kelvara]}
+
+  - {id: EQ-ST02-001, file: ST02_EquipmentGuide.md, title: ST02 Sealing Station Equipment Guide, parties: [Kelvara]}
+  - {id: ALM-ST02-001, file: ST02_AlarmReference.md, title: ST02 Temperature Alarm Reference, parties: [Kelvara]}
+  - {id: SPEC-ST02-001, file: ST02_SpecificationApplicability.md, title: ST02 Installed Sensor and Protection Gap, parties: [Kelvara]}
+  - {id: TRB-ST02-001, file: ST02_TemperatureTroubleshooting.md, title: ST02 Temperature Alarm Troubleshooting, parties: [Kelvara]}
+  - {id: HIST-ST02-001, file: ST02_MaintenanceHistory.md, title: ST02 Temperature Maintenance History, parties: [Kelvara]}
+  - {id: REC-ST02-001, file: ST02_RecoveryAndRestart.md, title: ST02 Temperature Recovery and Restart Conditions, parties: [Kelvara]}
+  - {id: EQ-ST01-001, file: ST01_EquipmentGuide.md, title: ST01 Filling Station Equipment Guide, parties: [Kelvara]}
+  - {id: ALM-ST01-001, file: ST01_AlarmReference.md, title: ST01 Pressure and Flow Alarm Reference, parties: [Kelvara]}
+  - {id: TRB-ST01-001, file: ST01_PressureTroubleshooting.md, title: ST01 Low Pressure Troubleshooting, parties: [Kelvara]}
+  - {id: HIST-ST01-001, file: ST01_MaintenanceHistory.md, title: ST01 Pressure Maintenance History, parties: [Kelvara]}
+  - {id: RES-ST01-001, file: ST01_ResourcesAndService.md, title: ST01 Incident Resources and Service Snapshot, parties: [Kelvara]}
+  - {id: REC-ST01-001, file: ST01_RecoveryAndRestart.md, title: ST01 Pressure Recovery and Product Release, parties: [Kelvara]}
+
+# Fixed replay sources, projected into citable graph evidence at each file's as_of.
+machine_data:
+  - ST04_Telemetry.json
+  - ST04_AlarmEvents.json
+  - ST02_Telemetry.json
+  - ST02_AlarmEvents.json
+  - ST01_Telemetry.json
+  - ST01_AlarmEvents.json

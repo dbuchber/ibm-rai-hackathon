@@ -8,7 +8,7 @@ import yaml
 from rdflib import RDF, RDFS, URIRef
 
 from contracts.ids import local_name, node_iri, pred_iri
-from kg import layer2_docs
+from kg import layer2_docs, operational
 from kg.common import KGDataset, safe_id
 
 COMPANY_YAML = Path("data/company.yaml")
@@ -60,5 +60,7 @@ def build(ds: KGDataset, yaml_path: Path = COMPANY_YAML, docs_dir: Path = DOCS_D
             title, _, body = sec.partition("\n")
             layer2_docs.add_chunk(ds, doc, d["id"], n, title.strip(), f"{title.strip()}. {' '.join(body.split())}",
                                   1, d["file"])
+    for file in cfg.get("machine_data", []):
+        operational.build(ds, Path(docs_dir) / file)
     layer2_docs.link_mentions(ds)
     return ds

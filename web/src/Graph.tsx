@@ -205,7 +205,7 @@ export default function Graph(p: Props) {
       cy.resize();
       const current = latest.current;
       const focused = current.focus.length
-        ? cy.collection(current.focus.map(id => cy.getElementById(id)).filter(el => el.nonempty()))
+        ? cy.elements().filter(el => current.focus.includes(el.id()))
         : cy.elements();
       if (focused.nonempty()) fitTo(cy, focused, current.inset, false);
     });
@@ -275,7 +275,7 @@ export default function Graph(p: Props) {
   useEffect(() => {
     const cy = cyRef.current!;
     const eles = p.focus.length
-      ? cy.collection(p.focus.map((id) => cy.getElementById(id)).filter((e) => e.nonempty()))
+      ? cy.elements().filter(el => p.focus.includes(el.id()))
       : cy.elements();
     if (eles.nonempty()) fitTo(cy, eles, p.inset, !reducedMotion());
     // eslint-disable-next-line react-hooks/exhaustive-deps

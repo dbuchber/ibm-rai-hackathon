@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario_id": "SCN-ST04-VIB-01",
+  "incident_id": "INC-ST04-20261024-01",
+  "station_id": "ST04_PACKAGING",
+  "production_order_id": "PO-1005",
+  "as_of": "2026-10-24T10:00:05+02:00",
+  "timezone": "Europe/Vienna",
+  "source_id": "EVT-ST04-001",
+  "source_type": "synthetic_alarm_log",
+  "lifecycle_semantics": "Each entry changes one alarm instance. No cleared entry means the alarm remains active at as_of. Acknowledgement does not clear an alarm.",
+  "events": [
+    {
+      "event_id": "EVT-ST04-001-A",
+      "alarm_instance_id": "ALM-ST04-20261024-01",
+      "alarm_code": "PKG-VIB-HI",
+      "sensor_id": "ST04_PACKAGING_VIB",
+      "occurred_at": "2026-10-24T09:50:00+02:00",
+      "transition": "activated",
+      "severity": "warning",
+      "trigger_sample_id": "TEL-ST04-003",
+      "trigger_value": 0.23,
+      "unit": "mm/s",
+      "controller_action": "warning_notification"
+    },
+    {
+      "event_id": "EVT-ST04-001-B",
+      "alarm_instance_id": "ALM-ST04-20261024-02",
+      "alarm_code": "PKG-VIB-HH",
+      "sensor_id": "ST04_PACKAGING_VIB",
+      "occurred_at": "2026-10-24T10:00:00+02:00",
+      "transition": "activated",
+      "severity": "critical",
+      "trigger_sample_id": "TEL-ST04-005",
+      "trigger_value": 0.38,
+      "unit": "mm/s",
+      "controller_action": "protective_stop_requested"
+    }
+  ]
+}

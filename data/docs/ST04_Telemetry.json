@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario_id": "SCN-ST04-VIB-01",
+  "incident_id": "INC-ST04-20261024-01",
+  "station_id": "ST04_PACKAGING",
+  "production_order_id": "PO-1005",
+  "as_of": "2026-10-24T10:00:05+02:00",
+  "timezone": "Europe/Vienna",
+  "source_id": "TEL-ST04-001",
+  "source_type": "synthetic_controller_replay",
+  "fresh_for_seconds": 30,
+  "sampling_note": "Sparse historical samples plus the incident snapshot; not a continuous stream and not a post-repair verification test.",
+  "samples": [
+    {
+      "sample_id": "TEL-ST04-001",
+      "observed_at": "2026-10-24T09:00:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST04_PACKAGING_VIB",
+          "value": 0.12,
+          "unit": "mm/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_SPD",
+          "value": 1.2,
+          "unit": "m/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_CUR",
+          "value": 8.7,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST04-002",
+      "observed_at": "2026-10-24T09:30:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST04_PACKAGING_VIB",
+          "value": 0.16,
+          "unit": "mm/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_SPD",
+          "value": 1.2,
+          "unit": "m/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_CUR",
+          "value": 8.7,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST04-003",
+      "observed_at": "2026-10-24T09:50:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST04_PACKAGING_VIB",
+          "value": 0.23,
+          "unit": "mm/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_SPD",
+          "value": 1.2,
+          "unit": "m/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_CUR",
+          "value": 8.8,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST04-004",
+      "observed_at": "2026-10-24T09:59:50+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST04_PACKAGING_VIB",
+          "value": 0.32,
+          "unit": "mm/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_SPD",
+          "value": 1.2,
+          "unit": "m/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_CUR",
+          "value": 8.8,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST04-005",
+      "observed_at": "2026-10-24T10:00:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST04_PACKAGING_VIB",
+          "value": 0.38,
+          "unit": "mm/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_SPD",
+          "value": 1.2,
+          "unit": "m/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_CUR",
+          "value": 8.9,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST04-006",
+      "observed_at": "2026-10-24T10:00:05+02:00",
+      "machine_state": "STOPPED_PROTECTIVE",
+      "measurements": [
+        {
+          "sensor_id": "ST04_PACKAGING_VIB",
+          "value": 0.0,
+          "unit": "mm/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_SPD",
+          "value": 0.0,
+          "unit": "m/s",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST04_PACKAGING_CUR",
+          "value": 0.0,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    }
+  ]
+}
