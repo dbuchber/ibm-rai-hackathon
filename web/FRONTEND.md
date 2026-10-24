@@ -72,8 +72,8 @@ Keep the source line visible; do not round, restate or add other numbers on this
 `src/Roadmap.tsx` gets new tiles. Nothing here runs today; keep the existing "Roadmap" labelling on every tile.
 Copy is fixed (agreed with the team lead); layout is yours. Keep the two existing groups as they are.
 
-**New group: Connected to your systems.** Subtitle: *Everything that enters the graph goes through the same
-approval as LLM proposals today.*
+**New group: Connected to your systems.** Subtitle: *Systems of record feed the graph directly. Anything an AI
+extracts or links waits for human approval.*
 
 | tile | text |
 |---|---|
