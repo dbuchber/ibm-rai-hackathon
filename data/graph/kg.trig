@@ -2,25 +2,28 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<urn:g:proposed> {
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
-
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
-
-    <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> a ns1:SensorModel ;
-        rdfs:label "Series 2400" ;
-        rdfs:comment "ThermoSense Pt100 RTD sensor model rated to 250°C continuous operation, recommended for sustained use above 200°C." .
-
-    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> .
-}
-
 <urn:g:approved> {
     <https://rai-hackathon.bbger.at/kg/company/Kelvara> a ns1:Company ;
         rdfs:label "Kelvara Packaging GmbH" ;
         rdfs:comment "Fictional food-packaging company. Operates the iMAKS production line A." ;
         ns1:operates <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
-        ns1:party_to <https://rai-hackathon.bbger.at/kg/document/MC-2026-01>,
-            <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> .
+        ns1:party_to <https://rai-hackathon.bbger.at/kg/document/ALM-ST01-001>,
+            <https://rai-hackathon.bbger.at/kg/document/ALM-ST02-001>,
+            <https://rai-hackathon.bbger.at/kg/document/ALM-ST04-001>,
+            <https://rai-hackathon.bbger.at/kg/document/EQ-ST01-001>,
+            <https://rai-hackathon.bbger.at/kg/document/EQ-ST02-001>,
+            <https://rai-hackathon.bbger.at/kg/document/EQ-ST04-001>,
+            <https://rai-hackathon.bbger.at/kg/document/HIST-ST01-001>,
+            <https://rai-hackathon.bbger.at/kg/document/HIST-ST02-001>,
+            <https://rai-hackathon.bbger.at/kg/document/HIST-ST04-001>,
+            <https://rai-hackathon.bbger.at/kg/document/REC-ST01-001>,
+            <https://rai-hackathon.bbger.at/kg/document/REC-ST02-001>,
+            <https://rai-hackathon.bbger.at/kg/document/REC-ST04-001>,
+            <https://rai-hackathon.bbger.at/kg/document/RES-ST01-001>,
+            <https://rai-hackathon.bbger.at/kg/document/SPEC-ST02-001>,
+            <https://rai-hackathon.bbger.at/kg/document/TRB-ST01-001>,
+            <https://rai-hackathon.bbger.at/kg/document/TRB-ST02-001>,
+            <https://rai-hackathon.bbger.at/kg/document/TRB-ST04-001> .
 
     <https://rai-hackathon.bbger.at/kg/document/DS-ELEC-3300> a ns1:Document ;
         rdfs:label "DS-ELEC-3300 Industrial Current Transformer Series 3300" ;
@@ -52,6 +55,34 @@
         ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1>,
             <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s2> ;
         ns1:rev "Rev D" .
+
+    <https://rai-hackathon.bbger.at/kg/document/EVT-ST01-001> a ns1:Document ;
+        rdfs:label "EVT-ST01-001 ST01_AlarmEvents" ;
+        rdfs:comment "Synthetic operational replay; historical fixture, not a live feed." ;
+        ns1:asOf "2026-10-24T13:00:05+02:00" ;
+        ns1:file "ST01_AlarmEvents.json" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST01-001-s3> ;
+        ns1:incidentId "INC-ST01-20261024-01" .
+
+    <https://rai-hackathon.bbger.at/kg/document/EVT-ST02-001> a ns1:Document ;
+        rdfs:label "EVT-ST02-001 ST02_AlarmEvents" ;
+        rdfs:comment "Synthetic operational replay; historical fixture, not a live feed." ;
+        ns1:asOf "2026-10-24T12:00:05+02:00" ;
+        ns1:file "ST02_AlarmEvents.json" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST02-001-s2> ;
+        ns1:incidentId "INC-ST02-20261024-01" .
+
+    <https://rai-hackathon.bbger.at/kg/document/EVT-ST04-001> a ns1:Document ;
+        rdfs:label "EVT-ST04-001 ST04_AlarmEvents" ;
+        rdfs:comment "Synthetic operational replay; historical fixture, not a live feed." ;
+        ns1:asOf "2026-10-24T10:00:05+02:00" ;
+        ns1:file "ST04_AlarmEvents.json" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST04-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST04-001-s2> ;
+        ns1:incidentId "INC-ST04-20261024-01" .
 
     <https://rai-hackathon.bbger.at/kg/document/SOP-001> a ns1:Document ;
         rdfs:label "SOP-001 Standard Operating Procedures" ;
@@ -130,6 +161,30 @@
             <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s3>,
             <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s4> ;
         ns1:rev "1.0" .
+
+    <https://rai-hackathon.bbger.at/kg/document/TEL-ST01-001> a ns1:Document ;
+        rdfs:label "TEL-ST01-001 ST01_Telemetry" ;
+        rdfs:comment "Synthetic operational replay; historical fixture, not a live feed." ;
+        ns1:asOf "2026-10-24T13:00:05+02:00" ;
+        ns1:file "ST01_Telemetry.json" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/TEL-ST01-001-s1> ;
+        ns1:incidentId "INC-ST01-20261024-01" .
+
+    <https://rai-hackathon.bbger.at/kg/document/TEL-ST02-001> a ns1:Document ;
+        rdfs:label "TEL-ST02-001 ST02_Telemetry" ;
+        rdfs:comment "Synthetic operational replay; historical fixture, not a live feed." ;
+        ns1:asOf "2026-10-24T12:00:05+02:00" ;
+        ns1:file "ST02_Telemetry.json" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/TEL-ST02-001-s1> ;
+        ns1:incidentId "INC-ST02-20261024-01" .
+
+    <https://rai-hackathon.bbger.at/kg/document/TEL-ST04-001> a ns1:Document ;
+        rdfs:label "TEL-ST04-001 ST04_Telemetry" ;
+        rdfs:comment "Synthetic operational replay; historical fixture, not a live feed." ;
+        ns1:asOf "2026-10-24T10:00:05+02:00" ;
+        ns1:file "ST04_Telemetry.json" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/TEL-ST04-001-s1> ;
+        ns1:incidentId "INC-ST04-20261024-01" .
 
     <https://rai-hackathon.bbger.at/kg/person/P004> a ns1:Person ;
         rdfs:label "P004 (operator)" ;
@@ -1721,6 +1776,116 @@
         ns1:sourceRule "RULE_VIB_THRESHOLD_CRITICAL" ;
         ns1:startTs "2026-01-09T13:00:00" .
 
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "ALM-ST01-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: ALM-ST01-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST01_FILLING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "ALM-ST01-001 §FILL-PRS-LO warning" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-03>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "FILL-PRS-LO warning. ST01_FILLING: A valid running ST01_FILLING_PRS reading below 3.3 bar and at least 3.0 bar activates fictional FILL-PRS-LO. RULE-ST01-03 requires inlet-valve inspection within five minutes. For a lone operator, the permitted first inspection is the external position indicator in EQ-ST01-001. If that time window has elapsed, record the overdue check; do not report it as completed." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "ALM-ST01-001 §FILL-PRS-LL critical" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "FILL-PRS-LL critical. ST01_FILLING: A valid running ST01_FILLING_PRS reading below 3.0 bar activates fictional FILL-PRS-LL. SOP-002 specifies inspect and notify maintenance. The simulated controller additionally requests a quality-hold stop; that is a fictional scenario policy, not an iMAKS emergency-stop rule. Confirm actual machine state through telemetry. Acknowledgement does not clear the alarm or authorize product release." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s4> a ns1:Chunk ;
+        rdfs:label "ALM-ST01-001 §Flow context and trend" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Flow context and trend. ST01_FILLING: RULE-ST01-01 requires ST01_FILLING_FLW between 112 and 128 L/min; SOP-002 has a low critical boundary of 105 L/min. Flow below 112 but at least 105 L/min activates fictional FILL-FLW-LO in this replay. MAINT-04 requires pressure below 3.3 bar for more than fifteen minutes before inspecting filter and pump. Sparse low samples twenty minutes apart do not prove continuous low pressure; confirm duration from a complete trend or report it unknown. Pressure and flow falling together cannot establish the root cause." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s5> a ns1:Chunk ;
+        rdfs:label "ALM-ST01-001 §Freshness and lifecycle" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Freshness and lifecycle. ST01_FILLING: At the selected replay time, use only observations at or before that time. Good-quality telemetry is fresh for thirty seconds inclusive. Each alarm instance remains active until an explicit cleared lifecycle event appears. Stopped zero flow is expected and cannot establish normal delivery. Falling stopped pressure does not establish depressurization, and old nominal readings cannot authorize restart." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "ALM-ST02-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: ALM-ST02-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST02_SEALING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "ALM-ST02-001 §SEAL-TMP-HI warning" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "SEAL-TMP-HI warning. ST02_SEALING: ST02_SEALING_TMP values greater than 195 degrees C and at most 210 degrees C activate fictional code SEAL-TMP-HI while the controller is running. RULE-ST02-01 requires temperature within 175 to 195 degrees C. A warning is not permission to operate outside that band. Apply TRB-ST02-001; do not wait for the critical trip when the operating band is exceeded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s3> a ns1:Chunk ;
+        rdfs:label "ALM-ST02-001 §SEAL-TMP-HH critical trip" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "SEAL-TMP-HH critical trip. ST02_SEALING: A valid ST02_SEALING_TMP reading greater than 210 degrees C activates fictional code SEAL-TMP-HH. RULE-ST02-02 and SOP-002 require emergency stop of ST02_SEALING, ST03_LABELLING, and ST04_PACKAGING and inspection. An alarm record documents the controller request, not proof that all affected stations stopped. The supplied replay never exceeds 210 degrees C and contains no critical-trip event." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s4> a ns1:Chunk ;
+        rdfs:label "ALM-ST02-001 §Instrument limit advisory" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Instrument limit advisory. ST02_SEALING: Fictional code SEAL-TMP-RANGE activates above the installed TMP-2210 continuous maximum of 200 degrees C and requests engineering review. It is a scenario-specific advisory, not an existing iMAKS critical rule. SPEC-ST02-001 explains the gap between the 210 degrees C critical threshold and the 200 degrees C continuous instrument rating. A numeric display outside the continuous rating is evidence of the controller report, not a verified accurate process temperature." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s5> a ns1:Chunk ;
+        rdfs:label "ALM-ST02-001 §Freshness and alarm lifecycle" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Freshness and alarm lifecycle. ST02_SEALING: Use only records at or before the explicitly selected replay time. Fresh telemetry has good quality and age from 0 through 30 seconds. Good quality is the controller transport flag; it does not certify accuracy beyond the instrument rating. Alarms remain active until an explicit cleared lifecycle event exists. Cooling after stop and acknowledgement do not clear them. Missing or stale measurements block a recovery claim." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "ALM-ST04-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: ALM-ST04-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Synthetic demo alarm-code mapping for ST04_PACKAGING and ST04_PACKAGING_VIB. Limits reproduce the existing graph's SOP-001 and SOP-002 values; alarm codes are fictional additions." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s2> a ns1:Chunk ;
+        rdfs:label "ALM-ST04-001 §Warning: PKG-VIB-HI" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:page 1 ;
+        ns1:text "Warning: PKG-VIB-HI. For ST04_PACKAGING_VIB, PKG-VIB-HI activates when a valid running vibration measurement is greater than 0.20 mm/s and at most 0.35 mm/s. RULE-ST04-01 requires maintenance within 24 hours. An active critical alarm takes precedence over this warning response. A warning alone does not establish a bearing defect or authorize maintenance work by an operator. Follow TRB-ST04-001 to establish the current state." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s3> a ns1:Chunk ;
+        rdfs:label "ALM-ST04-001 §Critical: PKG-VIB-HH" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:page 1 ;
+        ns1:text "Critical: PKG-VIB-HH. For ST04_PACKAGING_VIB, PKG-VIB-HH activates when a valid running vibration measurement is greater than 0.35 mm/s. RULE-ST04-02 specifies emergency stop and bearing inspection. In this simulated controller, the event requests a protective stop and latches the critical alarm. Confirm the actual stopped state on HMI-ST04; an alarm event alone does not prove that the machine stopped. If motion continues or an immediate hazard is visible, use the local emergency stop and keep clear. Acknowledgement does not permit restart." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s4> a ns1:Chunk ;
+        rdfs:label "ALM-ST04-001 §Trend advisory and uncertainty" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Trend advisory and uncertainty. MAINT-01 on ST04_PACKAGING is the SOP-003 maintenance action to inspect and lubricate the main bearing when ST04_PACKAGING_VIB drifts upward by more than 0.05 mm/s over 60 minutes. Compare valid running readings at matching speed. The advisory identifies a maintenance need, not a confirmed root cause. Stopped readings must not be used to establish bearing recovery. Vibration can also reflect a loose sensor or a mechanical obstruction; this dataset does not confirm either." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s5> a ns1:Chunk ;
+        rdfs:label "ALM-ST04-001 §Freshness and alarm lifecycle" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Freshness and alarm lifecycle. For the ST04_PACKAGING demo replay, evaluate records only at the explicitly selected scenario time. A telemetry sample is fresh if its age is between 0 and 30 seconds inclusive and quality is good. Do not use future records. A pre-stop peak can explain the trip but is not a current running measurement. An alarm remains active until an explicit cleared lifecycle record exists; a zero stopped vibration reading does not clear it. Missing, stale, or bad-quality evidence blocks a recovery claim. Consult REC-ST04-001 for restart conditions." .
+
     <https://rai-hackathon.bbger.at/kg/chunk/DS-MECH-4400-s1> a ns1:Chunk ;
         rdfs:label "DS-MECH-4400 §1. Pressure Transmitter PRS-4410" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
@@ -1745,36 +1910,372 @@
         ns1:page 1 ;
         ns1:text "4. Inductive Speed Encoder SPD-4490 Parameter Value Unit Speed range 0.1 to 10 m/s Resolution 0.001 m/s Max amb. temp 80 °C" .
 
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
+        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+        ns1:page 1 ;
+        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
+
     <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s2> a ns1:Chunk ;
         rdfs:label "DS-THERM-2200 §2. Humidity Sensor HUM-2250 — Specifications" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> ;
         ns1:page 1 ;
         ns1:text "2. Humidity Sensor HUM-2250 — Specifications Parameter Value Unit Measurement range 0 to 100 %RH Accuracy ±2.0 %RH Operating temp -20 to +60 °C Response time < 8 s" .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s1> a ns1:Chunk ;
-        rdfs:label "MC-2026-01 §1. Scope" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
-            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02>,
-            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
-            <https://rai-hackathon.bbger.at/kg/rule/MAINT-02>,
-            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
-            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "EQ-ST01-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
         ns1:page 1 ;
-        ns1:text "1. Scope. The service provider performs the predictive maintenance actions MAINT-01 and MAINT-02 on ST04_PACKAGING and ST02_SEALING, as defined in SOP-003." .
+        ns1:text "Scope and document control. Document ID: EQ-ST01-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST01_FILLING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s2> a ns1:Chunk ;
-        rdfs:label "MC-2026-01 §2. Response Times" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02>,
-            <https://rai-hackathon.bbger.at/kg/rule/MAINT-02>,
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "EQ-ST01-001 §Equipment and process path" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450>,
+            <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Equipment and process path. ST01_FILLING: For PO-1001, the fictional product path is inlet valve VLV-ST01-01, filter FLT-ST01-01, pump PMP-ST01-01, and filling manifold MAN-ST01-01. ST01_FILLING_PRS, model PRS-4410, measures delivery pressure downstream of the pump. ST01_FILLING_FLW, model FLW-4450, measures delivered flow. The instrumentation measures process delivery pressure, not a pneumatic supply. No upstream-pressure sensor or filter differential-pressure measurement is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "EQ-ST01-001 §Operator observation points" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Operator observation points. ST01_FILLING: HMI-ST01 outside the closed guard provides Diagnostics, Alarm History, Stop, and Alarm Acknowledge. OBS-ST01-01 is the external inspection window facing the inlet valve position indicator and pump status lamp. The valve OPEN/CLOSED/UNKNOWN indicator can be read without access. If obscured, record not visible. Do not infer valve position from pressure. The emergency-stop control is beside HMI-ST01." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s4> a ns1:Chunk ;
+        rdfs:label "EQ-ST01-001 §Lone-worker scope and tools" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Lone-worker scope and tools. ST01_FILLING: The trained operator may read the HMI, command normal Stop, record evidence, and observe the external indicators without tools. Do not operate the process valve, loosen fittings, drain lines, open filters, prime the pump, remove guards, or reset motor protection. Those actions require a qualified process-maintenance technician and separate approved instructions for isolation, depressurization, and hygiene. A stopped pump does not prove pressure has been removed. Use RES-ST01-001 for the incident-specific assistance route." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "EQ-ST02-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: EQ-ST02-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST02_SEALING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "EQ-ST02-001 §Installed equipment" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
             <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
-        ns1:text "2. Response Times. For CRITICAL alarms at ST02_SEALING the provider is on site within 4 hours. For HIGH priority actions such as MAINT-02 (sealing jaw inspection) the provider responds within 2 working days." .
+        ns1:text "Installed equipment. ST02_SEALING: Sealing jaw JAW-ST02-01 and heater HTR-ST02-01 are inside a fixed guard. Temperature sensor ST02_SEALING_TMP is the installed ThermoSense TMP-2210, as recorded in this scenario installation register. ST02_SEALING_CUR measures motor current. HMI-ST02 is outside the guard at the operator position. Production order PO-1003 is affected. The replacement Series 2400 mentioned in DS-THERM-2200 is a recommendation, not the installed sensor." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s3> a ns1:Chunk ;
-        rdfs:label "MC-2026-01 §3. Spare Parts" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s3> a ns1:Chunk ;
+        rdfs:label "EQ-ST02-001 §Controls and observation point" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
-        ns1:text "3. Spare Parts. Kelvara keeps a stock of TMP-2210 sensors and sealing jaw elements. Spare sensors are ordered from ThermoSense GmbH." .
+        ns1:text "Controls and observation point. ST02_SEALING: HMI-ST02 provides Diagnostics, Alarm History, Stop, and Alarm Acknowledge. OBS-ST02-01 is the marked position outside the closed guard facing the jaw inspection window. Read temperatures from HMI-ST02; do not touch the jaw or sensor, and do not open guards. An emergency-stop control is next to the panel. Acknowledge records receipt; it does not reset a trip or authorize restart." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s4> a ns1:Chunk ;
+        rdfs:label "EQ-ST02-001 §Lone-worker scope" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Lone-worker scope. ST02_SEALING: The trained line operator may read diagnostics, stop the station with the documented Stop control, record evidence, and observe from OBS-ST02-01. Sensor replacement, parameter edits, electrical measurements, heater adjustment, and guarded access require a qualified technician and the separate approved isolation instruction. A stopped machine can remain hot and energized. Contact fictional Maintenance Desk extension 240; if unavailable, retain the stop and log the attempt." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "EQ-ST04-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: EQ-ST04-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST04_PACKAGING and production order PO-1005. This is fictional equipment and synthetic training documentation. Component locations and controls below are invented for this demo; they are not manufacturer instructions. The scenario supplements SOP-001, SOP-002, and SOP-003 without changing their alarm limits." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s2> a ns1:Chunk ;
+        rdfs:label "EQ-ST04-001 §Component locations" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Component locations. ST04_PACKAGING transfers sealed trays to the final packaging outlet. The operator position faces the outlet. The operator panel HMI-ST04 is outside the fixed guard on the outlet side. Main bearing BRG-ST04-01 is at the drive end, behind the fixed guard. Sensor ST04_PACKAGING_VIB, model VIB-4480, is mounted on that bearing housing. ST04_PACKAGING_SPD measures conveyor speed; ST04_PACKAGING_CUR measures motor current. These identifiers refer to the same sensors in the telemetry records." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s3> a ns1:Chunk ;
+        rdfs:label "EQ-ST04-001 §Operator controls and inspection points" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Operator controls and inspection points. ST04_PACKAGING HMI-ST04 has read-only Diagnostics, Alarm History, and Maintenance History pages, plus Stop and Alarm Acknowledge controls. The outside observation point OBS-ST04-01 faces the drive-end inspection window without entering a guarded area. A local emergency-stop button is beside HMI-ST04. Alarm acknowledgement records that the operator has seen an alarm; it does not clear the underlying fault, release an emergency stop, or authorize restart." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s4> a ns1:Chunk ;
+        rdfs:label "EQ-ST04-001 §Lone-worker scope" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Lone-worker scope. For ST04_PACKAGING, the scenario assumes a trained line operator is alone and may read diagnostics, record observations, and observe from OBS-ST04-01 with guards closed. The operator may not open guards, reach into the conveyor, remove trapped material, lubricate the bearing, open electrical panels, or perform a test run after a critical vibration trip alone. A stopped conveyor is not evidence of energy isolation. Intrusive work requires a qualified technician following the site's approved isolation procedure; that procedure is outside this dataset." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s5> a ns1:Chunk ;
+        rdfs:label "EQ-ST04-001 §Required resources" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Required resources. For external checks of ST04_PACKAGING, use HMI-ST04 and the incident log; no hand tools are required. Do not approach the drive to take manual readings. Record the sensor ID, timestamp, value, unit, quality flag, machine state, and whether each value was measured while running or stopped. Remote maintenance advice is available through the fictional internal Maintenance Desk extension 240; if unavailable, retain the stop and log the attempted contact. No response time or remote restart authority is promised." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "EVT-ST01-001 §EVT-ST01-001-A" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-A>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST01-001-A\", \"alarm_instance_id\": \"ALM-ST01-20261024-01\", \"alarm_code\": \"FILL-PRS-LO\", \"sensor_id\": \"ST01_FILLING_PRS\", \"occurred_at\": \"2026-10-24T12:40:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST01-002\", \"trigger_value\": 3.2, \"unit\": \"bar\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "EVT-ST01-001 §EVT-ST01-001-B" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-B>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST01-001-B\", \"alarm_instance_id\": \"ALM-ST01-20261024-02\", \"alarm_code\": \"FILL-PRS-LL\", \"sensor_id\": \"ST01_FILLING_PRS\", \"occurred_at\": \"2026-10-24T13:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"critical\", \"trigger_sample_id\": \"TEL-ST01-003\", \"trigger_value\": 2.9, \"unit\": \"bar\", \"controller_action\": \"quality_hold_stop_requested\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "EVT-ST01-001 §EVT-ST01-001-C" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-C>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST01-001-C\", \"alarm_instance_id\": \"ALM-ST01-20261024-03\", \"alarm_code\": \"FILL-FLW-LO\", \"sensor_id\": \"ST01_FILLING_FLW\", \"occurred_at\": \"2026-10-24T13:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST01-003\", \"trigger_value\": 110.0, \"unit\": \"L/min\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "EVT-ST02-001 §EVT-ST02-001-A" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST02-001-A>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST02_SEALING, incident INC-ST02-20261024-01, order PO-1003. Selected time: 2026-10-24T12:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST02-001-A\", \"alarm_instance_id\": \"ALM-ST02-20261024-01\", \"alarm_code\": \"SEAL-TMP-HI\", \"sensor_id\": \"ST02_SEALING_TMP\", \"occurred_at\": \"2026-10-24T11:55:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST02-002\", \"trigger_value\": 198.0, \"unit\": \"degC\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "EVT-ST02-001 §EVT-ST02-001-B" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST02-001-B>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST02_SEALING, incident INC-ST02-20261024-01, order PO-1003. Selected time: 2026-10-24T12:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST02-001-B\", \"alarm_instance_id\": \"ALM-ST02-20261024-02\", \"alarm_code\": \"SEAL-TMP-RANGE\", \"sensor_id\": \"ST02_SEALING_TMP\", \"occurred_at\": \"2026-10-24T12:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"advisory\", \"trigger_sample_id\": \"TEL-ST02-003\", \"trigger_value\": 205.0, \"unit\": \"degC\", \"controller_action\": \"engineering_review_requested\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "EVT-ST04-001 §EVT-ST04-001-A" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST04-001-A>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST04_PACKAGING, incident INC-ST04-20261024-01, order PO-1005. Selected time: 2026-10-24T10:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST04-001-A\", \"alarm_instance_id\": \"ALM-ST04-20261024-01\", \"alarm_code\": \"PKG-VIB-HI\", \"sensor_id\": \"ST04_PACKAGING_VIB\", \"occurred_at\": \"2026-10-24T09:50:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST04-003\", \"trigger_value\": 0.23, \"unit\": \"mm/s\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/EVT-ST04-001-s2> a ns1:Chunk ;
+        rdfs:label "EVT-ST04-001 §EVT-ST04-001-B" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST04-001-B>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST04_PACKAGING, incident INC-ST04-20261024-01, order PO-1005. Selected time: 2026-10-24T10:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST04-001-B\", \"alarm_instance_id\": \"ALM-ST04-20261024-02\", \"alarm_code\": \"PKG-VIB-HH\", \"sensor_id\": \"ST04_PACKAGING_VIB\", \"occurred_at\": \"2026-10-24T10:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"critical\", \"trigger_sample_id\": \"TEL-ST04-005\", \"trigger_value\": 0.38, \"unit\": \"mm/s\", \"controller_action\": \"protective_stop_requested\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "HIST-ST01-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: HIST-ST01-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST01_FILLING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "HIST-ST01-001 §WO-ST01-301: restricted inlet filter" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST01-301: restricted inlet filter. ST01_FILLING: On 2026-09-20 low pressure and flow occurred at ST01_FILLING. A qualified technician measured filter differential pressure under a separate approved instruction and confirmed restriction in FLT-ST01-01. The filter was replaced and hygiene/verification records completed before release. No differential-pressure measurement is supplied for INC-ST01-20261024-01, so the same repair cannot be selected automatically." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "HIST-ST01-001 §WO-ST01-319: pump delivery issue" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST01-319: pump delivery issue. ST01_FILLING: On 2026-10-11 low pressure and flow with the valve indicated open was traced to a pump fault after qualified inspection. A pump repair and supervised verification restored nominal delivery. The older confirmed cause does not establish PMP-ST01-01 condition in the current incident." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s4> a ns1:Chunk ;
+        rdfs:label "HIST-ST01-001 §Open incident boundary" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Open incident boundary. ST01_FILLING: As of 2026-10-24T13:00:05+02:00, INC-ST01-20261024-01 has no observed inlet position, pump-status reading, filter differential pressure, upstream-pressure measurement, confirmed cause, repair completion, or release approval. The provided sparse telemetry cannot establish a continuous fifteen-minute MAINT-04 trigger." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "HIST-ST02-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: HIST-ST02-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST02_SEALING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "HIST-ST02-001 §WO-ST02-201: prior setting error" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST02-201: prior setting error. ST02_SEALING: On 2026-09-15 a qualified technician confirmed an incorrect recipe setting after a changeover. The setting was restored under a separately approved instruction and a supervised verification was recorded. The order was closed that day. No setting error is confirmed for INC-ST02-20261024-01; its current setpoint is not supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s3> a ns1:Chunk ;
+        rdfs:label "HIST-ST02-001 §WO-ST02-217: prior sensor drift" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST02-217: prior sensor drift. ST02_SEALING: On 2026-10-06 an independent calibrated reference confirmed drift in a previous TMP-2210 sensor. A qualified technician replaced it with the same model and documented verification at 185 degrees C. This report does not authorize operation above 200 degrees C and does not prove the currently installed sensor is drifting." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s4> a ns1:Chunk ;
+        rdfs:label "HIST-ST02-001 §Current incident boundary" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Current incident boundary. ST02_SEALING: As of 2026-10-24T12:00:05+02:00, INC-ST02-20261024-01 has no independent temperature measurement, confirmed cause, completed corrective work, engineering change, test authorization, or production release. Historical closure records cannot close the present incident." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "HIST-ST04-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: HIST-ST04-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Fictional completed work reports for ST04_PACKAGING, BRG-ST04-01, and ST04_PACKAGING_VIB. Historical readings are not live measurements. These reports establish previous findings only." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s2> a ns1:Chunk ;
+        rdfs:label "HIST-ST04-001 §WO-ST04-101: lubrication deficiency" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST04-101: lubrication deficiency. On 2026-09-18, ST04_PACKAGING_VIB increased from 0.13 to 0.24 mm/s while ST04_PACKAGING_SPD remained 1.20 m/s. After approved isolation, a qualified technician confirmed insufficient lubrication at BRG-ST04-01 and performed MAINT-01 using the separate approved maintenance instruction. A supervised post-work test measured 0.12 mm/s at 1.20 m/s. The report was closed on 2026-09-18. This finding does not establish the cause of INC-ST04-20261024-01." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s3> a ns1:Chunk ;
+        rdfs:label "HIST-ST04-001 §WO-ST04-118: sensor mounting fault" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST04-118: sensor mounting fault. On 2026-10-09, ST04_PACKAGING_VIB showed intermittent high readings while speed and current remained stable. Under approved isolation, a qualified technician found a loose sensor mounting at BRG-ST04-01, restored it under the manufacturer's instruction, and verified the signal. The report was closed after a supervised test at 0.12 mm/s and 1.20 m/s. No bearing defect was confirmed. Similar telemetry alone cannot distinguish this issue from a mechanical fault." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s4> a ns1:Chunk ;
+        rdfs:label "HIST-ST04-001 §WO-ST04-129: recent visual inspection" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "WO-ST04-129: recent visual inspection. On 2026-10-22, an external visual inspection of ST04_PACKAGING recorded no visible cable damage through the inspection window. No guards were removed, no bearing lubrication was performed, and no internal bearing condition was assessed. ST04_PACKAGING_VIB was 0.12 mm/s at 1.20 m/s at that time. This record cannot exclude a later defect or prove that the bearing is currently serviceable." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s5> a ns1:Chunk ;
+        rdfs:label "HIST-ST04-001 §Open incident boundary" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Open incident boundary. As of 2026-10-24T10:00:05+02:00, INC-ST04-20261024-01 at ST04_PACKAGING has no confirmed root cause, completed repair, technician inspection, or restart approval in this dataset. Do not reuse the closed status or successful test readings of an older work order as evidence that the current incident is resolved." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "REC-ST01-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: REC-ST01-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST01_FILLING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "REC-ST01-001 §Station and product hold" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Station and product hold. ST01_FILLING: Keep ST01_FILLING stopped after FILL-PRS-LL. Place output since the first low-pressure observation at 2026-10-24T12:40:00+02:00 under a quality-hold request for PO-1001; Quality must confirm the affected interval because the exact onset between sparse samples is unknown. A hold request is not proof that ERP or physical segregation has already been completed. Do not release product or silently record the request as executed." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "REC-ST01-001 §Prerequisites for a test" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Prerequisites for a test. ST01_FILLING: A qualified process-maintenance technician must record findings, cause assessment, any corrective work, and completion of the separate approved isolation, depressurization, restoration, and hygiene checks. Record any part actually installed. A shift supervisor must authorize the supervised verification; Quality must approve required hygiene clearance. The lone operator cannot substitute remote advice or a stock record for these approvals. Reset, valve operation, repair, and test-start sequences require separate approved machine instructions." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s4> a ns1:Chunk ;
+        rdfs:label "REC-ST01-001 §Verification criteria" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Verification criteria. ST01_FILLING: For this fictional supervised ST01_FILLING test, collect good-quality pressure and flow at intervals no greater than ten seconds for five uninterrupted minutes. ST01_FILLING_PRS must stay within 3.75 to 3.85 bar and ST01_FILLING_FLW within 118.5 to 121.5 L/min, using SOP-002 nominal bands. No active pressure/flow alarms or observed leakage is permitted. A failed criterion or missing sample returns the station to maintenance; do not repeatedly reset. These readings must be measured during the authorized test, not borrowed from historical operation." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s5> a ns1:Chunk ;
+        rdfs:label "REC-ST01-001 §Separate machine and product releases" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Separate machine and product releases. ST01_FILLING: Machine restart requires completed maintenance, hygiene clearance, a passing supervised test, explicit alarm clearance, and shift-supervisor production release. Product release additionally requires Quality approval for the affected interval of PO-1001. No such approvals or post-repair samples exist in INC-ST01-20261024-01. If the specialist cannot attend, the operator checklist ends with checks recorded, assistance requested, and station/product release blocked." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "REC-ST02-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: REC-ST02-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST02_SEALING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "REC-ST02-001 §Hold and qualified review" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Hold and qualified review. ST02_SEALING: After the reported excursion above the TMP-2210 continuous rating, retain the stop pending qualified maintenance assessment and engineering review of SPEC-ST02-001. The lone operator cannot authorize a test, modify thresholds, or approve a replacement model. Cooling below a limit does not establish instrument accuracy or resolve the protection mismatch." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s3> a ns1:Chunk ;
+        rdfs:label "REC-ST02-001 §Prerequisites for verification" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Prerequisites for verification. ST02_SEALING: A qualified technician must document the cause assessment, independent temperature verification using the separate approved measurement instruction, any corrective work, and completion of the approved isolation/restoration process. Engineering must record an approved disposition of the protection mismatch, including applicable instrument, operating limits, and controller protection. The shift supervisor must authorize a controlled verification test; all guards and protective functions must be restored. The physical repair, test-start, and reset sequences are outside this dataset." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s4> a ns1:Chunk ;
+        rdfs:label "REC-ST02-001 §Verification and release" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Verification and release. ST02_SEALING: For the fictional supervised verification at a target of 185 degrees C, record good-quality control readings and an independent reference at intervals no greater than ten seconds for five uninterrupted minutes. Both must stay within 183.8 to 186.2 degrees C, and their difference must not exceed the DS-THERM-2200 accuracy of 1.5 degrees C. An invalid sample, missing reference, alarm, or failed criterion returns the station to maintenance. These acceptance criteria do not resolve the protection mismatch by themselves. Explicit alarm clearance, qualified maintenance confirmation, engineering disposition, and supervisor production release are required. None is supplied for this incident." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "REC-ST04-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-02>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: REC-ST04-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Fictional release rules for ST04_PACKAGING following a vibration alarm. Supplements RULE-ST04-01, RULE-ST04-02, and MAINT-01. This document states acceptance criteria; it is not an isolation, repair, or controller-reset instruction." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s2> a ns1:Chunk ;
+        rdfs:label "REC-ST04-001 §Hold after critical vibration" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Hold after critical vibration. After PKG-VIB-HH at ST04_PACKAGING, keep the station stopped until a qualified technician has assessed the cause and the shift supervisor has authorized a controlled verification test. An operator working alone cannot grant these approvals. Alarm acknowledgement, zero vibration at zero speed, an old successful work order, and an absence of visible damage do not satisfy release conditions. If assistance is unavailable, the checklist ends with the machine stopped and maintenance pending." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s3> a ns1:Chunk ;
+        rdfs:label "REC-ST04-001 §Prerequisites for a controlled verification test" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Prerequisites for a controlled verification test. For ST04_PACKAGING, the maintenance record must identify the incident, inspection findings, any corrective work, and the qualified technician responsible. The technician must confirm completion of the approved isolation and restoration process, guards restored, personnel clear, and protective functions available. The shift supervisor must record test authorization. No test may start with missing prerequisites. The actual restoration, reset, and start sequence must come from the separate approved machine instruction; it is not supplied here." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s4> a ns1:Chunk ;
+        rdfs:label "REC-ST04-001 §Verification acceptance criteria" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Verification acceptance criteria. For an authorized supervised ST04_PACKAGING test at the documented reference speed of 1.20 m/s, collect good-quality ST04_PACKAGING_VIB, ST04_PACKAGING_SPD, and ST04_PACKAGING_CUR samples at intervals no greater than 10 seconds for five uninterrupted minutes. Vibration must remain within 0.115 to 0.125 mm/s, speed within 1.18 to 1.22 m/s, and current within 8.5 to 8.9 A. These fictional test criteria use the existing SOP-002 nominal bands and are stricter than warning limits. No active vibration alarm, unexpected noise, or visible abnormal movement is permitted. If any criterion fails or a sample gap exceeds 10 seconds, stop the test and return the incident to maintenance; do not repeatedly reset." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s5> a ns1:Chunk ;
+        rdfs:label "REC-ST04-001 §Production release and incident closure" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Production release and incident closure. For ST04_PACKAGING, the shift supervisor records production release only after the authorized verification test passes and the alarm lifecycle explicitly records clearance. Record test start/end, measurement references, work-order reference, technician confirmation, supervisor approval, and release time. Until those records exist, report restart blocked. INC-ST04-20261024-01 supplies no post-repair test, repair completion, alarm clearance, or release record; checklist generation must not claim successful recovery." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "RES-ST01-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: RES-ST01-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST01_FILLING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "RES-ST01-001 §Snapshot validity" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Snapshot validity. ST01_FILLING: Synthetic assistance and inventory snapshot observed at 2026-10-24T13:00:05+02:00 and valid until 2026-10-24T13:15:05+02:00 for INC-ST01-20261024-01. Reconfirm after expiry. These are scenario-only personnel identifiers, not identities from the iMAKS registry. Only the trained line operator is physically present; no on-site process-maintenance technician or release approver is confirmed." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "RES-ST01-001 §Usual specialist unavailable" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Usual specialist unavailable. ST01_FILLING: EMP-DEMO-201, Maya Reed, is the usual qualified process-maintenance specialist for ST01_FILLING. Her recorded shift ended at 12:00 on 2026-10-24. At the snapshot time she is off shift and unavailable; do not recommend her as an available on-site helper. The line operator has no documented qualification to open filters, service pumps, or enter guarded areas." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s4> a ns1:Chunk ;
+        rdfs:label "RES-ST01-001 §Remote fallback" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Remote fallback. ST01_FILLING: Fictional Kelvara Maintenance Desk extension 240 routes to service ticket queue SVC-ST01. On-call process service is scheduled for remote triage from 12:00 to 16:00 on 2026-10-24. A scheduled service route is not a confirmed answered call or a dispatched technician. Site attendance, arrival time, and diagnosis are unknown. Request a callback, record the attempt and response, and retain the stop if assistance is unavailable. A remote advisor does not grant the operator intrusive-work qualifications." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s5> a ns1:Chunk ;
+        rdfs:label "RES-ST01-001 §Spare stock and applicability" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Spare stock and applicability. ST01_FILLING: Inventory snapshot: one sealed filter cartridge PART-FLT-ST01-A, listed for housing FLT-ST01-01, at stores bin B-14; zero pump assembly PART-PMP-ST01-A. No part is reserved or issued. A qualified technician must verify installed housing compatibility and approved hygiene requirements before selection. The availability of a filter cartridge does not establish filter restriction, authorize its installation by the lone operator, or prove the station is repairable with current stock." .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s1> a ns1:Chunk ;
         rdfs:label "SOP-001 §1. Station Dependencies" ;
@@ -1804,35 +2305,369 @@
         ns1:page 1 ;
         ns1:text "1. Role-Zone Authorisation Matrix Role Prod. Area Server Room Gen. Warehous e Main Entranc e Chem. Stora ge R&D Lab Cafeteria operator YES NO YES YES NO NO YES technician YES YES YES YES YES YES YES supervisor YES YES YES YES YES YES YES manager YES YES YES YES YES YES YES security YES YES YES YES YES YES YES visitor YES NO NO YES NO NO YES" .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s1> a ns1:Chunk ;
-        rdfs:label "SQA-THERMO-001 §1. Scope" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250>,
-            <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
+    <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "SPEC-ST02-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
-        ns1:text "1. Scope. ThermoSense GmbH supplies the temperature sensor TMP-2210 and the humidity sensor HUM-2250 for iMAKS line A. The products conform to datasheet DS-THERM-2200." .
+        ns1:text "Scope and document control. Document ID: SPEC-ST02-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST02_SEALING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s2> a ns1:Chunk ;
-        rdfs:label "SQA-THERMO-001 §2. Warranty Conditions" ;
+    <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "SPEC-ST02-001 §Applicable sources" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Applicable sources. ST02_SEALING: The installed ST02_SEALING_TMP model is TMP-2210 per EQ-ST02-001. DS-THERM-2200 specifies 200 degrees C continuous maximum and 220 degrees C intermittent for less than ten minutes, not for control. SOP-001 RULE-ST02-01 gives an operating band of 175 to 195 degrees C; RULE-ST02-02 and SOP-002 give a critical threshold above 210 degrees C. The three numbers have different meanings and must be cited separately." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s3> a ns1:Chunk ;
+        rdfs:label "SPEC-ST02-001 §Protection gap and decision" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
             <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
-        ns1:text "2. Warranty Conditions. The warranty for TMP-2210 covers continuous operation up to 200°C, as stated in DS-THERM-2200. Operation above 200°C voids the warranty for drift caused by thermocouple ageing. The Buyer is responsible for process limits at ST02_SEALING that respect this rating." .
+        ns1:text "Protection gap and decision. ST02_SEALING: A 210 degrees C critical threshold does not make continuous operation up to 210 degrees C acceptable for TMP-2210. At the replay peak of 205 degrees C, the approved operating band and the continuous instrument rating are already exceeded although the critical threshold has not been crossed. Surface this protection mismatch rather than treating absence of a critical alarm as permission to continue. The intermittent 220 degrees C note cannot authorize process control at 205 degrees C." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s3> a ns1:Chunk ;
-        rdfs:label "SQA-THERMO-001 §3. Calibration and Replacement" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
-            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING>,
+    <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s4> a ns1:Chunk ;
+        rdfs:label "SPEC-ST02-001 §Revision and applicability" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Revision and applicability. ST02_SEALING: This synthetic applicability note is revision 1, effective 2026-10-24. It records the mismatch; it does not change SOP-001, SOP-002, or DS-THERM-2200, approve a new threshold, or certify a sensor replacement. No approved engineering change, installed replacement, independent reference measurement, or revised control configuration is included for INC-ST02-20261024-01. Any proposed higher-rated model in the graph must not be treated as installed equipment." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TEL-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "TEL-ST01-001 §Machine observations" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. Latest snapshot fresh with good quality: True. TEL-ST01-001 at 2026-10-24T12:30:00+02:00: state=RUNNING; ST01_FILLING_PRS=3.8 bar (quality=good); ST01_FILLING_FLW=120.0 L/min (quality=good). TEL-ST01-002 at 2026-10-24T12:40:00+02:00: state=RUNNING; ST01_FILLING_PRS=3.2 bar (quality=good); ST01_FILLING_FLW=115.0 L/min (quality=good). TEL-ST01-003 at 2026-10-24T13:00:00+02:00: state=RUNNING; ST01_FILLING_PRS=2.9 bar (quality=good); ST01_FILLING_FLW=110.0 L/min (quality=good). TEL-ST01-004 at 2026-10-24T13:00:05+02:00: state=STOPPED_QUALITY_HOLD; ST01_FILLING_PRS=2.8 bar (quality=good); ST01_FILLING_FLW=0.0 L/min (quality=good). Stopped readings do not establish recovery. Sparse historical observations; no continuous-duration proof or post-repair verification test. A good controller quality flag does not certify instrument accuracy outside its specified range." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TEL-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "TEL-ST02-001 §Machine observations" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
             <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
         ns1:page 1 ;
-        ns1:text "3. Calibration and Replacement. Sensors installed at ST02_SEALING and ST01_FILLING are calibrated every 12 months. ThermoSense replaces a defective TMP-2210 within 5 working days. Drift beyond ±5°C within 500 hours is a warranty case only if the sensor was operated within its rating." .
+        ns1:text "Synthetic replay for ST02_SEALING, incident INC-ST02-20261024-01, order PO-1003. Selected time: 2026-10-24T12:00:05+02:00. This source provides observations, not repair or restart approval. Latest snapshot fresh with good quality: True. TEL-ST02-001 at 2026-10-24T11:50:00+02:00: state=RUNNING; ST02_SEALING_TMP=185.0 degC (quality=good); ST02_SEALING_CUR=12.4 A (quality=good). TEL-ST02-002 at 2026-10-24T11:55:00+02:00: state=RUNNING; ST02_SEALING_TMP=198.0 degC (quality=good); ST02_SEALING_CUR=12.4 A (quality=good). TEL-ST02-003 at 2026-10-24T12:00:00+02:00: state=RUNNING; ST02_SEALING_TMP=205.0 degC (quality=good); ST02_SEALING_CUR=12.4 A (quality=good). TEL-ST02-004 at 2026-10-24T12:00:05+02:00: state=STOPPED_OPERATOR; ST02_SEALING_TMP=204.0 degC (quality=good); ST02_SEALING_CUR=0.0 A (quality=good). Stopped readings do not establish recovery. Sparse historical observations; no continuous-duration proof or post-repair verification test. A good controller quality flag does not certify instrument accuracy outside its specified range." .
 
-    <https://rai-hackathon.bbger.at/kg/document/MC-2026-01> a ns1:Document ;
-        rdfs:label "MC-2026-01 Maintenance Contract Line A" ;
-        rdfs:comment "Maintenance Contract Line A" ;
-        ns1:file "MaintenanceContract.md" ;
-        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s1>,
-            <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s2>,
-            <https://rai-hackathon.bbger.at/kg/chunk/MC-2026-01-s3> .
+    <https://rai-hackathon.bbger.at/kg/chunk/TEL-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "TEL-ST04-001 §Machine observations" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Synthetic replay for ST04_PACKAGING, incident INC-ST04-20261024-01, order PO-1005. Selected time: 2026-10-24T10:00:05+02:00. This source provides observations, not repair or restart approval. Latest snapshot fresh with good quality: True. TEL-ST04-001 at 2026-10-24T09:00:00+02:00: state=RUNNING; ST04_PACKAGING_VIB=0.12 mm/s (quality=good); ST04_PACKAGING_SPD=1.2 m/s (quality=good); ST04_PACKAGING_CUR=8.7 A (quality=good). TEL-ST04-002 at 2026-10-24T09:30:00+02:00: state=RUNNING; ST04_PACKAGING_VIB=0.16 mm/s (quality=good); ST04_PACKAGING_SPD=1.2 m/s (quality=good); ST04_PACKAGING_CUR=8.7 A (quality=good). TEL-ST04-003 at 2026-10-24T09:50:00+02:00: state=RUNNING; ST04_PACKAGING_VIB=0.23 mm/s (quality=good); ST04_PACKAGING_SPD=1.2 m/s (quality=good); ST04_PACKAGING_CUR=8.8 A (quality=good). TEL-ST04-004 at 2026-10-24T09:59:50+02:00: state=RUNNING; ST04_PACKAGING_VIB=0.32 mm/s (quality=good); ST04_PACKAGING_SPD=1.2 m/s (quality=good); ST04_PACKAGING_CUR=8.8 A (quality=good). TEL-ST04-005 at 2026-10-24T10:00:00+02:00: state=RUNNING; ST04_PACKAGING_VIB=0.38 mm/s (quality=good); ST04_PACKAGING_SPD=1.2 m/s (quality=good); ST04_PACKAGING_CUR=8.9 A (quality=good). TEL-ST04-006 at 2026-10-24T10:00:05+02:00: state=STOPPED_PROTECTIVE; ST04_PACKAGING_VIB=0.0 mm/s (quality=good); ST04_PACKAGING_SPD=0.0 m/s (quality=good); ST04_PACKAGING_CUR=0.0 A (quality=good). Stopped readings do not establish recovery. Sparse historical samples plus the incident snapshot; not a continuous stream and not a post-repair verification test." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s1> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: TRB-ST01-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST01_FILLING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s2> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Step 1: confirm the stop" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Step 1: confirm the stop. ST01_FILLING: At HMI-ST01 Diagnostics, record state, timestamp, quality, ST01_FILLING_PRS, and ST01_FILLING_FLW. After FILL-PRS-LL, expected replay state is STOPPED_QUALITY_HOLD and flow is 0.0 L/min. If state is missing or inconsistent, retain the hold and request assistance; do not approach process equipment to compensate for missing data. For an immediate hazard use the emergency stop and keep clear." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s3> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Step 2: preserve the incident evidence" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Step 2: preserve the incident evidence. ST01_FILLING: In Alarm History, record instance IDs, codes, times, trigger samples, and whether alarms are still active. Record the last running pressure and flow separately from stopped readings. Compare them with ALM-ST01-001. Acknowledge only after recording; do not reset or resume filling. The replay first shows low pressure at 12:40 and the critical event at 13:00; it does not record that the five-minute inlet check was performed." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s4> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Step 3: inspect the external inlet indicator" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Step 3: inspect the external inlet indicator. ST01_FILLING: From OBS-ST01-01 with the station stopped and guards closed, read the VLV-ST01-01 position indicator. If CLOSED, report a possible supply-path issue without opening the valve. If OPEN, record it and continue to the pump-status observation; an open indicator does not prove supply or filter condition. If UNKNOWN or not visible, record the missing observation and escalate. No actual valve-position observation is included in this incident dataset." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s5> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Step 4: read pump status and look for external evidence" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Step 4: read pump status and look for external evidence. ST01_FILLING: At OBS-ST01-01 read the PMP-ST01-01 status lamp as normal, fault, or not visible. If fault, record the displayed code if readable from the HMI; do not reset motor protection. If normal, compare prior running pressure and flow while keeping the stop; normal status does not prove pump delivery. From outside the guard record visible leakage or abnormal accumulation as observed, not observed, or not visible. Do not touch fluid or open fittings. Pump status and leakage observations are not supplied for this incident." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s6> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Step 5: assess the diagnostic branches" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-04>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Step 5: assess the diagnostic branches. ST01_FILLING: If inlet indication is closed or unknown, qualified inspection of supply path and valve is required. If indication is open and pump status is fault, qualified pump/drive assessment is required. If indication is open with normal pump status but running pressure and flow were low, filter restriction, upstream supply loss, and pump delivery remain competing hypotheses. Without upstream or filter differential-pressure readings, do not select one as confirmed. Read HIST-ST01-001 for prior findings and its limits. Do not report that MAINT-04 duration is proven from sparse samples." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s7> a ns1:Chunk ;
+        rdfs:label "TRB-ST01-001 §Step 6: use the available support route" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:page 1 ;
+        ns1:text "Step 6: use the available support route. ST01_FILLING: Consult RES-ST01-001 at the same selected time. The usual specialist is off shift; the on-call service can receive a remote triage call, but attendance and arrival are unconfirmed. Contact the stated service route with pressure/flow evidence and missing observations. Keep the product and station on hold under REC-ST01-001. Stock availability alone is not permission to replace a part. If no response is obtained, record the attempted call and leave the hold in place." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s1> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Scope and document control" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and document control. Document ID: TRB-ST02-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Applies to ST02_SEALING. Fictional equipment details and synthetic training instructions; not manufacturer instructions. Existing iMAKS limits are retained. No intrusive repair or isolation sequence is supplied." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s2> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Step 1: establish state and timestamp" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Step 1: establish state and timestamp. ST02_SEALING: At HMI-ST02 Diagnostics, record the selected time, machine state, ST02_SEALING_TMP reading, timestamp, and quality. Use ALM-ST02-001 freshness rules. If missing or stale, do not claim the station is safe; contact Maintenance Desk 240. In an actual running over-temperature condition, use the normal Stop control from outside the guard. If an immediate hazard is present, use the emergency stop and keep clear." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s3> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Step 2: record the temperature history" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Step 2: record the temperature history. ST02_SEALING: Open Alarm History and the temperature trend. Record each alarm instance, activation time, trigger sample, peak temperature, operating setpoint if visible, and controller action. Do not change the setpoint or acknowledge away the evidence. An absent setpoint in the replay is unknown. Distinguish the running peak from the later cooling observation and document whether state STOPPED_OPERATOR is supported by fresh telemetry." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s4> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Step 3: compare all three limits" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Step 3: compare all three limits. ST02_SEALING: Using SPEC-ST02-001, compare the observed running peak with the 195 degrees C operating-band ceiling, the 200 degrees C TMP-2210 continuous rating, and the 210 degrees C critical threshold. At 205 degrees C report both exceeded limits and the not-yet-triggered critical threshold. Flag the protection mismatch. Do not describe the reading as a verified true temperature or use the intermittent rating to justify operation." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s5> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Step 4: inspect externally" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Step 4: inspect externally. ST02_SEALING: From OBS-ST02-01 outside closed guards, note visible product accumulation, unusual discoloration, or visible cable damage as observed, not observed, or not visible. Do not touch surfaces, remove trays, open guards, or inspect energized circuits. If smoke or another immediate hazard appears, withdraw and follow site emergency arrangements. Lack of visible damage does not establish heater or sensor integrity." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s6> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Step 5: separate hypotheses and escalation" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Step 5: separate hypotheses and escalation. ST02_SEALING: Read HIST-ST02-001. A previous controller setting error or sensor drift is only a hypothesis for this incident. Retain the stop and contact Maintenance Desk 240 with the instrument model, peak, three limits, active alarm IDs, and observed state. Request qualified verification of instrument validity and engineering review of protection applicability. No automatic parameter change or sensor substitution is authorized." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s7> a ns1:Chunk ;
+        rdfs:label "TRB-ST02-001 §Step 6: record restart blockers" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "Step 6: record restart blockers. ST02_SEALING: Apply REC-ST02-001. Record absent independent measurement, unconfirmed cause, missing corrective-work record, unresolved protection mismatch, and missing release approvals. The operator alone cannot clear these blockers. Leave the station stopped and log the handover attempt if assistance is unavailable. Do not claim cooling resolves the mismatch." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s1> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Scope and entry condition" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Scope and entry condition. Document ID: TRB-ST04-001. Revision: 1. Effective date: 2026-10-24. Owner: Kelvara Maintenance Engineering. Synthetic procedure for a trained lone operator responding to ST04_PACKAGING vibration alarms. Use EQ-ST04-001 for locations, ALM-ST04-001 for thresholds, and REC-ST04-001 for restart restrictions. Perform only external observations; detailed intrusive maintenance is not covered." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s2> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Step 1: confirm machine state" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Step 1: confirm machine state. At HMI-ST04, open Diagnostics for ST04_PACKAGING. Record the machine state, ST04_PACKAGING_SPD, measurement timestamp, and quality. Expected after a critical trip: state STOPPED_PROTECTIVE and speed 0.00 m/s, supported by fresh good-quality data. Confirm visually from outside the guard. If movement continues or an immediate hazard is present, use the local emergency stop and keep clear. If state or speed cannot be established, keep clear and contact Maintenance Desk 240. Do not proceed toward equipment to resolve missing telemetry." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s3> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Step 2: preserve alarm evidence" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Step 2: preserve alarm evidence. At HMI-ST04 Alarm History, record the ST04_PACKAGING alarm instance ID, code, activation time, trigger measurement ID, and active/cleared status. Compare the trigger value against ALM-ST04-001. Acknowledge the displayed alarm only after recording it; acknowledgement is not a reset. For PKG-VIB-HH, retain the stop even if stopped vibration is now zero. If the live display disagrees with the recorded event, retain both records and report the discrepancy rather than selecting one silently." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s4> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Step 3: check trend and data quality" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:page 1 ;
+        ns1:text "Step 3: check trend and data quality. Read the ST04_PACKAGING_VIB trend alongside ST04_PACKAGING_SPD and ST04_PACKAGING_CUR. Compare good-quality running readings at the same speed across the prior 60 minutes. Record the starting and ending vibration values and their difference. A rise greater than 0.05 mm/s supports MAINT-01. Do not include the stopped sample in that comparison. If timestamps, units, quality, or comparable operating conditions are missing, report that the trend cannot be established. Do not infer a confirmed bearing failure from the trend." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s5> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Step 4: observe without entering" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Step 4: observe without entering. With ST04_PACKAGING stopped, remain at OBS-ST04-01 outside closed guards. Look through the inspection window for displaced trays, visible debris, or visible sensor-cable damage. Record each finding as observed, not observed, or not visible. Do not touch the bearing housing, reach through openings, remove material, or open guards. If smoke, burning smell, or another immediate hazard is present, withdraw and follow site emergency arrangements. If the view is blocked, record not visible; do not treat that as no obstruction." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s6> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Step 5: review history and select the next action" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/MAINT-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Step 5: review history and select the next action. Open ST04_PACKAGING Maintenance History and compare symptoms with HIST-ST04-001. Previous lubrication or sensor-mount faults are possibilities, not the diagnosis of this incident. For a critical alarm, or a visible defect, retain the stop and request qualified maintenance. For warning-only evidence, follow RULE-ST04-01's maintenance scheduling requirement; this procedure grants no independent restart permission. Do not apply the previous repair automatically. MAINT-01 inspection and lubrication require the qualified technician and approved isolation procedure described in EQ-ST04-001." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s7> a ns1:Chunk ;
+        rdfs:label "TRB-ST04-001 §Step 6: hand over and record the blocker" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "Step 6: hand over and record the blocker. For ST04_PACKAGING, contact Maintenance Desk 240 with the incident ID, alarm instance, pre-stop peak, speed/current at that time, trend comparison, machine state, and external observations. State explicitly that the operator is alone. If no technician is available, leave the machine stopped and record maintenance pending. Follow REC-ST04-001 for release conditions. End the operator checklist with the current blocker; do not invent completed repairs, measurements, or approval." .
+
+    <https://rai-hackathon.bbger.at/kg/document/ALM-ST01-001> a ns1:Document ;
+        rdfs:label "ALM-ST01-001 ST01 Pressure and Flow Alarm Reference" ;
+        rdfs:comment "ST01 Pressure and Flow Alarm Reference" ;
+        ns1:file "ST01_AlarmReference.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST01-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/ALM-ST02-001> a ns1:Document ;
+        rdfs:label "ALM-ST02-001 ST02 Temperature Alarm Reference" ;
+        rdfs:comment "ST02 Temperature Alarm Reference" ;
+        ns1:file "ST02_AlarmReference.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST02-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/ALM-ST04-001> a ns1:Document ;
+        rdfs:label "ALM-ST04-001 ST04 Vibration Alarm Reference" ;
+        rdfs:comment "ST04 Vibration Alarm Reference" ;
+        ns1:file "ST04_AlarmReference.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/ALM-ST04-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/EQ-ST01-001> a ns1:Document ;
+        rdfs:label "EQ-ST01-001 ST01 Filling Station Equipment Guide" ;
+        rdfs:comment "ST01 Filling Station Equipment Guide" ;
+        ns1:file "ST01_EquipmentGuide.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST01-001-s4> .
+
+    <https://rai-hackathon.bbger.at/kg/document/EQ-ST02-001> a ns1:Document ;
+        rdfs:label "EQ-ST02-001 ST02 Sealing Station Equipment Guide" ;
+        rdfs:comment "ST02 Sealing Station Equipment Guide" ;
+        ns1:file "ST02_EquipmentGuide.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST02-001-s4> .
+
+    <https://rai-hackathon.bbger.at/kg/document/EQ-ST04-001> a ns1:Document ;
+        rdfs:label "EQ-ST04-001 ST04 Packaging Conveyor Equipment Guide" ;
+        rdfs:comment "ST04 Packaging Conveyor Equipment Guide" ;
+        ns1:file "ST04_EquipmentGuide.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/EQ-ST04-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/HIST-ST01-001> a ns1:Document ;
+        rdfs:label "HIST-ST01-001 ST01 Pressure Maintenance History" ;
+        rdfs:comment "ST01 Pressure Maintenance History" ;
+        ns1:file "ST01_MaintenanceHistory.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST01-001-s4> .
+
+    <https://rai-hackathon.bbger.at/kg/document/HIST-ST02-001> a ns1:Document ;
+        rdfs:label "HIST-ST02-001 ST02 Temperature Maintenance History" ;
+        rdfs:comment "ST02 Temperature Maintenance History" ;
+        ns1:file "ST02_MaintenanceHistory.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST02-001-s4> .
+
+    <https://rai-hackathon.bbger.at/kg/document/HIST-ST04-001> a ns1:Document ;
+        rdfs:label "HIST-ST04-001 ST04 Maintenance History" ;
+        rdfs:comment "ST04 Maintenance History" ;
+        ns1:file "ST04_MaintenanceHistory.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/HIST-ST04-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/REC-ST01-001> a ns1:Document ;
+        rdfs:label "REC-ST01-001 ST01 Pressure Recovery and Product Release" ;
+        rdfs:comment "ST01 Pressure Recovery and Product Release" ;
+        ns1:file "ST01_RecoveryAndRestart.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST01-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/REC-ST02-001> a ns1:Document ;
+        rdfs:label "REC-ST02-001 ST02 Temperature Recovery and Restart Conditions" ;
+        rdfs:comment "ST02 Temperature Recovery and Restart Conditions" ;
+        ns1:file "ST02_RecoveryAndRestart.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST02-001-s4> .
+
+    <https://rai-hackathon.bbger.at/kg/document/REC-ST04-001> a ns1:Document ;
+        rdfs:label "REC-ST04-001 ST04 Recovery and Restart Conditions" ;
+        rdfs:comment "ST04 Recovery and Restart Conditions" ;
+        ns1:file "ST04_RecoveryAndRestart.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/REC-ST04-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/RES-ST01-001> a ns1:Document ;
+        rdfs:label "RES-ST01-001 ST01 Incident Resources and Service Snapshot" ;
+        rdfs:comment "ST01 Incident Resources and Service Snapshot" ;
+        ns1:file "ST01_ResourcesAndService.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/RES-ST01-001-s5> .
+
+    <https://rai-hackathon.bbger.at/kg/document/SPEC-ST02-001> a ns1:Document ;
+        rdfs:label "SPEC-ST02-001 ST02 Installed Sensor and Protection Gap" ;
+        rdfs:comment "ST02 Installed Sensor and Protection Gap" ;
+        ns1:file "ST02_SpecificationApplicability.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/SPEC-ST02-001-s4> .
+
+    <https://rai-hackathon.bbger.at/kg/document/TRB-ST01-001> a ns1:Document ;
+        rdfs:label "TRB-ST01-001 ST01 Low Pressure Troubleshooting" ;
+        rdfs:comment "ST01 Low Pressure Troubleshooting" ;
+        ns1:file "ST01_PressureTroubleshooting.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s5>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s6>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST01-001-s7> .
+
+    <https://rai-hackathon.bbger.at/kg/document/TRB-ST02-001> a ns1:Document ;
+        rdfs:label "TRB-ST02-001 ST02 Temperature Alarm Troubleshooting" ;
+        rdfs:comment "ST02 Temperature Alarm Troubleshooting" ;
+        ns1:file "ST02_TemperatureTroubleshooting.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s5>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s6>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST02-001-s7> .
+
+    <https://rai-hackathon.bbger.at/kg/document/TRB-ST04-001> a ns1:Document ;
+        rdfs:label "TRB-ST04-001 ST04 Vibration Troubleshooting" ;
+        rdfs:comment "ST04 Vibration Troubleshooting" ;
+        ns1:file "ST04_VibrationTroubleshooting.md" ;
+        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s1>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s2>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s3>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s4>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s5>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s6>,
+            <https://rai-hackathon.bbger.at/kg/chunk/TRB-ST04-001-s7> .
 
     <https://rai-hackathon.bbger.at/kg/person/P001> a ns1:Person ;
         rdfs:label "P001 (operator)" ;
@@ -1974,6 +2809,18 @@
         ns1:role "supervisor" ;
         ns1:shift "Morning" .
 
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-02> a ns1:Rule ;
+        rdfs:label "MAINT-02" ;
+        rdfs:comment "CUR DRIFT >1.0 A for 30+ min" ;
+        ns1:action "Inspect sealing jaw alignment" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s2> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "CUR" ;
+        ns1:severity "HIGH" ;
+        ns1:unit "A" .
+
     <https://rai-hackathon.bbger.at/kg/rule/MAINT-03> a ns1:Rule ;
         rdfs:label "MAINT-03" ;
         rdfs:comment "TEN STUCK >10 consecutive samples" ;
@@ -1985,18 +2832,6 @@
         ns1:sensorType "TEN" ;
         ns1:severity "MEDIUM" ;
         ns1:unit "N" .
-
-    <https://rai-hackathon.bbger.at/kg/rule/MAINT-04> a ns1:Rule ;
-        rdfs:label "MAINT-04" ;
-        rdfs:comment "PRS <3.3 bar for >15 min" ;
-        ns1:action "Inspect inlet filter and pump" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
-            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s4> ;
-        ns1:ruleClass "MaintenanceRule" ;
-        ns1:sensorType "PRS" ;
-        ns1:severity "MEDIUM" ;
-        ns1:unit "bar" .
 
     <https://rai-hackathon.bbger.at/kg/rule/MAINT-05> a ns1:Rule ;
         rdfs:label "MAINT-05" ;
@@ -2159,22 +2994,6 @@
         ns1:warnHi 2.5e+01 ;
         ns1:warnLo 1.8e+01 .
 
-    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-01> a ns1:Rule ;
-        rdfs:label "RULE-ST01-01" ;
-        rdfs:comment "FLW MUST be maintained between 112 and 128 L/min" ;
-        ns1:action "Inspect and notify maintenance" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
-            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
-        ns1:critHi 1.35e+02 ;
-        ns1:critLo 1.05e+02 ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
-        ns1:ruleClass "OperationalRule" ;
-        ns1:sensorType "FLW" ;
-        ns1:severity "MANDATORY" ;
-        ns1:unit "L/min" ;
-        ns1:warnHi 1.28e+02 ;
-        ns1:warnLo 1.12e+02 .
-
     <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-02> a ns1:Rule ;
         rdfs:label "RULE-ST01-02" ;
         rdfs:comment "TMP exceeds 26°C" ;
@@ -2190,54 +3009,6 @@
         ns1:unit "°C" ;
         ns1:warnHi 2.6e+01 ;
         ns1:warnLo 1.8e+01 .
-
-    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-03> a ns1:Rule ;
-        rdfs:label "RULE-ST01-03" ;
-        rdfs:comment "PRS drop below 3.3 bar" ;
-        ns1:action "Inspect inlet valve within 5 min" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
-            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
-        ns1:critHi 4.8e+00 ;
-        ns1:critLo 3e+00 ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
-        ns1:ruleClass "OperationalRule" ;
-        ns1:sensorType "PRS" ;
-        ns1:severity "WARNING" ;
-        ns1:unit "bar" ;
-        ns1:warnHi 4.2e+00 ;
-        ns1:warnLo 3.3e+00 .
-
-    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01> a ns1:Rule ;
-        rdfs:label "RULE-ST02-01" ;
-        rdfs:comment "TMP MUST remain between 175°C and 195°C" ;
-        ns1:action "Inspect and notify maintenance" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
-            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:critHi 2.1e+02 ;
-        ns1:critLo 1.65e+02 ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
-        ns1:ruleClass "OperationalRule" ;
-        ns1:sensorType "TMP" ;
-        ns1:severity "MANDATORY" ;
-        ns1:unit "°C" ;
-        ns1:warnHi 1.95e+02 ;
-        ns1:warnLo 1.75e+02 .
-
-    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02> a ns1:Rule ;
-        rdfs:label "RULE-ST02-02" ;
-        rdfs:comment "TMP > 210°C (CRITICAL)" ;
-        ns1:action "Emergency stop ST02, ST03, ST04" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
-            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:critHi 2.1e+02 ;
-        ns1:critLo 1.65e+02 ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
-        ns1:ruleClass "OperationalRule" ;
-        ns1:sensorType "TMP" ;
-        ns1:severity "CRITICAL" ;
-        ns1:unit "°C" ;
-        ns1:warnHi 1.95e+02 ;
-        ns1:warnLo 1.75e+02 .
 
     <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-03> a ns1:Rule ;
         rdfs:label "RULE-ST02-03" ;
@@ -2287,38 +3058,6 @@
         ns1:warnHi 2.6e+00 ;
         ns1:warnLo 1.8e+00 .
 
-    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01> a ns1:Rule ;
-        rdfs:label "RULE-ST04-01" ;
-        rdfs:comment "VIB > 0.20 mm/s (WARNING)" ;
-        ns1:action "Schedule maintenance within 24 h" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
-            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:critHi 3.5e-01 ;
-        ns1:critLo 1e-02 ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
-        ns1:ruleClass "OperationalRule" ;
-        ns1:sensorType "VIB" ;
-        ns1:severity "WARNING" ;
-        ns1:unit "mm/s" ;
-        ns1:warnHi 2e-01 ;
-        ns1:warnLo 2e-02 .
-
-    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-02> a ns1:Rule ;
-        rdfs:label "RULE-ST04-02" ;
-        rdfs:comment "VIB > 0.35 mm/s (CRITICAL)" ;
-        ns1:action "Emergency stop; inspect bearings" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
-            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:critHi 3.5e-01 ;
-        ns1:critLo 1e-02 ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
-        ns1:ruleClass "OperationalRule" ;
-        ns1:sensorType "VIB" ;
-        ns1:severity "CRITICAL" ;
-        ns1:unit "mm/s" ;
-        ns1:warnHi 2e-01 ;
-        ns1:warnLo 2e-02 .
-
     <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-03> a ns1:Rule ;
         rdfs:label "RULE-ST04-03" ;
         rdfs:comment "SPD drops below 1.00 m/s without operator command" ;
@@ -2354,6 +3093,48 @@
     <https://rai-hackathon.bbger.at/kg/supplier/ElectroMeasure> a ns1:Supplier ;
         rdfs:label "ElectroMeasure AG" ;
         rdfs:comment "Vendor of electrical sensors, datasheet DS-ELEC-3300." .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-A> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST01-001-A FILL-PRS-LO" ;
+        rdfs:comment "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST01-001-A\", \"alarm_instance_id\": \"ALM-ST01-20261024-01\", \"alarm_code\": \"FILL-PRS-LO\", \"sensor_id\": \"ST01_FILLING_PRS\", \"occurred_at\": \"2026-10-24T12:40:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST01-002\", \"trigger_value\": 3.2, \"unit\": \"bar\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T13:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T12:40:00+02:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-B> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST01-001-B FILL-PRS-LL" ;
+        rdfs:comment "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST01-001-B\", \"alarm_instance_id\": \"ALM-ST01-20261024-02\", \"alarm_code\": \"FILL-PRS-LL\", \"sensor_id\": \"ST01_FILLING_PRS\", \"occurred_at\": \"2026-10-24T13:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"critical\", \"trigger_sample_id\": \"TEL-ST01-003\", \"trigger_value\": 2.9, \"unit\": \"bar\", \"controller_action\": \"quality_hold_stop_requested\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T13:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T13:00:00+02:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-C> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST01-001-C FILL-FLW-LO" ;
+        rdfs:comment "Synthetic replay for ST01_FILLING, incident INC-ST01-20261024-01, order PO-1001. Selected time: 2026-10-24T13:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST01-001-C\", \"alarm_instance_id\": \"ALM-ST01-20261024-03\", \"alarm_code\": \"FILL-FLW-LO\", \"sensor_id\": \"ST01_FILLING_FLW\", \"occurred_at\": \"2026-10-24T13:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST01-003\", \"trigger_value\": 110.0, \"unit\": \"L/min\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T13:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T13:00:00+02:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST02-001-A> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST02-001-A SEAL-TMP-HI" ;
+        rdfs:comment "Synthetic replay for ST02_SEALING, incident INC-ST02-20261024-01, order PO-1003. Selected time: 2026-10-24T12:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST02-001-A\", \"alarm_instance_id\": \"ALM-ST02-20261024-01\", \"alarm_code\": \"SEAL-TMP-HI\", \"sensor_id\": \"ST02_SEALING_TMP\", \"occurred_at\": \"2026-10-24T11:55:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST02-002\", \"trigger_value\": 198.0, \"unit\": \"degC\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T12:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T11:55:00+02:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST02-001-B> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST02-001-B SEAL-TMP-RANGE" ;
+        rdfs:comment "Synthetic replay for ST02_SEALING, incident INC-ST02-20261024-01, order PO-1003. Selected time: 2026-10-24T12:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST02-001-B\", \"alarm_instance_id\": \"ALM-ST02-20261024-02\", \"alarm_code\": \"SEAL-TMP-RANGE\", \"sensor_id\": \"ST02_SEALING_TMP\", \"occurred_at\": \"2026-10-24T12:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"advisory\", \"trigger_sample_id\": \"TEL-ST02-003\", \"trigger_value\": 205.0, \"unit\": \"degC\", \"controller_action\": \"engineering_review_requested\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T12:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T12:00:00+02:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST04-001-A> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST04-001-A PKG-VIB-HI" ;
+        rdfs:comment "Synthetic replay for ST04_PACKAGING, incident INC-ST04-20261024-01, order PO-1005. Selected time: 2026-10-24T10:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST04-001-A\", \"alarm_instance_id\": \"ALM-ST04-20261024-01\", \"alarm_code\": \"PKG-VIB-HI\", \"sensor_id\": \"ST04_PACKAGING_VIB\", \"occurred_at\": \"2026-10-24T09:50:00+02:00\", \"transition\": \"activated\", \"severity\": \"warning\", \"trigger_sample_id\": \"TEL-ST04-003\", \"trigger_value\": 0.23, \"unit\": \"mm/s\", \"controller_action\": \"warning_notification\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T10:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T09:50:00+02:00" .
+
+    <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST04-001-B> a ns1:AnomalyEvent ;
+        rdfs:label "EVT-ST04-001-B PKG-VIB-HH" ;
+        rdfs:comment "Synthetic replay for ST04_PACKAGING, incident INC-ST04-20261024-01, order PO-1005. Selected time: 2026-10-24T10:00:05+02:00. This source provides observations, not repair or restart approval. {\"event_id\": \"EVT-ST04-001-B\", \"alarm_instance_id\": \"ALM-ST04-20261024-02\", \"alarm_code\": \"PKG-VIB-HH\", \"sensor_id\": \"ST04_PACKAGING_VIB\", \"occurred_at\": \"2026-10-24T10:00:00+02:00\", \"transition\": \"activated\", \"severity\": \"critical\", \"trigger_sample_id\": \"TEL-ST04-005\", \"trigger_value\": 0.38, \"unit\": \"mm/s\", \"controller_action\": \"protective_stop_requested\"} Active at selected time: True. Controller action is a request; confirm machine state using telemetry. The cause is unconfirmed; no repair or restart release is recorded." ;
+        ns1:asOf "2026-10-24T10:00:05+02:00" ;
+        ns1:occurredAt "2026-10-24T10:00:00+02:00" .
 
     <https://rai-hackathon.bbger.at/kg/chunk/DS-ELEC-3300-s1> a ns1:Chunk ;
         rdfs:label "DS-ELEC-3300 §1. Electrical Specifications" ;
@@ -2473,6 +3254,13 @@
         ns1:page 1 ;
         ns1:text "ST01_FILLING FLW: L/min 105.0 112.0 120.0 ± 1.5 128.0 135.0 Inspect and notify maintenance" .
 
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> a ns1:Chunk ;
+        rdfs:label "SOP-002 §ST02_SEALING TMP thresholds" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:page 1 ;
+        ns1:text "ST02_SEALING TMP: °C 165.0 175.0 185.0 ± 1.2 195.0 210.0 E-STOP ST02/ST03/ST04; inspect element" .
+
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s5> a ns1:Chunk ;
         rdfs:label "SOP-002 §ST02_SEALING PRS thresholds" ;
         ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_PRS>,
@@ -2582,13 +3370,13 @@
         ns1:page 1 ;
         ns1:text "MAINT-08 HUM RND01_RDLAB HUM DRIFT >10%RH over 60 min Activate dehumidifier; check HVAC drain HIGH" .
 
-    <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> a ns1:Document ;
-        rdfs:label "SQA-THERMO-001 Supplier Quality Agreement with ThermoSense GmbH" ;
-        rdfs:comment "Supplier Quality Agreement with ThermoSense GmbH" ;
-        ns1:file "SQA_ThermoSense.md" ;
-        ns1:has_chunk <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s1>,
-            <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s2>,
-            <https://rai-hackathon.bbger.at/kg/chunk/SQA-THERMO-001-s3> .
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02> a ns1:Maintenance ;
+        rdfs:label "MAINT-02: Inspect sealing jaw alignment" ;
+        ns1:action "Inspect sealing jaw alignment" ;
+        ns1:nodeId "N0055" ;
+        ns1:priority "HIGH" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR> ;
+        ns1:ruleId "MAINT-02" .
 
     <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-03> a ns1:Maintenance ;
         rdfs:label "MAINT-03: Replace TEN sensor" ;
@@ -2597,14 +3385,6 @@
         ns1:priority "MEDIUM" ;
         ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_TEN> ;
         ns1:ruleId "MAINT-03" .
-
-    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04> a ns1:Maintenance ;
-        rdfs:label "MAINT-04: Inspect inlet filter and pump" ;
-        ns1:action "Inspect inlet filter and pump" ;
-        ns1:nodeId "N0057" ;
-        ns1:priority "MEDIUM" ;
-        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS> ;
-        ns1:ruleId "MAINT-04" .
 
     <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-05> a ns1:Maintenance ;
         rdfs:label "MAINT-05: Activate secondary cooling" ;
@@ -2642,18 +3422,6 @@
         rdfs:label "security" ;
         rdfs:comment "Site security." .
 
-    <https://rai-hackathon.bbger.at/kg/rule/MAINT-01> a ns1:Rule ;
-        rdfs:label "MAINT-01" ;
-        rdfs:comment "VIB DRIFT >0.05 mm/s over 60 min" ;
-        ns1:action "Inspect and lubricate main bearing" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
-            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s1> ;
-        ns1:ruleClass "MaintenanceRule" ;
-        ns1:sensorType "VIB" ;
-        ns1:severity "HIGH" ;
-        ns1:unit "mm/s" .
-
     <https://rai-hackathon.bbger.at/kg/rule/RULE-CHM01-03> a ns1:Rule ;
         rdfs:label "RULE-CHM01-03" ;
         rdfs:comment "Only personnel with hazmat training (technician/supervisor/manager) are authorised to enter Chemical Storage" ;
@@ -2662,6 +3430,38 @@
         ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> ;
         ns1:ruleClass "AccessRule" ;
         ns1:severity "CRITICAL" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-01> a ns1:Rule ;
+        rdfs:label "RULE-ST01-01" ;
+        rdfs:comment "FLW MUST be maintained between 112 and 128 L/min" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 1.35e+02 ;
+        ns1:critLo 1.05e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "FLW" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "L/min" ;
+        ns1:warnHi 1.28e+02 ;
+        ns1:warnLo 1.12e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST01-03> a ns1:Rule ;
+        rdfs:label "RULE-ST01-03" ;
+        rdfs:comment "PRS drop below 3.3 bar" ;
+        ns1:action "Inspect inlet valve within 5 min" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:critHi 4.8e+00 ;
+        ns1:critLo 3e+00 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "PRS" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "bar" ;
+        ns1:warnHi 4.2e+00 ;
+        ns1:warnLo 3.3e+00 .
 
     <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_HUM> a ns1:Sensor ;
         rdfs:label "SRV01_SERVERROOM_HUM" ;
@@ -2702,35 +3502,9 @@
         ns1:warnHi 9.5e-01 ;
         ns1:warnLo 7.5e-01 .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR> a ns1:Sensor ;
-        rdfs:label "ST04_PACKAGING_CUR" ;
-        ns1:critHi 1.1e+01 ;
-        ns1:critLo 6.5e+00 ;
-        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:nodeId "N0023" ;
-        ns1:nominalValue 8.7e+00 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
-        ns1:sensorType "CUR" ;
-        ns1:unit "A" ;
-        ns1:warnHi 9.8e+00 ;
-        ns1:warnLo 7.5e+00 .
-
-    <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> a ns1:SensorModel ;
-        rdfs:label "FLW-4450" ;
-        rdfs:comment "Electromagnetic flowmeter" ;
-        ns1:sensorType "FLW" ;
-        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
-
-    <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> a ns1:SensorModel ;
-        rdfs:label "VIB-4480" ;
-        rdfs:comment "Piezoelectric accelerometer." ;
-        ns1:sensorType "VIB" ;
-        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
-
     <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> a ns1:Supplier ;
         rdfs:label "ThermoSense GmbH" ;
-        rdfs:comment "Vendor of thermal sensors, datasheet DS-THERM-2200." ;
-        ns1:party_to <https://rai-hackathon.bbger.at/kg/document/SQA-THERMO-001> .
+        rdfs:comment "Vendor of thermal sensors, datasheet DS-THERM-2200." .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s10> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.9 CAF01_CAFETERIA" ;
@@ -2751,13 +3525,6 @@
         ns1:page 2 ;
         ns1:text "2.5 SRV01_SERVERROOM RULE-SRV01-01: TMP MUST NOT exceed 25°C. RULE-SRV01-02: TMP > 28°C (CRITICAL) — automatic controlled shutdown of all PLC nodes." .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> a ns1:Chunk ;
-        rdfs:label "SOP-002 §ST02_SEALING TMP thresholds" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
-            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:page 1 ;
-        ns1:text "ST02_SEALING TMP: °C 165.0 175.0 185.0 ± 1.2 195.0 210.0 E-STOP ST02/ST03/ST04; inspect element" .
-
     <https://rai-hackathon.bbger.at/kg/customer/Nordmilch> a ns1:Customer ;
         rdfs:label "Nordmilch eG" ;
         rdfs:comment "Fictional dairy cooperative." .
@@ -2766,25 +3533,37 @@
         rdfs:label "Velora Foods AG" ;
         rdfs:comment "Fictional dairy customer." .
 
-    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01> a ns1:Maintenance ;
-        rdfs:label "MAINT-01: Inspect and lubricate main bearing" ;
-        ns1:action "Inspect and lubricate main bearing" ;
-        ns1:nodeId "N0054" ;
-        ns1:priority "HIGH" ;
-        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
-        ns1:ruleId "MAINT-01" .
-
-    <https://rai-hackathon.bbger.at/kg/rule/MAINT-02> a ns1:Rule ;
-        rdfs:label "MAINT-02" ;
-        rdfs:comment "CUR DRIFT >1.0 A for 30+ min" ;
-        ns1:action "Inspect sealing jaw alignment" ;
-        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01> a ns1:Rule ;
+        rdfs:label "RULE-ST02-01" ;
+        rdfs:comment "TMP MUST remain between 175°C and 195°C" ;
+        ns1:action "Inspect and notify maintenance" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
             <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s2> ;
-        ns1:ruleClass "MaintenanceRule" ;
-        ns1:sensorType "CUR" ;
-        ns1:severity "HIGH" ;
-        ns1:unit "A" .
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "MANDATORY" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02> a ns1:Rule ;
+        rdfs:label "RULE-ST02-02" ;
+        rdfs:comment "TMP > 210°C (CRITICAL)" ;
+        ns1:action "Emergency stop ST02, ST03, ST04" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "TMP" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
 
     <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04> a ns1:Rule ;
         rdfs:label "RULE-ST02-04" ;
@@ -2802,16 +3581,32 @@
         ns1:warnHi 1.35e+01 ;
         ns1:warnLo 1.1e+01 .
 
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-02> a ns1:Rule ;
+        rdfs:label "RULE-ST04-02" ;
+        rdfs:comment "VIB > 0.35 mm/s (CRITICAL)" ;
+        ns1:action "Emergency stop; inspect bearings" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "CRITICAL" ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
+
     <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> a ns1:SensorModel ;
         rdfs:label "CT-3300" ;
         rdfs:comment "Current transformer Series 3300, 14 A continuous." ;
         ns1:sensorType "CUR" ;
         ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ElectroMeasure> .
 
-    <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> a ns1:SensorModel ;
-        rdfs:label "PRS-4410" ;
-        rdfs:comment "Pressure transmitter" ;
-        ns1:sensorType "PRS" ;
+    <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> a ns1:SensorModel ;
+        rdfs:label "FLW-4450" ;
+        rdfs:comment "Electromagnetic flowmeter" ;
+        ns1:sensorType "FLW" ;
         ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
 
     <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> a ns1:SensorModel ;
@@ -2820,11 +3615,11 @@
         ns1:sensorType "SPD" ;
         ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
 
-    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> a ns1:Chunk ;
-        rdfs:label "DS-THERM-2200 §1. Temperature Sensor TMP-2210 — Specifications" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
-        ns1:page 1 ;
-        ns1:text "1. Temperature Sensor TMP-2210 — Specifications Parameter Value Unit Notes Measurement range -40 to +200 °C Continuous; see note 1 Accuracy (IEC 60584) ±1.5 (class 2) °C At 20°C reference Response time (t90) < 3 s In still air Output signal 4–20 mA Linear to range Max intermittent 220 °C < 10 min; not for control Note 1 — Maximum Operating Temperature: The rated maximum for continuous operation is 200°C. Exposure above this value accelerates thermocouple ageing and may cause drift of up to ±5°C within 500 hours. For applications requiring sustained operation above 200°C, ThermoSense recommends the Series 2400 (Pt100 RTD, rated to 250°C continuous)." .
+    <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> a ns1:SensorModel ;
+        rdfs:label "VIB-4480" ;
+        rdfs:comment "Piezoelectric accelerometer." ;
+        ns1:sensorType "VIB" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s2> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.1 ST01_FILLING" ;
@@ -2877,17 +3672,37 @@
         ns1:page 1 ;
         ns1:text "2. Correlated Fault Resolution Pattern Primary Fault Secondary Effect Resolution ST02_SEALING-CUR↑ → ST04_PACKAGING- SPD↓ Sealing motor overload Conveyor speed drop via electrical coupling 1.Verify ST02-CUR trend. 2.Inspect sealing jaw. 3.Reset ST04 speed setpoint. SRV01-TMP↑ → SCADA latency↑ Server Room overheating Increased scan time → apparent STUCK readings 1.Reduce SRV01-TMP <25°C. 2.Verify PLC heartbeats. 3.Clear STUCK alarms. WRH01-TMP↑ → QC HOLD Cold warehouse drift Product quality risk 1.Restore WRH01-TMP <8°C. 2.Notify QC. 3.Place batch on HOLD in ERP." .
 
-    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02> a ns1:Maintenance ;
-        rdfs:label "MAINT-02: Inspect sealing jaw alignment" ;
-        ns1:action "Inspect sealing jaw alignment" ;
-        ns1:nodeId "N0055" ;
-        ns1:priority "HIGH" ;
-        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR> ;
-        ns1:ruleId "MAINT-02" .
-
     <https://rai-hackathon.bbger.at/kg/role/manager> a ns1:Role ;
         rdfs:label "manager" ;
         rdfs:comment "Plant management." .
+
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-04> a ns1:Rule ;
+        rdfs:label "MAINT-04" ;
+        rdfs:comment "PRS <3.3 bar for >15 min" ;
+        ns1:action "Inspect inlet filter and pump" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS>,
+            <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s4> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "PRS" ;
+        ns1:severity "MEDIUM" ;
+        ns1:unit "bar" .
+
+    <https://rai-hackathon.bbger.at/kg/rule/RULE-ST04-01> a ns1:Rule ;
+        rdfs:label "RULE-ST04-01" ;
+        rdfs:comment "VIB > 0.20 mm/s (WARNING)" ;
+        ns1:action "Schedule maintenance within 24 h" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s5> ;
+        ns1:ruleClass "OperationalRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "WARNING" ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
 
     <https://rai-hackathon.bbger.at/kg/sensor/CAF01_CAFETERIA_HUM> a ns1:Sensor ;
         rdfs:label "CAF01_CAFETERIA_HUM" ;
@@ -2929,20 +3744,6 @@
         ns1:warnHi 2.6e+01 ;
         ns1:warnLo 1.8e+01 .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW> a ns1:Sensor ;
-        rdfs:label "ST01_FILLING_FLW" ;
-        ns1:critHi 1.35e+02 ;
-        ns1:critLo 1.05e+02 ;
-        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
-        ns1:nodeId "N0012" ;
-        ns1:nominalValue 1.2e+02 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> ;
-        ns1:sensorType "FLW" ;
-        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0046> ;
-        ns1:unit "L/min" ;
-        ns1:warnHi 1.28e+02 ;
-        ns1:warnLo 1.12e+02 .
-
     <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_TMP> a ns1:Sensor ;
         rdfs:label "ST01_FILLING_TMP" ;
         ns1:critHi 3e+01 ;
@@ -2969,9 +3770,29 @@
         ns1:warnHi 8.5e+01 ;
         ns1:warnLo 6e+01 .
 
+    <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> a ns1:SensorModel ;
+        rdfs:label "PRS-4410" ;
+        rdfs:comment "Pressure transmitter" ;
+        ns1:sensorType "PRS" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/MechSens> .
+
     <https://rai-hackathon.bbger.at/kg/supplier/MechSens> a ns1:Supplier ;
         rdfs:label "MechSens Italia S.r.l." ;
         rdfs:comment "Vendor of mechanical sensors, datasheet DS-MECH-4400." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> a ns1:Chunk ;
+        rdfs:label "SOP-001 §2.2 ST02_SEALING" ;
+        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-03>,
+            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
+            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
+            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:page 1 ;
+        ns1:text "2.2 ST02_SEALING RULE-ST02-01: TMP MUST remain between 175°C and 195°C. RULE-ST02-02: TMP > 210°C (CRITICAL) — emergency stop ST02, ST03, ST04. RULE-ST02-03: CUR increase >1.5 A above nominal sustained >5 min — schedule maintenance. RULE-ST02-04: CUR drift at ST02_SEALING CORRELATES with speed reduction at ST04_PACKAGING due to shared electrical coupling. Monitor ST04_PACKAGING-SPD whenever ST02_SEALING-CUR triggers a WARNING." .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s4> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.3 ST03_LABELLING" ;
@@ -2993,6 +3814,14 @@
         ns1:page 1 ;
         ns1:text "4. Unauthorised Access Rules RULE-ACCESS-01: Any entry by an unauthorised role MUST be logged as OccupancyEvent::UnauthorisedAccess with person_id, zone, and timestamp. RULE-ACCESS-02: Security personnel MUST be notified within 2 minutes of detection. RULE-ACCESS-03: The KG node MUST include authorized=NO and a reference to this rule. RULE-ACCESS-04: Chemical Storage has zero-tolerance policy. Any UNAUTHORIZED_ACCESS triggers immediate escalation to the Safety Officer regardless of role." .
 
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04> a ns1:Maintenance ;
+        rdfs:label "MAINT-04: Inspect inlet filter and pump" ;
+        ns1:action "Inspect inlet filter and pump" ;
+        ns1:nodeId "N0057" ;
+        ns1:priority "MEDIUM" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS> ;
+        ns1:ruleId "MAINT-04" .
+
     <https://rai-hackathon.bbger.at/kg/sensor/CHM01_CHEMICALSTORAGE_HUM> a ns1:Sensor ;
         rdfs:label "CHM01_CHEMICALSTORAGE_HUM" ;
         ns1:critHi 6e+01 ;
@@ -3006,20 +3835,6 @@
         ns1:warnHi 5e+01 ;
         ns1:warnLo 2e+01 .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP> a ns1:Sensor ;
-        rdfs:label "ST02_SEALING_TMP" ;
-        ns1:critHi 2.1e+02 ;
-        ns1:critLo 1.65e+02 ;
-        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:nodeId "N0014" ;
-        ns1:nominalValue 1.85e+02 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
-        ns1:sensorType "TMP" ;
-        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0040> ;
-        ns1:unit "°C" ;
-        ns1:warnHi 1.95e+02 ;
-        ns1:warnLo 1.75e+02 .
-
     <https://rai-hackathon.bbger.at/kg/sensor/ST03_LABELLING_CNT> a ns1:Sensor ;
         rdfs:label "ST03_LABELLING_CNT" ;
         ns1:critHi 140 ;
@@ -3032,20 +3847,6 @@
         ns1:unit "pcs/min" ;
         ns1:warnHi 130 ;
         ns1:warnLo 110 .
-
-    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> a ns1:Chunk ;
-        rdfs:label "SOP-001 §2.2 ST02_SEALING" ;
-        ns1:mentions <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-01>,
-            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-02>,
-            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-03>,
-            <https://rai-hackathon.bbger.at/kg/rule/RULE-ST02-04>,
-            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR>,
-            <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP>,
-            <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD>,
-            <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING>,
-            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:page 1 ;
-        ns1:text "2.2 ST02_SEALING RULE-ST02-01: TMP MUST remain between 175°C and 195°C. RULE-ST02-02: TMP > 210°C (CRITICAL) — emergency stop ST02, ST03, ST04. RULE-ST02-03: CUR increase >1.5 A above nominal sustained >5 min — schedule maintenance. RULE-ST02-04: CUR drift at ST02_SEALING CORRELATES with speed reduction at ST04_PACKAGING due to shared electrical coupling. Monitor ST04_PACKAGING-SPD whenever ST02_SEALING-CUR triggers a WARNING." .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s8> a ns1:Chunk ;
         rdfs:label "SOP-001 §2.7 CHM01_CHEMICALSTORAGE (Chemical Storage)" ;
@@ -3062,19 +3863,36 @@
         ns1:page 2 ;
         ns1:text "Anomaly Type Definitions for KG Mapping Type Definition Detection Criterion Ontology Class SPIKE Transient deviation >3σ, <5 min Single reading >CRIT AnomalyEvent::Spike DRIFT Monotonic deviation >15 min Slope >0.1σ/min for 5+ readings AnomalyEvent::Drift STUCK Unchanged >10 consecutive readings std(last 10)<0.001×nominal AnomalyEvent::StuckSensor OUT_OF_RAN GE Sustained WARN violation >10 min >WARN for 20+ readings AnomalyEvent::OutOfRange CORRELATED Causally linked to another station Onset within 90 min of cause AnomalyEvent::Correlated" .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD> a ns1:Sensor ;
-        rdfs:label "ST04_PACKAGING_SPD" ;
-        ns1:critHi 1.6e+00 ;
-        ns1:critLo 8.5e-01 ;
+    <https://rai-hackathon.bbger.at/kg/rule/MAINT-01> a ns1:Rule ;
+        rdfs:label "MAINT-01" ;
+        rdfs:comment "VIB DRIFT >0.05 mm/s over 60 min" ;
+        ns1:action "Inspect and lubricate main bearing" ;
+        ns1:applies_to <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB>,
+            <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:defined_in <https://rai-hackathon.bbger.at/kg/chunk/SOP-003-s1> ;
+        ns1:ruleClass "MaintenanceRule" ;
+        ns1:sensorType "VIB" ;
+        ns1:severity "HIGH" ;
+        ns1:unit "mm/s" .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_CUR> a ns1:Sensor ;
+        rdfs:label "ST04_PACKAGING_CUR" ;
+        ns1:critHi 1.1e+01 ;
+        ns1:critLo 6.5e+00 ;
         ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:nodeId "N0024" ;
-        ns1:nominalValue 1.2e+00 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> ;
-        ns1:sensorType "SPD" ;
-        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0048> ;
-        ns1:unit "m/s" ;
-        ns1:warnHi 1.4e+00 ;
-        ns1:warnLo 1e+00 .
+        ns1:nodeId "N0023" ;
+        ns1:nominalValue 8.7e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
+        ns1:sensorType "CUR" ;
+        ns1:unit "A" ;
+        ns1:warnHi 9.8e+00 ;
+        ns1:warnLo 7.5e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> a ns1:SensorModel ;
+        rdfs:label "HUM-2250" ;
+        rdfs:comment "Humidity sensor" ;
+        ns1:sensorType "HUM" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> .
 
     <https://rai-hackathon.bbger.at/kg/chunk/SOP-004-s2> a ns1:Chunk ;
         rdfs:label "SOP-004 §2. Maximum Occupancy per Zone" ;
@@ -3089,26 +3907,13 @@
         ns1:page 1 ;
         ns1:text "2. Maximum Occupancy per Zone Zone Max Persons Enforcement Production Area 12 WARNING above 10; CRITICAL above 12 Server Room 2 CRITICAL above 2; access badge required General Warehouse 4 WARNING above 3 Main Entrance 8 Monitoring only Chemical Storage 4 CRITICAL above 4; hazmat training required — see RULE-CHM01-03 R&D Lab 6 WARNING above 5; precision experiments may be disturbed Cafeteria 20 Monitoring only — occupant comfort" .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS> a ns1:Sensor ;
-        rdfs:label "ST01_FILLING_PRS" ;
-        ns1:critHi 4.8e+00 ;
-        ns1:critLo 3e+00 ;
-        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
-        ns1:nodeId "N0011" ;
-        ns1:nominalValue 3.8e+00 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
-        ns1:sensorType "PRS" ;
-        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0041>,
-            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04> ;
-        ns1:unit "bar" ;
-        ns1:warnHi 4.2e+00 ;
-        ns1:warnLo 3.3e+00 .
-
-    <https://rai-hackathon.bbger.at/kg/sensormodel/HUM-2250> a ns1:SensorModel ;
-        rdfs:label "HUM-2250" ;
-        rdfs:comment "Humidity sensor" ;
-        ns1:sensorType "HUM" ;
-        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> .
+    <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01> a ns1:Maintenance ;
+        rdfs:label "MAINT-01: Inspect and lubricate main bearing" ;
+        ns1:action "Inspect and lubricate main bearing" ;
+        ns1:nodeId "N0054" ;
+        ns1:priority "HIGH" ;
+        ns1:resolves <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> ;
+        ns1:ruleId "MAINT-01" .
 
     <https://rai-hackathon.bbger.at/kg/role/supervisor> a ns1:Role ;
         rdfs:label "supervisor" ;
@@ -3158,22 +3963,6 @@
         ns1:warnHi 2.6e+00 ;
         ns1:warnLo 1.8e+00 .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> a ns1:Sensor ;
-        rdfs:label "ST04_PACKAGING_VIB" ;
-        ns1:critHi 3.5e-01 ;
-        ns1:critLo 1e-02 ;
-        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
-        ns1:nodeId "N0022" ;
-        ns1:nominalValue 1.2e-01 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> ;
-        ns1:sensorType "VIB" ;
-        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0042>,
-            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0053>,
-            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01> ;
-        ns1:unit "mm/s" ;
-        ns1:warnHi 2e-01 ;
-        ns1:warnLo 2e-02 .
-
     <https://rai-hackathon.bbger.at/kg/sensor/SRV01_SERVERROOM_TMP> a ns1:Sensor ;
         rdfs:label "SRV01_SERVERROOM_TMP" ;
         ns1:critHi 2.8e+01 ;
@@ -3213,21 +4002,20 @@
         rdfs:label "technician" ;
         rdfs:comment "Maintenance and process technician." .
 
-    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR> a ns1:Sensor ;
-        rdfs:label "ST02_SEALING_CUR" ;
-        ns1:correlates_with <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD> ;
-        ns1:critHi 1.5e+01 ;
-        ns1:critLo 9.5e+00 ;
-        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:nodeId "N0016" ;
-        ns1:nominalValue 1.24e+01 ;
-        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
-        ns1:sensorType "CUR" ;
-        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0047>,
-            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02> ;
-        ns1:unit "A" ;
-        ns1:warnHi 1.35e+01 ;
-        ns1:warnLo 1.1e+01 .
+    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_FLW> a ns1:Sensor ;
+        rdfs:label "ST01_FILLING_FLW" ;
+        ns1:critHi 1.35e+02 ;
+        ns1:critLo 1.05e+02 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:nodeId "N0012" ;
+        ns1:nominalValue 1.2e+02 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/FLW-4450> ;
+        ns1:sensorType "FLW" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-C>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0046> ;
+        ns1:unit "L/min" ;
+        ns1:warnHi 1.28e+02 ;
+        ns1:warnLo 1.12e+02 .
 
     <https://rai-hackathon.bbger.at/kg/system/iMAKS> a ns1:System ;
         rdfs:label "iMAKS" ;
@@ -3249,11 +4037,51 @@
         ns1:stationType "CAFETERIA" ;
         ns1:zone "Cafeteria" .
 
-    <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> a ns1:SensorModel ;
-        rdfs:label "TMP-2210" ;
-        rdfs:comment "Thermocouple temperature sensor, rated 200 °C continuous." ;
+    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_CUR> a ns1:Sensor ;
+        rdfs:label "ST02_SEALING_CUR" ;
+        ns1:correlates_with <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD> ;
+        ns1:critHi 1.5e+01 ;
+        ns1:critLo 9.5e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0016" ;
+        ns1:nominalValue 1.24e+01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/CT-3300> ;
+        ns1:sensorType "CUR" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0047>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-02> ;
+        ns1:unit "A" ;
+        ns1:warnHi 1.35e+01 ;
+        ns1:warnLo 1.1e+01 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_SPD> a ns1:Sensor ;
+        rdfs:label "ST04_PACKAGING_SPD" ;
+        ns1:critHi 1.6e+00 ;
+        ns1:critLo 8.5e-01 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0024" ;
+        ns1:nominalValue 1.2e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/SPD-4490> ;
+        ns1:sensorType "SPD" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/N0048> ;
+        ns1:unit "m/s" ;
+        ns1:warnHi 1.4e+00 ;
+        ns1:warnLo 1e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST02_SEALING_TMP> a ns1:Sensor ;
+        rdfs:label "ST02_SEALING_TMP" ;
+        ns1:critHi 2.1e+02 ;
+        ns1:critLo 1.65e+02 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0014" ;
+        ns1:nominalValue 1.85e+02 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> ;
         ns1:sensorType "TMP" ;
-        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> .
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST02-001-A>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST02-001-B>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0040> ;
+        ns1:unit "°C" ;
+        ns1:warnHi 1.95e+02 ;
+        ns1:warnLo 1.75e+02 .
 
     <https://rai-hackathon.bbger.at/kg/station/RND01_RDLAB> a ns1:Station ;
         rdfs:label "RND01_RDLAB" ;
@@ -3270,6 +4098,29 @@
         ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
         ns1:stationType "SERVERROOM" ;
         ns1:zone "Server Room" .
+
+    <https://rai-hackathon.bbger.at/kg/sensor/ST01_FILLING_PRS> a ns1:Sensor ;
+        rdfs:label "ST01_FILLING_PRS" ;
+        ns1:critHi 4.8e+00 ;
+        ns1:critLo 3e+00 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> ;
+        ns1:nodeId "N0011" ;
+        ns1:nominalValue 3.8e+00 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/PRS-4410> ;
+        ns1:sensorType "PRS" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-A>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST01-001-B>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0041>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-04> ;
+        ns1:unit "bar" ;
+        ns1:warnHi 4.2e+00 ;
+        ns1:warnLo 3.3e+00 .
+
+    <https://rai-hackathon.bbger.at/kg/sensormodel/TMP-2210> a ns1:SensorModel ;
+        rdfs:label "TMP-2210" ;
+        rdfs:comment "Thermocouple temperature sensor, rated 200 °C continuous." ;
+        ns1:sensorType "TMP" ;
+        ns1:supplied_by <https://rai-hackathon.bbger.at/kg/supplier/ThermoSense> .
 
     <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> a ns1:Station ;
         rdfs:label "CHM01_CHEMICALSTORAGE" ;
@@ -3295,15 +4146,6 @@
         rdfs:label "operator" ;
         rdfs:comment "Line operator on a production shift." .
 
-    <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> a ns1:Station ;
-        rdfs:label "ST01_FILLING" ;
-        rdfs:comment "Filling station — liquid product filling" ;
-        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
-        ns1:nodeId "N0009" ;
-        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
-        ns1:stationType "FILLING" ;
-        ns1:zone "Production Area" .
-
     <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> a ns1:Station ;
         rdfs:label "ST03_LABELLING" ;
         rdfs:comment "Labelling station — label application and tension control" ;
@@ -3313,22 +4155,23 @@
         ns1:stationType "LABELLING" ;
         ns1:zone "Production Area" .
 
-    <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> a ns1:Station ;
-        rdfs:label "ST04_PACKAGING" ;
-        rdfs:comment "Packaging station — final boxing and conveyor" ;
-        ns1:nodeId "N0021" ;
-        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
-        ns1:stationType "PACKAGING" ;
-        ns1:zone "Production Area" .
-
-    <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> a ns1:Station ;
-        rdfs:label "ST02_SEALING" ;
-        rdfs:comment "Sealing station — thermal sealing of packages" ;
-        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
-        ns1:nodeId "N0013" ;
-        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
-        ns1:stationType "SEALING" ;
-        ns1:zone "Production Area" .
+    <https://rai-hackathon.bbger.at/kg/sensor/ST04_PACKAGING_VIB> a ns1:Sensor ;
+        rdfs:label "ST04_PACKAGING_VIB" ;
+        ns1:critHi 3.5e-01 ;
+        ns1:critLo 1e-02 ;
+        ns1:monitors <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
+        ns1:nodeId "N0022" ;
+        ns1:nominalValue 1.2e-01 ;
+        ns1:of_model <https://rai-hackathon.bbger.at/kg/sensormodel/VIB-4480> ;
+        ns1:sensorType "VIB" ;
+        ns1:triggers <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST04-001-A>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/EVT-ST04-001-B>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0042>,
+            <https://rai-hackathon.bbger.at/kg/anomalyevent/N0053>,
+            <https://rai-hackathon.bbger.at/kg/maintenance/MAINT-01> ;
+        ns1:unit "mm/s" ;
+        ns1:warnHi 2e-01 ;
+        ns1:warnLo 2e-02 .
 
     <https://rai-hackathon.bbger.at/kg/zone/R_D_Lab> a ns1:Zone ;
         rdfs:label "R&D Lab" ;
@@ -3344,6 +4187,14 @@
         rdfs:label "Chemical Storage" ;
         ns1:contains <https://rai-hackathon.bbger.at/kg/station/CHM01_CHEMICALSTORAGE> ;
         ns1:nodeId "N0006" .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> a ns1:Station ;
+        rdfs:label "ST04_PACKAGING" ;
+        rdfs:comment "Packaging station — final boxing and conveyor" ;
+        ns1:nodeId "N0021" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "PACKAGING" ;
+        ns1:zone "Production Area" .
 
     <https://rai-hackathon.bbger.at/kg/zone/Cafeteria> a ns1:Zone ;
         rdfs:label "Cafeteria" ;
@@ -3362,5 +4213,35 @@
             <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING>,
             <https://rai-hackathon.bbger.at/kg/station/ST04_PACKAGING> ;
         ns1:nodeId "N0002" .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST01_FILLING> a ns1:Station ;
+        rdfs:label "ST01_FILLING" ;
+        rdfs:comment "Filling station — liquid product filling" ;
+        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> ;
+        ns1:nodeId "N0009" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "FILLING" ;
+        ns1:zone "Production Area" .
+
+    <https://rai-hackathon.bbger.at/kg/station/ST02_SEALING> a ns1:Station ;
+        rdfs:label "ST02_SEALING" ;
+        rdfs:comment "Sealing station — thermal sealing of packages" ;
+        ns1:feeds_into <https://rai-hackathon.bbger.at/kg/station/ST03_LABELLING> ;
+        ns1:nodeId "N0013" ;
+        ns1:part_of <https://rai-hackathon.bbger.at/kg/system/iMAKS> ;
+        ns1:stationType "SEALING" ;
+        ns1:zone "Production Area" .
+}
+
+<urn:g:proposed> {
+    <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> a ns1:SensorModel ;
+        rdfs:label "Series 2400" ;
+        rdfs:comment "ThermoSense Pt100 RTD sensor model rated to 250°C continuous operation, recommended for sustained use above 200°C." .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-002-s4> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> ns1:mentions <https://rai-hackathon.bbger.at/kg/sensormodel/Series_2400> .
+
+    <https://rai-hackathon.bbger.at/kg/chunk/SOP-001-s3> ns1:contradicts <https://rai-hackathon.bbger.at/kg/chunk/DS-THERM-2200-s1> .
 }
 

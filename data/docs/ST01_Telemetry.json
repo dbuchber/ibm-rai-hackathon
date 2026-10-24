@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario_id": "SCN-ST01-PRS-01",
+  "incident_id": "INC-ST01-20261024-01",
+  "station_id": "ST01_FILLING",
+  "production_order_id": "PO-1001",
+  "as_of": "2026-10-24T13:00:05+02:00",
+  "timezone": "Europe/Vienna",
+  "source_id": "TEL-ST01-001",
+  "source_type": "synthetic_controller_replay",
+  "fresh_for_seconds": 30,
+  "sampling_note": "Sparse historical observations; no continuous-duration proof or post-repair verification test. A good controller quality flag does not certify instrument accuracy outside its specified range.",
+  "samples": [
+    {
+      "sample_id": "TEL-ST01-001",
+      "observed_at": "2026-10-24T12:30:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST01_FILLING_PRS",
+          "value": 3.8,
+          "unit": "bar",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST01_FILLING_FLW",
+          "value": 120.0,
+          "unit": "L/min",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST01-002",
+      "observed_at": "2026-10-24T12:40:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST01_FILLING_PRS",
+          "value": 3.2,
+          "unit": "bar",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST01_FILLING_FLW",
+          "value": 115.0,
+          "unit": "L/min",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST01-003",
+      "observed_at": "2026-10-24T13:00:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST01_FILLING_PRS",
+          "value": 2.9,
+          "unit": "bar",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST01_FILLING_FLW",
+          "value": 110.0,
+          "unit": "L/min",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST01-004",
+      "observed_at": "2026-10-24T13:00:05+02:00",
+      "machine_state": "STOPPED_QUALITY_HOLD",
+      "measurements": [
+        {
+          "sensor_id": "ST01_FILLING_PRS",
+          "value": 2.8,
+          "unit": "bar",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST01_FILLING_FLW",
+          "value": 0.0,
+          "unit": "L/min",
+          "quality": "good"
+        }
+      ]
+    }
+  ]
+}

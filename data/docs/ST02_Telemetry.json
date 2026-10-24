@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario_id": "SCN-ST02-TMP-01",
+  "incident_id": "INC-ST02-20261024-01",
+  "station_id": "ST02_SEALING",
+  "production_order_id": "PO-1003",
+  "as_of": "2026-10-24T12:00:05+02:00",
+  "timezone": "Europe/Vienna",
+  "source_id": "TEL-ST02-001",
+  "source_type": "synthetic_controller_replay",
+  "fresh_for_seconds": 30,
+  "sampling_note": "Sparse historical observations; no continuous-duration proof or post-repair verification test. A good controller quality flag does not certify instrument accuracy outside its specified range.",
+  "samples": [
+    {
+      "sample_id": "TEL-ST02-001",
+      "observed_at": "2026-10-24T11:50:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST02_SEALING_TMP",
+          "value": 185.0,
+          "unit": "degC",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST02_SEALING_CUR",
+          "value": 12.4,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST02-002",
+      "observed_at": "2026-10-24T11:55:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST02_SEALING_TMP",
+          "value": 198.0,
+          "unit": "degC",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST02_SEALING_CUR",
+          "value": 12.4,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST02-003",
+      "observed_at": "2026-10-24T12:00:00+02:00",
+      "machine_state": "RUNNING",
+      "measurements": [
+        {
+          "sensor_id": "ST02_SEALING_TMP",
+          "value": 205.0,
+          "unit": "degC",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST02_SEALING_CUR",
+          "value": 12.4,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "sample_id": "TEL-ST02-004",
+      "observed_at": "2026-10-24T12:00:05+02:00",
+      "machine_state": "STOPPED_OPERATOR",
+      "measurements": [
+        {
+          "sensor_id": "ST02_SEALING_TMP",
+          "value": 204.0,
+          "unit": "degC",
+          "quality": "good"
+        },
+        {
+          "sensor_id": "ST02_SEALING_CUR",
+          "value": 0.0,
+          "unit": "A",
+          "quality": "good"
+        }
+      ]
+    }
+  ]
+}

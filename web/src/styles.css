@@ -478,9 +478,60 @@ button.chip:hover { background: var(--fill2); }
 .hint.error { color: var(--contra); }
 .more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent); }
 .waiting .secs { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink3); }
-.field.model { margin-top: 8px; }
 
-/* multi-turn chat: the next question may refer to the previous one */
-.follow-up { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: var(--ink2); margin: 2px 0 6px; }
-.follow-up span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.follow-up button.link { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; }
+/* ---------- try it yourself: QR code to the phone version ---------- */
+.tryit { text-align: center; cursor: default; }
+.tryit .slide-eyebrow { margin-bottom: 12px; }
+.tryit .qr { display: block; width: 100%; height: auto; border-radius: 12px; }
+.tryit p { margin: 12px 0 0; font-size: 12.5px; color: var(--ink2); line-height: 1.4; }
+.tryit-inline { width: 168px; margin: 18px auto 0; }
+
+/* ---------- phone version (Mobile.tsx) ---------- */
+body:has(.m) { overflow: auto; }
+.m { min-height: 100%; max-width: 640px; margin: 0 auto; padding-bottom: env(safe-area-inset-bottom); }
+.m-bar {
+  position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px; background: var(--glass-strong);
+  backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 0.5px solid var(--hair);
+}
+.m-bar .link-btn { font-size: 16px; min-height: 36px; }
+.m-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.m-body { padding: 18px 16px 40px; }
+.m-title { font-size: 28px; letter-spacing: -0.02em; line-height: 1.15; margin: 4px 0 8px; }
+.m-question { font-size: 22px; letter-spacing: -0.015em; line-height: 1.25; margin: 10px 0 14px; }
+.m-ask { margin: 18px 0 0; }
+.m-ask textarea, .m-flag textarea {
+  width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: var(--fill); border: 0.5px solid var(--hair);
+  border-radius: 14px; padding: 12px 14px; resize: none;
+}
+.m-ask .field input { font-size: 16px; min-height: 44px; }
+.m-wide { width: 100%; margin-top: 12px; height: 48px; font-size: 16px; }
+.m-section { margin: 28px 0 10px; }
+.m-foot { text-align: center; margin-top: 28px; font-size: 14px; }
+.m-foot a { color: var(--accent); }
+.link-btn.small { font-size: 12px; }
+.m-steps { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.m-steps > li { background: var(--solid); border: 0.5px solid var(--hair); border-radius: 14px; padding: 10px 12px; font-size: 14px; animation: card-in 0.45s var(--ease) both; }
+.m-steps b { font-weight: 600; margin-right: 4px; }
+.m-steps summary { cursor: pointer; list-style-position: inside; }
+.m-steps .decision { grid-template-columns: 56px 1fr; }
+.m-answer-head { display: flex; justify-content: space-between; align-items: center; }
+.m-answer-head .report-btn { padding: 8px 12px; font-size: 13px; }
+.m-flag { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.m-flag .btn { align-self: flex-end; height: 40px; }
+.m .cite { font-size: 14px; padding: 10px 12px; }
+.m-passage { display: block; margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ink); white-space: pre-wrap; }
+.m-evidence { margin-top: 10px; }
+.mini-graph { position: relative; height: 320px; margin: 12px -16px 0; border-top: 0.5px solid var(--hair); border-bottom: 0.5px solid var(--hair); background: var(--bg); touch-action: none; }
+.m-picked { margin-top: 8px; min-height: 18px; }
+.m .toast { bottom: calc(24px + env(safe-area-inset-bottom)); }
+
+/* ---------- impressum ---------- */
+.imprint-link { border: 0; background: none; padding: 4px 6px; color: var(--ink3); font-size: 12px; cursor: pointer; }
+.imprint-link:hover { color: var(--ink); text-decoration: underline; }
+.imprint-corner { position: absolute; right: 16px; bottom: 10px; z-index: 50; }
+.m-foot .imprint-link { font-size: 14px; color: var(--accent); padding: 0; }
+.imprint { text-align: left; }
+.imprint h5 { margin-top: 18px; }
+.imprint p { line-height: 1.5; }
+.imprint-close { margin-top: 8px; }

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario_id": "SCN-ST01-PRS-01",
+  "incident_id": "INC-ST01-20261024-01",
+  "station_id": "ST01_FILLING",
+  "production_order_id": "PO-1001",
+  "as_of": "2026-10-24T13:00:05+02:00",
+  "timezone": "Europe/Vienna",
+  "source_id": "EVT-ST01-001",
+  "source_type": "synthetic_alarm_log",
+  "lifecycle_semantics": "Only explicit cleared records clear an instance; acknowledgement or stopped readings do not clear it.",
+  "events": [
+    {
+      "event_id": "EVT-ST01-001-A",
+      "alarm_instance_id": "ALM-ST01-20261024-01",
+      "alarm_code": "FILL-PRS-LO",
+      "sensor_id": "ST01_FILLING_PRS",
+      "occurred_at": "2026-10-24T12:40:00+02:00",
+      "transition": "activated",
+      "severity": "warning",
+      "trigger_sample_id": "TEL-ST01-002",
+      "trigger_value": 3.2,
+      "unit": "bar",
+      "controller_action": "warning_notification"
+    },
+    {
+      "event_id": "EVT-ST01-001-B",
+      "alarm_instance_id": "ALM-ST01-20261024-02",
+      "alarm_code": "FILL-PRS-LL",
+      "sensor_id": "ST01_FILLING_PRS",
+      "occurred_at": "2026-10-24T13:00:00+02:00",
+      "transition": "activated",
+      "severity": "critical",
+      "trigger_sample_id": "TEL-ST01-003",
+      "trigger_value": 2.9,
+      "unit": "bar",
+      "controller_action": "quality_hold_stop_requested"
+    },
+    {
+      "event_id": "EVT-ST01-001-C",
+      "alarm_instance_id": "ALM-ST01-20261024-03",
+      "alarm_code": "FILL-FLW-LO",
+      "sensor_id": "ST01_FILLING_FLW",
+      "occurred_at": "2026-10-24T13:00:00+02:00",
+      "transition": "activated",
+      "severity": "warning",
+      "trigger_sample_id": "TEL-ST01-003",
+      "trigger_value": 110.0,
+      "unit": "L/min",
+      "controller_action": "warning_notification"
+    }
+  ]
+}

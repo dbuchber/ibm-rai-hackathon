@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario_id": "SCN-ST02-TMP-01",
+  "incident_id": "INC-ST02-20261024-01",
+  "station_id": "ST02_SEALING",
+  "production_order_id": "PO-1003",
+  "as_of": "2026-10-24T12:00:05+02:00",
+  "timezone": "Europe/Vienna",
+  "source_id": "EVT-ST02-001",
+  "source_type": "synthetic_alarm_log",
+  "lifecycle_semantics": "Only explicit cleared records clear an instance; acknowledgement or stopped readings do not clear it.",
+  "events": [
+    {
+      "event_id": "EVT-ST02-001-A",
+      "alarm_instance_id": "ALM-ST02-20261024-01",
+      "alarm_code": "SEAL-TMP-HI",
+      "sensor_id": "ST02_SEALING_TMP",
+      "occurred_at": "2026-10-24T11:55:00+02:00",
+      "transition": "activated",
+      "severity": "warning",
+      "trigger_sample_id": "TEL-ST02-002",
+      "trigger_value": 198.0,
+      "unit": "degC",
+      "controller_action": "warning_notification"
+    },
+    {
+      "event_id": "EVT-ST02-001-B",
+      "alarm_instance_id": "ALM-ST02-20261024-02",
+      "alarm_code": "SEAL-TMP-RANGE",
+      "sensor_id": "ST02_SEALING_TMP",
+      "occurred_at": "2026-10-24T12:00:00+02:00",
+      "transition": "activated",
+      "severity": "advisory",
+      "trigger_sample_id": "TEL-ST02-003",
+      "trigger_value": 205.0,
+      "unit": "degC",
+      "controller_action": "engineering_review_requested"
+    }
+  ]
+}

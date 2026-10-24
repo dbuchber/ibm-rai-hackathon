@@ -16,6 +16,29 @@ npm run dev            # http://127.0.0.1:5180, offline replay of the recorded r
 
 Against the real API (backend running on port 17080): `VITE_DATA=api npm run dev`.
 
+## Presentation UI
+
+The frontend opens with the logo, a five-scene walkthrough, and the interactive workspace from
+`demo.html` / `demo.app.html`. Click, use the presentation dots, or use arrow keys to move
+through the first two screens. Auto-play advances every 3.5 seconds through each walkthrough scene; Escape returns from
+the workspace to the last walkthrough scene. The scaled preview uses real events from
+`demo-contradiction`, with no new engine run or changes to the interactive workspace.
+The first walkthrough scene shows only chat. The question and search scenes keep that chat-only layout. The graph and evidence trail
+reveal when the answer arrives, with a staggered entrance and a chat position transition.
+The interactive workspace follows the same rule; recorded questions are available in chat
+before an answer. Exploring earlier evidence keeps the answer and panels available.
+Its captions describe existing question, traversal and evidence features; the design’s
+alarm/fix-plan/checklist concept is represented by the current evidence trail.
+
+The workspace has a collapsible graph, an evidence trail, and the answer chat.
+The trail groups discovered entities, relevant relationships, excluded evidence, source
+conflicts and supporting passages. Selecting a graph entity shows its connected facts.
+It uses the existing `frames()` / `viewAt()` state: selecting a step pauses replay
+and updates the graph to that frame. Node and relation buttons focus the graph; citations
+still open source passages. The trail comes from the selected run rather than a fixed tutorial. Recorded questions replay through the existing engine events; selecting an evidence item
+pauses playback and focuses that information. Mock canary runs remain available for manual
+exploration. Static mode uses the recorded runs; live questions use the existing API and invitation-code field.
+
 ## What to build
 
 **1. Animated demo.** Plays a recorded run. Used on the projector during the pitch (presenter steps through it)
@@ -160,3 +183,23 @@ Rules:
 | `src/canary.ts` | click mock for the chat canary |
 
 Replace freely. The contract is fixed, the components are not.
+
+### Rebuilt maintenance data and recorded examples
+
+The current graph includes the ST01 pressure, ST02 temperature and ST04 vibration scenarios
+from commit `28e8516`. These are independent synthetic incident snapshots, not live machine
+streams. The stored runs predate that rebuild and retain their original answers and embedded
+evidence. Replay is labelled accordingly; it does not imply a newly generated maintenance
+checklist. Live questions continue to use the configured engine API against the current graph.
+
+Recorded questions remain on their final answer instead of automatically changing scenarios.
+While the graph is hidden, replay advances quickly to the answer with status updates. Earlier
+source chunks embedded in a recording remain inspectable even when their parent document
+is no longer present in the rebuilt graph.
+
+The Emergency Checklist opens on its first entity item once the answer is available.
+Playback and navigation do not mark items complete. Each item has an independent checkbox
+that the user explicitly checks or unchecks; completion does not change the graph selection.
+
+A light/dark toggle is available on every screen. Its selection is saved locally and
+updates the graph palette without resetting the current question or checklist state.
