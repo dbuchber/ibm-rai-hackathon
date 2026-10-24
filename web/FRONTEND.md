@@ -25,6 +25,25 @@ and on the website (plays alone, so the captions must carry the story).
 
 Both draw the same event stream. Build one renderer, put a text field in front of it for the chat.
 
+## Problem slide (C-level, before the walkthrough)
+
+A new screen between the logo and the walkthrough: Logo → **Problem** → Walkthrough → Demo. Same navigation
+(click, arrow keys, dots, auto-play) and the same look as the logo screen: black, one big statement, little text,
+blue accent, light mode supported. Copy is fixed (agreed with the team lead); layout is yours.
+
+| element | text |
+|---|---|
+| eyebrow | THE PROBLEM |
+| big number | 60% |
+| headline | of AI projects without AI-ready data will be abandoned. |
+| subline | On a production line, a wrong answer is not a typo. It is a stopped line, a recalled batch, or an injured worker. |
+| answer line | Graph Anchor: the model proposes, **people approve**, every answer shows its path. |
+| source (small, bottom) | Gartner, press release 26 Feb 2025 |
+
+Source wording: "Through 2026, organizations will abandon 60% of AI projects unsupported by AI-ready data."
+(<https://www.gartner.com/en/newsroom/press-releases/2025-02-26-lack-of-ai-ready-data-puts-ai-projects-at-risk>).
+Keep the source line visible; do not round, restate or add other numbers on this slide.
+
 ## The event stream
 
 A run is a list of events, each `{run_id, seq, ts, type, payload}`. `seq` starts at 0 and has no gaps.
