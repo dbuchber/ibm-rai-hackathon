@@ -8,6 +8,8 @@ import { Picker, RunPanel } from "./RunPanel";
 import Contrast from "./Contrast";
 import Curate, { kindOf } from "./Curate";
 import Roadmap from "./Roadmap";
+import Inspector from "./Inspector";
+import { fold, foldClasses } from "./fold";
 import { Icon, Mark } from "./bits";
 
 type View = "twin" | "ask" | "contrast" | "curate" | "roadmap";
@@ -35,6 +37,7 @@ export default function App() {
   const [lost, setLost] = useState(false);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [focusChunk, setFocusChunk] = useState<string | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
   const [curFocus, setCurFocus] = useState<string[]>([]);
   const [baseOntology, setOntology] = useState<Ontology>({ classes: [], predicates: [] });
@@ -91,6 +94,8 @@ export default function App() {
     return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected") };
   }, [graph, runEls, status, prop]);
   const idx = useMemo(() => labelIndex(nodes), [nodes]);
+  // chunks are drawn one level down: hidden in the graph, lifted onto their documents (fold.ts)
+  const folded = useMemo(() => fold(nodes, edges), [nodes, edges]);
   const edgeIdx = useMemo(() => new Map(edges.map((e) => [e.id, e])), [edges]);
 
   // ---- playback ----
@@ -178,9 +183,12 @@ export default function App() {
     setTimeout(() => showProposal(full), 350);
   };
 
+  // citations and chips: a chunk opens its document in the inspector, anything else flashes in the graph
   const cite = (id: string) => {
+    const doc = folded.docOf.get(id);
+    if (doc) { setSelected(doc); setFocusChunk(id); }
     setFlash(null);
-    requestAnimationFrame(() => setFlash(id));
+    requestAnimationFrame(() => setFlash(folded.mapId(id)));
   };
 
   // ---- what the graph shows ----
@@ -218,21 +226,38 @@ export default function App() {
     focus = curFocus.length ? curFocus : proposals.filter((p) => p.status !== "rejected").flatMap(targets);
     focusKey = "curate:" + curFocus.join();
   }
-  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: 16 };
+  const sel = selected ? idx.get(selected) : undefined;
+  const inset = { top: 84, right: panelOpen ? 452 : 16, bottom: view === "ask" && runId ? 92 : 16, left: sel ? 412 : 16 };
+  const shownClasses = useMemo(() => foldClasses(classes, folded), [classes, folded]);
+  const shownFocus = [...new Set(focus.map(folded.mapId))];
+  const shownAnchors = useMemo(
+    () => new Map([...prop.anchors].map(([k, v]) => [k, folded.mapId(v)])), [prop.anchors, folded]);
+  const cited = useMemo(() => {
+    const v = view === "contrast" ? full : rv;
+    const ids = new Set<string>();
+    if (!showRun) return ids;
+    v.answer?.citations.forEach((c) => c.chunk_id && ids.add(c.chunk_id));
+    v.evidence?.nodes.forEach((n) => n.cls === "Chunk" && ids.add(n.id));
+    return ids;
+  }, [view, full, rv, showRun]);
 
   const stats = useMemo(() => {
     const approved = graph.edges.filter((e) => (status.get(e.id) ?? e.graph) === "approved").length;
     const docs = graph.nodes.filter((n) => n.cls === "Document").length;
-    return { nodes: graph.nodes.length, approved, docs };
+    const chunks = graph.nodes.filter((n) => n.cls === "Chunk").length;
+    return { nodes: graph.nodes.length - chunks, approved, docs, chunks };
   }, [graph, status]);
 
-  const sel = selected ? idx.get(selected) : undefined;
   const current = pos >= 0 ? fs[pos] : undefined;
 
   return (
     <>
-      <Graph nodes={nodes} edges={edges} classes={classes} mode={mode} focus={focus} focusKey={focusKey}
-        inset={inset} flash={flash} onSelect={setSelected} anchors={prop.anchors} />
+      <Graph nodes={folded.nodes} edges={folded.edges} classes={shownClasses} mode={mode} focus={shownFocus} focusKey={focusKey}
+        inset={inset} flash={flash} onSelect={(id) => { setSelected(id); setFocusChunk(null); }} anchors={shownAnchors} />
+      {sel && (
+        <Inspector node={sel} folded={folded} idx={idx} cited={cited} focusChunk={focusChunk}
+          onClose={() => { setSelected(null); setFocusChunk(null); }} />
+      )}
 
       <header className="topbar">
         <div className="brand glass">
@@ -268,7 +293,7 @@ export default function App() {
       {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
 
       {view === "ask" && runId && (
-        <div className="player glass" style={{ left: `calc((100% - ${inset.right}px + 16px) / 2)` }} role="toolbar" aria-label="Playback">
+        <div className="player glass" style={{ left: `calc(${inset.left}px + (100% - ${inset.left + inset.right}px) / 2)` }} role="toolbar" aria-label="Playback">
           <button className="icon-btn" aria-label="Restart" onClick={() => { setPos(0); setPlaying(true); }}><Icon name="restart" /></button>
           <button className="icon-btn" aria-label="Previous step" disabled={pos <= 0}
             onClick={() => { setPlaying(false); setPos((p) => Math.max(0, p - 1)); }}><Icon name="prev" /></button>
@@ -294,19 +319,6 @@ export default function App() {
       )}
 
       <div className="corner" style={{ bottom: view === "ask" && runId ? 92 : 16 }}>
-        {sel && (
-          <div className="inspector glass" role="dialog" aria-label={sel.label}>
-            <div className="cls">{sel.cls}</div>
-            <h4>{sel.label}</h4>
-            {sel.description && <div className="small muted">{sel.description}</div>}
-            {sel.text && <div className="text">{sel.text}</div>}
-            {Object.keys(sel.props ?? {}).length > 0 && (
-              <dl className="props">
-                {Object.entries(sel.props!).map(([k, val]) => (<><dt key={k}>{k}</dt><dd key={k + "v"}>{String(val)}</dd></>))}
-              </dl>
-            )}
-          </div>
-        )}
         {view === "twin" && !sel && (
           <div className="intro glass">
             <div className="eyebrow">The anchor</div>
@@ -316,10 +328,11 @@ export default function App() {
               <div className="stat"><b>{stats.nodes}</b><span>entities</span></div>
               <div className="stat"><b>{stats.approved}</b><span>approved relations</span></div>
               <div className="stat"><b>{stats.docs}</b><span>documents</span></div>
+              <div className="stat"><b>{stats.chunks}</b><span>passages</span></div>
             </div>
           </div>
         )}
-        <Legend mode={mode} view={view} />
+        {!sel && <Legend mode={mode} view={view} />}
       </div>
     </>
   );

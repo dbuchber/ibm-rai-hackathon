@@ -2,7 +2,8 @@
 import cytoscape, { type Core, type ElementDefinition, type StylesheetStyle } from "cytoscape";
 import fcose from "cytoscape-fcose";
 import { useEffect, useRef } from "react";
-import type { Edge, Node } from "./contracts";
+import type { Node } from "./contracts";
+import type { DisplayEdge as Edge } from "./fold";
 import { pretty } from "./run";
 
 cytoscape.use(fcose);
@@ -142,7 +143,11 @@ function toElements(nodes: Node[], edges: Edge[]): ElementDefinition[] {
       .filter((e) => ids.has(e.s) && ids.has(e.o))
       .map((e) => ({
         group: "edges" as const,
-        data: { id: e.id, source: e.s, target: e.o, pred: pretty(e.p), graph: e.graph, minor: minor.has(e.s) || minor.has(e.o) },
+        data: {
+          id: e.id, source: e.s, target: e.o, graph: e.graph, minor: minor.has(e.s) || minor.has(e.o),
+          // lifted edges (see fold.ts) say how many text passages stand behind them
+          pred: pretty(e.p) + (e.chunks ? ` · ${e.chunks} passage${e.chunks === 1 ? "" : "s"}` : ""),
+        },
         classes: e.id.startsWith("contra:") ? "contra-virtual" : "",
       })),
   ];
@@ -183,6 +188,7 @@ export default function Graph(p: Props) {
       minZoom: 0.15, maxZoom: 3, wheelSensitivity: 0.25, boxSelectionEnabled: false,
     });
     cyRef.current = cy;
+    if (import.meta.env.DEV) (window as unknown as { __cy: Core }).__cy = cy; // for headless UI checks
     cy.on("mouseover", "node, edge", (e) => e.target.addClass("hover"));
     cy.on("mouseout", "node, edge", (e) => e.target.removeClass("hover"));
     cy.on("tap", "node", (e) => onSelect.current(e.target.id()));
@@ -270,7 +276,7 @@ export default function Graph(p: Props) {
     if (el.empty()) return;
     const eles = el.isEdge() ? el.union(el.connectedNodes()) : el;
     eles.addClass("flash");
-    fitTo(cy, el.isEdge() ? eles : (el as cytoscape.NodeSingular).closedNeighborhood(), p.inset, !reducedMotion(), 2);
+    fitTo(cy, el.isEdge() ? eles : (el as cytoscape.NodeSingular).closedNeighborhood(), p.inset, !reducedMotion(), 1.5);
     const t = setTimeout(() => eles.removeClass("flash"), 1800);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps

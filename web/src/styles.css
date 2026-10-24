@@ -394,3 +394,19 @@ button.chip:hover { background: var(--fill2); }
 }
 .hits button { width: 100%; text-align: left; border: 0; background: none; padding: 7px 9px; border-radius: 8px; cursor: pointer; font-size: 13.5px; }
 .hits button:hover, .hits button:focus-visible { background: var(--fill); }
+
+/* ---------- inspector (left panel): chunks live one level below the graph ---------- */
+.panel.left { right: auto; left: 16px; width: 380px; animation-name: panel-in-left; }
+@keyframes panel-in-left { from { opacity: 0; transform: translateX(-24px); } }
+.panel.left .props { margin-top: 10px; }
+.chunk-item {
+  background: var(--solid); border: 0.5px solid var(--hair); border-radius: 16px; padding: 12px 14px; margin-bottom: 8px;
+  transition: box-shadow 0.4s var(--ease), background 0.4s var(--ease); animation: card-in 0.45s var(--ease) both;
+}
+.chunk-item.cited { background: var(--accent-tint); border-color: transparent; }
+.chunk-item.focus { box-shadow: 0 0 0 2px var(--accent); }
+.chunk-top { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.chunk-title { font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.chunk-meta { font-size: 12px; color: var(--ink2); margin-top: 2px; }
+.chunk-text { font-size: 13px; line-height: 1.5; margin: 8px 0 0; }
+@media (max-width: 900px) { .panel.left { width: auto; right: 16px; } }

@@ -189,7 +189,9 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite }: Ru
           <section className="card evidence-card">
             <h3>Evidence graph</h3>
             <p className="small">
-              {v.evidence.nodes.length} nodes and {v.evidence.edges.length} relations led to this answer.
+              {v.evidence.nodes.filter((n) => n.cls !== "Chunk").length} entities,{" "}
+              {v.evidence.nodes.filter((n) => n.cls === "Chunk").length} text passages and {v.evidence.edges.length} relations led to this answer.
+              Click a document to read its passages.
               Everything else the walk looked at is dimmed. This is the context the model was given, not a claim about what it thought.
             </p>
           </section>
