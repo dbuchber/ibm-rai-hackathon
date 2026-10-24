@@ -164,7 +164,7 @@ button.chip:hover { background: var(--fill2); }
 }
 .cite:hover { background: var(--fill2); }
 .cite .p { font-family: var(--mono); font-size: 11px; color: var(--accent); }
-.cite.chunk { border-left: 3px solid var(--docs); }
+.cite.chunk::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: var(--docs); margin-right: 7px; vertical-align: 1px; }
 
 /* picker */
 .pick { display: flex; flex-direction: column; gap: 10px; }
