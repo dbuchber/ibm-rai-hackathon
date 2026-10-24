@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
 import { data, type Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
@@ -27,6 +27,9 @@ const HOLD: Record<FrameKind, number> = {
 const EMPTY = new Map<string, string>();
 
 export default function App({ active = true, walkthroughStage }: { active?: boolean; walkthroughStage?: number }) {
+  const [revealedRun, setRevealedRun] = useState<string | null>(null);
+  const chatBox = useRef<HTMLElement>(null);
+  const previousChatBox = useRef<DOMRect | null>(null);
   const [demoPlaying, setDemoPlaying] = useState(false);
   const [showGraph, setShowGraph] = useState(true);
   const [draft, setDraft] = useState("");
@@ -86,10 +89,32 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
     setSelected(null); setFocusChunk(null); setFlash(null);
     if (walkthroughStage === 0) { setRunId(null); setPos(-1); setView("twin"); return; }
     setRunId("demo-contradiction"); setView("ask");
-    const kind = (["question", "question", "frontier", "verdicts", "evidence"] as const)[walkthroughStage];
+    const kind = (["question", "question", "frontier", "answer", "evidence"] as const)[walkthroughStage];
     const position = fs.findIndex(frame => frame.kind === kind);
     setPos(position);
   }, [walkthroughStage, fs]);
+
+  const panelsVisible = !!runId && (walkthroughStage !== undefined
+    ? walkthroughStage >= 3 && !!rv.answer
+    : !!rv.answer || revealedRun === runId);
+  useEffect(() => {
+    if (runId && rv.answer) setRevealedRun(runId);
+  }, [runId, rv.answer]);
+  useLayoutEffect(() => {
+    const element = chatBox.current;
+    if (!element) return;
+    const box = element.getBoundingClientRect();
+    const previous = previousChatBox.current;
+    if (previous && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Account for the scaled app preview as well as the full-size workspace.
+      const scale = element.offsetWidth ? box.width / element.offsetWidth : 1;
+      element.animate([
+        { transform: `translate(${(previous.left - box.left) / scale}px, ${(previous.top - box.top) / scale}px)`, opacity: .8 },
+        { transform: "translate(0, 0)", opacity: 1 },
+      ], { duration: 650, easing: "cubic-bezier(.2,.7,.2,1)" });
+    }
+    previousChatBox.current = box;
+  }, [panelsVisible]);
 
   // proposal decisions override the graph state of their edge
   const status = useMemo(() => new Map(proposals.map((p) => [p.id, p.status])), [proposals]);
@@ -156,6 +181,7 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   const go = (v: View) => { if (v !== view) { moveOn(); setAuditOpen(false); } setView(v); };
 
   const pick = useCallback(async (id: string) => {
+    setRevealedRun(null);
     moveOn();
     stopStream.current();
     const ev = await data.getRun(id);
@@ -190,6 +216,7 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   };
 
   const ask = useCallback(async (q: string) => {
+    setRevealedRun(null);
     moveOn();
     stopStream.current();
     try {
@@ -357,7 +384,7 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   }, [view, full, rv, showRun]);
 
   return (
-    <div className={"demo-workspace" + (showGraph ? "" : " graph-collapsed")}>
+    <div className={"demo-workspace" + (showGraph ? "" : " graph-collapsed") + (panelsVisible ? " has-answer" : " chat-first")}>
       <div className="graph-pane">
       <Graph nodes={folded.nodes} edges={folded.edges} classes={shownClasses} mode={mode} focus={shownFocus} focusKey={focusKey}
         inset={inset} flash={flash} onSelect={(id) => { setAuditOpen(false); setSelected(id); setFocusChunk(null); }} anchors={shownAnchors} />
@@ -379,12 +406,13 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
           onPick={id => { setDemoPlaying(!runs.find(run => run.run_id === id)?.mock); void pick(id); }} onStep={index => { setDemoPlaying(false); setPlaying(false); setPos(index); setView("ask"); }} onCite={cite} />
 
       </aside>
-      <section className="chat-pane" aria-label="Ask the twin">
+      <section ref={chatBox} className="chat-pane" aria-label="Ask the twin">
         <div className="workspace-heading"><div><div className="eyebrow">Ask the twin</div><h2>Open chat</h2></div><button className="clear-chat" onClick={() => { moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); setDemoPlaying(false); setDraft(""); setQuestionError(""); setSelected(null); setFocusChunk(null); setView("twin"); }}>Clear</button></div>
-        {!runId && <div className="chat-empty"><strong>No questions yet</strong><span>Explore a question from the evidence trail.</span></div>}
-        {runId && <RunPanel answerOnly view={rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
+        {!runId && <div className="chat-empty"><strong>No questions yet</strong><span>{"Ask about stations, sensors, suppliers and source documents."}</span></div>}
+        {runId && <RunPanel answerOnly view={panelsVisible ? { ...rv, answer: full.answer } : rv} idx={idx} edges={edgeIdx} live={liveRun} lost={lost}
           onBack={() => { setDemoPlaying(false); moveOn(); stopStream.current(); setRunId(null); setEvents([]); setPos(-1); setPlaying(false); }}
           onCite={cite} reported={reported.has(runId)} onReport={report} />}
+        {!runId && <details className="chat-recordings" open={!data.live}><summary>Explore a recorded question</summary><div className="guide-questions">{runs.map(run => <button key={run.run_id} onClick={() => { setDemoPlaying(!run.mock); void pick(run.run_id); }}>{run.question}{run.mock && <span className="tag mock">Mock canary</span>}</button>)}</div></details>}
         <form className="chat-form" onSubmit={event => { event.preventDefault(); if (draft.trim() && data.live) ask(draft.trim()); }}>
           {data.live && <input className="invite-field" aria-label="Invitation code" placeholder="Invitation code" value={invite} onChange={event => setInvite(event.target.value)} />}
           {questionError && <div className="chat-error" role="alert">{questionError}</div>}

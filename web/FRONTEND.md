@@ -23,6 +23,10 @@ The frontend opens with the logo, a five-scene walkthrough, and the interactive 
 through the first two screens. Auto-play advances every 3.5 seconds through each walkthrough scene; Escape returns from
 the workspace to the last walkthrough scene. The scaled preview uses real events from
 `demo-contradiction`, with no new engine run or changes to the interactive workspace.
+The first walkthrough scene shows only chat. The question and search scenes keep that chat-only layout. The graph and evidence trail
+reveal when the answer arrives, with a staggered entrance and a chat position transition.
+The interactive workspace follows the same rule; recorded questions are available in chat
+before an answer. Exploring earlier evidence keeps the answer and panels available.
 Its captions describe existing question, traversal and evidence features; the design’s
 alarm/fix-plan/checklist concept is represented by the current evidence trail.
 

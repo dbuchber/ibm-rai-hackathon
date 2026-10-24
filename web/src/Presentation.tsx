@@ -5,10 +5,10 @@ const App = lazy(() => import("./App"));
 document.documentElement.dataset.presentationTheme = "dark";
 const labels = ["Logo", "Walkthrough", "Demo"];
 const captions = [
-  ["The tool", "Graph Anchor: the plant graph, an evidence trail and an open chat."],
-  ["Step 1 · Question", "A question comes in about the sealing station’s temperature limit."],
-  ["Step 2 · Search", "The agent explores related knowledge in the approved graph."],
-  ["Step 3 · Evidence trail", "Relevant relationships reveal the knowledge behind the answer."],
+  ["Start in chat", "Every investigation starts with a question."],
+  ["Step 1 · Question sent", "Ask about the sealing station’s temperature limit."],
+  ["Step 2 · Search", "The agent gathers evidence while you stay in chat."],
+  ["Step 3 · Answer", "The answer arrives with its graph and evidence trail."],
   ["Step 4 · Check the sources", "Compare the evidence. Conflicting sources stay visible."],
 ];
 
@@ -35,7 +35,7 @@ function WalkthroughPreview({ stage }: { stage: number }) {
   }, []);
 
   return <div className="walkthrough-frame" ref={frame} role="img" aria-label={`Recorded app preview: ${captions[stage][1]}`}>
-    <div className="walkthrough-tool" style={{ transform: `translate(-50%, -50%) scale(${scale})` }} aria-hidden="true" {...{ inert: "" }}>
+    <div className={`walkthrough-tool${stage < 3 ? " chat-intro" : ""}`} style={{ transform: `translate(-50%, -50%) scale(${scale})` }} aria-hidden="true" {...{ inert: "" }}>
       <Suspense fallback={<div className="walkthrough-loading">Opening the knowledge graph…</div>}>
         <App active={false} walkthroughStage={stage} />
       </Suspense>

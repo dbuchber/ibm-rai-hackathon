@@ -216,3 +216,24 @@
 .walkthrough-tool .guide-pane { grid-column: auto; grid-row: auto; max-height: none; flex-shrink: 1; }
 .walkthrough-tool .chat-pane { grid-column: auto; grid-row: auto; position: relative; top: auto; min-height: 0; max-height: none; flex-shrink: 1; }
 .walkthrough-tool .graph-toggle { top: 50%; left: -20px; right: auto; }
+
+
+/* Keep chat in focus until an answer exists; reveal its supporting knowledge together. */
+.walkthrough-tool.chat-intro { border-color: transparent; background: transparent; }
+.demo-workspace.chat-first,
+.walkthrough-tool .demo-workspace.chat-first { display: grid; grid-template-columns: minmax(0, 600px); justify-content: center; }
+.demo-workspace.chat-first .graph-pane,
+.demo-workspace.chat-first .guide-pane { display: none; }
+.demo-workspace.chat-first .chat-pane { grid-column: 1; grid-row: 1; position: relative; top: auto; max-height: none; min-height: 0; }
+.demo-workspace.has-answer .graph-pane { animation: knowledge-reveal 650ms cubic-bezier(.2,.7,.2,1) both; }
+.demo-workspace.has-answer .guide-pane { animation: knowledge-reveal 650ms 100ms cubic-bezier(.2,.7,.2,1) both; }
+@keyframes knowledge-reveal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.chat-recordings { margin: 0 16px 16px; min-height: 0; overflow: auto; border: 1px solid var(--hair); border-radius: 14px; }
+.chat-recordings summary { padding: 12px; font-size: 12px; color: var(--ink2); cursor: pointer; }
+.chat-recordings .guide-questions { margin: 0; padding: 0 12px 12px; }
+.chat-first .chat-empty { padding: 24px; }
+@media (max-width: 600px) {
+  .demo-workspace.chat-first { display: flex; }
+  .demo-workspace.chat-first .chat-pane { flex: 1; }
+  .walkthrough-tool .demo-workspace.chat-first { display: grid; }
+}
