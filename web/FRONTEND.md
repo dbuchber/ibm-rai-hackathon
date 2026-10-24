@@ -44,6 +44,30 @@ Source wording: "Through 2026, organizations will abandon 60% of AI projects uns
 (<https://www.gartner.com/en/newsroom/press-releases/2025-02-26-lack-of-ai-ready-data-puts-ai-projects-at-risk>).
 Keep the source line visible; do not round, restate or add other numbers on this slide.
 
+## Roadmap additions (future features)
+
+`src/Roadmap.tsx` gets new tiles. Nothing here runs today; keep the existing "Roadmap" labelling on every tile.
+Copy is fixed (agreed with the team lead); layout is yours. Keep the two existing groups as they are.
+
+**New group: Connected to your systems.** Subtitle: *Everything that enters the graph goes through the same
+approval as LLM proposals today.*
+
+| tile | text |
+|---|---|
+| MES | Live machine states, alarms and orders from the shop floor instead of a CSV export. |
+| ERP | Orders, materials and suppliers from the system of record instead of a hand-kept file. |
+| IBM Maximo / SAP PM | Maintenance plans, work orders and spare parts linked to the stations they belong to. |
+| Document ingestion | Any PDF, SOP or datasheet: parsed, chunked and linked, with its version and validity. |
+| SharePoint | Existing document libraries indexed in place, permissions respected. |
+| Jira | Maintenance tickets and incidents as evidence: what broke, what was done. |
+
+**Two tiles added to the existing group "Trust and reach":**
+
+| tile | text |
+|---|---|
+| Versions and validity | Which SOP applies to which station, from when. A new version flags every fact it touches for re-approval. |
+| Measured quality | A fixed question set runs on every change: correctness, faithfulness to sources, graph vs. plain vector search. |
+
 ## The event stream
 
 A run is a list of events, each `{run_id, seq, ts, type, payload}`. `seq` starts at 0 and has no gaps.
