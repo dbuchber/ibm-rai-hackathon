@@ -6,10 +6,11 @@ import { frames, labelIndex, runElements, viewAt, type FrameKind } from "./run";
 import { Picker, RunPanel } from "./RunPanel";
 import Contrast from "./Contrast";
 import Curate from "./Curate";
+import Roadmap from "./Roadmap";
 import { Icon, Mark } from "./bits";
 
-type View = "twin" | "ask" | "contrast" | "curate";
-const VIEWS: [View, string][] = [["twin", "Twin"], ["ask", "Ask"], ["contrast", "Contrast"], ["curate", "Curate"]];
+type View = "twin" | "ask" | "contrast" | "curate" | "roadmap";
+const VIEWS: [View, string][] = [["twin", "Twin"], ["ask", "Ask"], ["contrast", "Contrast"], ["curate", "Curate"], ["roadmap", "Roadmap"]];
 
 const HOLD: Record<FrameKind, number> = {
   question: 1400, strategy: 3200, seeds: 2200, frontier: 2000, verdicts: 3000, answer: 3400, evidence: 0,
@@ -108,7 +109,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).tagName === "INPUT") return;
-      if (e.key >= "1" && e.key <= "4") setView(VIEWS[+e.key - 1][0]);
+      if (e.key >= "1" && e.key <= "5") setView(VIEWS[+e.key - 1][0]);
       if (view !== "ask" || !runId) return;
       if (e.key === " ") { e.preventDefault(); setPlaying((p) => !p); }
       if (e.key === "ArrowRight") { setPlaying(false); setPos((p) => Math.min(fs.length - 1, p + 1)); }
@@ -204,6 +205,8 @@ export default function App() {
           onShow={(id) => { const p = proposals.find((x) => x.id === id); if (p) setCurFocus([p.triple.s, p.triple.o]); cite(id); }} />
       )}
 
+      {view === "roadmap" && <Roadmap steps={full.steps.length || 3} />}
+
       {view === "ask" && runId && (
         <div className="player glass" style={{ left: `calc((100% - ${inset.right}px + 16px) / 2)` }} role="toolbar" aria-label="Playback">
           <button className="icon-btn" aria-label="Restart" onClick={() => { setPos(0); setPlaying(true); }}><Icon name="restart" /></button>
@@ -263,7 +266,7 @@ export default function App() {
 }
 
 function Legend({ mode, view }: { mode: GraphMode; view: View }) {
-  if (view === "contrast") return null;
+  if (view === "contrast" || view === "roadmap") return null;
   if (mode === "twin" || view === "curate") {
     return (
       <div className="legend glass">
