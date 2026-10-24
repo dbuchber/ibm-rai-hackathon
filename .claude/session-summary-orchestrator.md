@@ -67,3 +67,13 @@ Then: merge everything, rebuild, ask the user to choose the main pitch run, copy
 - Contradiction `SOP-002-s6 contradicts DS-ELEC-3300-s1` approved (coordinator as analyst). `SOP-001 vs DS-THERM-2200` stays `proposed` as the curation example.
 - Seed search prefers IDs named verbatim (contracts fix `9080708`).
 - Chat satellites (chunks unfolding around a node) dropped in favour of the inspector.
+
+## Addendum (about 13:45, last action of the first orchestrator)
+
+- **Sync:** Mac, GitHub (`origin`, github.com/dbuchber/ibm-rai-hackathon) and Hetzner `main` are on the same state (`e1ddd1a`, merge of `e681c69` beats/invite code). 43 tests green. The Granite run has beats. `test_runs_validate` skips `runs/live-*` (runtime, gitignored).
+- **Push to Hetzner:** `data/proposals.json` is modified at runtime in the main worktree, so `updateInstead` refuses pushes. Workaround: `git push hetzner main:incoming/<x>`, then on the server `git stash; git merge incoming/<x>; git stash pop`. D is moving runtime state to `data/state/`.
+- **IBM ICA:** key in Hetzner `.env` as `ICA_API_KEY`. Granite = `openai/ibm/granite-4-h-small`, `api_base=https://api.servicesessentials.ibm.com/v1/chat-models`. Run `runs/demo-po1003-granite.jsonl` = model contrast (33 s, misses the contradiction). Live stays on mistral-large-4 through the gateway. Docs in `docs/ibm/`.
+- **Hardening:**
+  - Done on the host: Caddy security headers/CSP/body limit (backup `Caddyfile.bak.*-rai-headers`), ufw `172.31.250.0/28 → 172.31.250.1:14000`, `ADMIN_TOKEN` in `.env`.
+  - **D is working on:** non-root/read-only/cap_drop/limits; bridge network `rai-net` + socat sidecar `gw-forward`; explicit env (no ICA key in the container); rate limit 15 live runs per IP per hour + 1 concurrent; invite code first; admin reset. **Then rebuild** (`docker compose -f deploy/compose.yml up -d --build`) and check the page incl. CSP console errors (Playwright).
+- Orchestration of the Hetzner sessions passes to the new session.
