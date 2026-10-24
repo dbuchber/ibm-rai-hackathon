@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from functools import lru_cache
 
 import numpy as np
@@ -9,11 +10,19 @@ import numpy as np
 MODEL = "BAAI/bge-small-en-v1.5"
 
 
+_LOAD = threading.Lock()   # parallel live runs: load the model once, not once per thread
+
+
 @lru_cache(maxsize=1)
-def _model():
+def _load():
     from fastembed import TextEmbedding
 
     return TextEmbedding(MODEL)
+
+
+def _model():
+    with _LOAD:
+        return _load()
 
 
 _CACHE: dict[str, np.ndarray] = {}   # text -> unit vector; keyed by the text itself, so edited nodes re-embed

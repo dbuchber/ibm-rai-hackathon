@@ -6,7 +6,7 @@ from pathlib import Path
 import httpx
 import pytest
 
-from api.main import create_app
+from api.main import _stub_runner, create_app
 from contracts.models import EventAdapter, GraphExport, Proposal
 
 pytestmark = pytest.mark.asyncio
@@ -355,14 +355,32 @@ async def test_question_length_limit(tmp_path):
     assert (await c.post("/api/runs", json={"question": "x" * 500})).status_code == 200
 
 
-async def test_only_one_live_run_at_a_time(tmp_path):
-    c = _client(_app(tmp_path, stub_delay=0.05))
-    first = await c.post("/api/runs", json={"question": "a"})
-    assert first.status_code == 200
-    second = await c.post("/api/runs", json={"question": "b"})
-    assert second.status_code == 429 and "retry-after" in second.headers
-    await _wait_idle(None, c, first.json()["run_id"])
-    assert (await c.post("/api/runs", json={"question": "c"})).status_code == 200
+async def _events(c, rid):
+    return (await c.get(f"/api/runs/{rid}")).json()
+
+
+async def test_live_runs_in_parallel_then_queued_then_full(tmp_path):
+    c = _client(_app(tmp_path, runner=_stub_runner(0.05), max_live=2, max_queue=1))
+    a, b, q = [(await c.post("/api/runs", json={"question": x})).json()["run_id"] for x in "abq"]
+    full = await c.post("/api/runs", json={"question": "d"})
+    assert full.status_code == 429 and "retry-after" in full.headers
+    await asyncio.sleep(0.2)
+    assert await _events(c, a) and await _events(c, b)   # both slots run at once
+    assert await _events(c, q) == []                     # third waits for a slot, no error
+    await _wait_idle(None, c, q)
+    ev = await _events(c, q)
+    assert ev[-1]["type"] == "run.finished" and ev[-1]["payload"]["status"] == "ok"
+    assert (await c.post("/api/runs", json={"question": "e"})).status_code == 200
+
+
+async def test_queued_run_timeout_counts_from_its_start(tmp_path):
+    c = _client(_app(tmp_path, runner=_stub_runner(0.05), max_live=1, max_queue=1, run_timeout=0.6))
+    first = (await c.post("/api/runs", json={"question": "a"})).json()["run_id"]
+    queued = (await c.post("/api/runs", json={"question": "b"})).json()["run_id"]
+    await asyncio.sleep(0.7)   # the queued run has waited longer than the timeout, but has not started
+    await c.post("/api/runs", json={"question": "c"})   # a new request runs the timeout sweep
+    assert not any(e["type"] == "run.finished" and e["payload"]["status"] == "error" for e in await _events(c, queued))
+    await _wait_idle(None, c, first)
 
 
 async def test_run_rate_limit_per_ip_with_retry_after(tmp_path):
@@ -453,7 +471,7 @@ async def test_live_closed_without_configured_codes(tmp_path):
 
 
 async def test_check_order_invite_before_busy_before_rate(tmp_path):
-    c = _client(_app(tmp_path, stub_delay=0.05, run_limit=1))
+    c = _client(_app(tmp_path, stub_delay=0.05, run_limit=1, max_live=1, max_queue=0))
     first = await c.post("/api/runs", json={"question": "a"})
     assert first.status_code == 200
     # busy AND over budget: no invite -> 403; with invite -> "busy" (5 s) wins over the hourly budget

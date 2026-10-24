@@ -70,7 +70,7 @@ class LiveRun:
         self.run_id, self.path = run_id, path
         self.events: list[dict] = []
         self.done = False
-        self.started = time.monotonic()
+        self.started: float | None = None   # set when the run gets a slot; a queued run has not started
         self.lock = threading.Lock()
 
     def add(self, ev, close: bool = False) -> None:
@@ -93,7 +93,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
                limit_clock: Callable[[], float] = time.monotonic,
                run_limit: int = 15, write_limit: int = 120, max_question: int = 500, run_timeout: float = 300.0,
                invite_codes: list[str] | None = None, reviewer_codes: list[str] | None = None, runner: Callable | None = None,
-               chat_streak: int | None = None) -> FastAPI:
+               chat_streak: int | None = None, max_live: int | None = None, max_queue: int | None = None) -> FastAPI:
     env = os.environ.get
     kg = ROOT / "data" / "graph" / "kg.trig"
     graph_path = Path(graph_path or env("RAI_GRAPH") or kg)
@@ -162,7 +162,12 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     chat = ChatCanary(lambda: store, lambda kind, detail, pid=None: guard.log(kind, detail, pid),
                       streak=chat_streak or int(env("RAI_CHAT_CANARY_STREAK", "3")), record=keep_feedback)
     history = app.state.chat_history = ChatHistory(window=int(env("RAI_CHAT_HISTORY", "3")))
-    run_rl = RateLimiter(run_limit, clock=limit_clock)
+    # per client IP and hour; an audience on one Wi-Fi shares one public IP, so raise it for live demos
+    run_rl = RateLimiter(int(env("RAI_RUN_LIMIT", str(run_limit))), clock=limit_clock)
+    # live runs mostly wait on the LLM: several run at once, the rest queue for a slot instead of being refused
+    max_live = max_live if max_live is not None else int(env("RAI_MAX_LIVE", "4"))
+    max_queue = max_queue if max_queue is not None else int(env("RAI_MAX_QUEUE", "20"))
+    slots = threading.BoundedSemaphore(max_live)
     # strict models (engine/models.py): per IP and model, and per model across all clients
     strict_ip_rl = RateLimiter(int(env("RAI_STRICT_IP_LIMIT", "2")), clock=limit_clock)
     strict_all_rl = RateLimiter(int(env("RAI_STRICT_GLOBAL_LIMIT", "10")), clock=limit_clock)
@@ -221,7 +226,7 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
     @app.post("/api/runs")
     async def create_run(body: CreateRun, request: Request, x_invite_code: str = Header(""),
                          x_chat_session: str | None = Header(None)) -> CreateRunResponse:
-        # order: invite code, then input size, then one run at a time, then per-IP hourly budget
+        # order: invite code, then input size, then free slot or queue place, then per-IP hourly budget
         if not any(secrets.compare_digest(x_invite_code.encode(), c.encode()) for c in invite_codes):
             raise HTTPException(403, "invite code required")
         run_model = body.model or model
@@ -230,11 +235,11 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         if len(body.question) > max_question:
             raise HTTPException(422, f"question longer than {max_question} characters")
         for r in live.values():  # a hung LLM call must not block live mode for everyone
-            if not r.done and time.monotonic() - r.started > run_timeout:
+            if not r.done and r.started is not None and time.monotonic() - r.started > run_timeout:
                 r.add(RunFinishedEvent(run_id=r.run_id, seq=0, ts=_now(), payload=RunFinished(
                     status="error", error=f"run timed out after {int(run_timeout)} s")), close=True)
-        if any(not r.done for r in live.values()):
-            raise too_many(5, "another live run is in progress")
+        if sum(not r.done for r in live.values()) >= max_live + max_queue:
+            raise too_many(5, "live mode is full")
         ip = client_ip(request)
         if (retry := run_rl.retry_after(ip)) is not None:
             raise too_many(retry, "run limit reached for this client")
@@ -256,13 +261,15 @@ def create_app(graph_path: Path | None = None, runs_dir: Path | None = None,
         emit = history.capture(x_chat_session, body.question, chat.emit(run_id, lr.add), alive=lambda: not lr.done)
 
         def work():
-            try:
-                runner(body.question, store, model=run_model, mode="live", emit=emit, history=turns)
-            except Exception as e:  # keep the stream well-formed
-                lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
-                                        payload=RunFinished(status="error", error=str(e))))
-            finally:
-                lr.done = True
+            with slots:
+                lr.started = time.monotonic()
+                try:
+                    runner(body.question, store, model=run_model, mode="live", emit=emit, history=turns)
+                except Exception as e:  # keep the stream well-formed
+                    lr.add(RunFinishedEvent(run_id=run_id, seq=0, ts=_now(),
+                                            payload=RunFinished(status="error", error=str(e))))
+                finally:
+                    lr.done = True
         threading.Thread(target=work, daemon=True).start()
         return CreateRunResponse(run_id=run_id, reveal=reveal)
 
