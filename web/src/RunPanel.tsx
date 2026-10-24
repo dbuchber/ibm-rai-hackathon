@@ -13,11 +13,19 @@ interface PickerProps {
   meta: Map<string, RunMeta>;
   live: boolean;
   onPick: (id: string) => void;
-  onAsk: (q: string) => void;
+  /** resolves to an error message for the visitor, or null once the run started */
+  onAsk: (q: string, invite: string) => Promise<string | null>;
 }
+
+const INVITE_KEY = "graph-anchor.invite";
+const loadInvite = () => { try { return localStorage.getItem(INVITE_KEY) ?? ""; } catch { return ""; } };
+const saveInvite = (v: string) => { try { localStorage.setItem(INVITE_KEY, v); } catch { /* private window */ } };
 
 export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
   const [q, setQ] = useState("");
+  const [invite, setInvite] = useState(loadInvite);
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   // runs of the same question with different models share one card
   const groups = [...runs.reduce((m, r) => m.set(r.question, [...(m.get(r.question) ?? []), r]), new Map<string, RunSummary[]>()).values()];
   return (
@@ -42,17 +50,29 @@ export function Picker({ runs, meta, live, onPick, onAsk }: PickerProps) {
         </div>
         <form
           style={{ marginTop: 22 }}
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            if (q.trim()) onAsk(q.trim());
+            if (!q.trim() || !invite.trim()) return;
+            saveInvite(invite.trim());
+            setBusy(true); setErr(null);
+            const m = await onAsk(q.trim(), invite.trim());
+            setBusy(false); setErr(m);
           }}
         >
           <label className="eyebrow" htmlFor="ask">Or ask your own</label>
           <div className="ask-field">
             <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} disabled={!live}
               placeholder={live ? "Ask about orders, stations, sensors…" : "Live mode is off"} />
-            <button className="btn" disabled={!live || !q.trim()}>Ask</button>
+            <button className="btn" disabled={!live || !q.trim() || !invite.trim() || busy}>{busy ? "Starting…" : "Ask"}</button>
           </div>
+          {live && (
+            <label className="field invite">
+              <span>Invite code</span>
+              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="From the presenter" spellCheck={false} autoComplete="off" />
+            </label>
+          )}
+          {err && <div className="hint error" role="alert">{err}</div>}
+          {live && !err && <div className="hint">A live run takes about a minute. The recorded runs above replay instantly.</div>}
           {!live && <div className="hint">Offline replay. Live questions need the engine API.</div>}
         </form>
       </div>
@@ -113,7 +133,9 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
       </div>
       <div className="panel-body" ref={body} aria-live="polite">
         {lost && <div className="banner">Connection lost. Showing the events received so far.</div>}
-        {v.finished?.status === "error" && <div className="banner">Run failed: {v.finished.error}</div>}
+        {v.finished?.status === "error" && (
+          <div className="banner" title={v.finished.error ?? undefined}>The model is not available right now. Replay one of the recorded runs.</div>
+        )}
 
         {v.strategy && (
           <section className="card">
@@ -229,6 +251,12 @@ export function RunPanel({ view: v, idx, edges, live, lost, onBack, onCite, repo
               Everything else the walk looked at is dimmed. This is the context the model was given, not a claim about what it thought.
             </p>
           </section>
+        )}
+        {live && !v.finished && !lost && (
+          <div className="waiting" role="status">
+            <span className="spinner" aria-hidden="true" />
+            {!v.strategy ? "Waiting for the model to choose a strategy…" : !v.answer ? "Waiting for the model to walk the graph…" : "Finishing…"}
+          </div>
         )}
       </div>
     </aside>

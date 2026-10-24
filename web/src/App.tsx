@@ -107,13 +107,14 @@ export default function App() {
 
   const { nodes, edges } = useMemo(() => {
     const n = new Map<string, Node>();
-    graph.nodes.forEach((x) => n.set(x.id, x));
+    // people (badge holders) only add a hairball of zone access edges; no run walks them
+    graph.nodes.forEach((x) => { if (x.cls !== "Person") n.set(x.id, x); });
     prop.nodes.forEach((x) => { if (!n.has(x.id)) n.set(x.id, x); });
     // run events embed nodes in full; they win so the run shows exactly what the model was given
     runEls.nodes.forEach((x) => n.set(x.id, x));
     const e = new Map<string, Edge>();
     for (const x of [...prop.edges, ...graph.edges, ...runEls.edges]) e.set(x.id, { ...x, graph: status.get(x.id) ?? x.graph });
-    return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected") };
+    return { nodes: [...n.values()], edges: [...e.values()].filter((x) => x.graph !== "rejected" && n.has(x.s) && n.has(x.o)) };
   }, [graph, runEls, status, prop]);
   const idx = useMemo(() => labelIndex(nodes), [nodes]);
   // chunks are drawn one level down: hidden in the graph, lifted onto their documents (fold.ts)
@@ -151,19 +152,25 @@ export default function App() {
     setRunId(id); setEvents(ev); setPos(0); setPlaying(true); setView("ask"); setSelected(null);
   }, []);
 
-  const ask = useCallback(async (q: string) => {
+  const ask = useCallback(async (q: string, invite: string): Promise<string | null> => {
     moveOn();
-    stopStream.current();
     try {
-      const { run_id } = await data.startRun(q);
+      const { run_id } = await data.startRun(q, invite);
+      stopStream.current();
       setLiveRun(true); setLost(false); setRunId(run_id); setEvents([]); setPos(-1); setPlaying(true);
       stopStream.current = data.streamRun(
         run_id,
         (e) => setEvents((xs) => (xs.some((x) => x.seq === e.seq) ? xs : [...xs, e])),
         () => setLost(true),
       );
+      return null;
     } catch (err) {
-      setLost(true);
+      const m = (err as Error).message;
+      if (/invite/i.test(m)) return "That invite code is not valid.";
+      if (/in progress/i.test(m)) return "Another live run is in progress. Try again in a minute.";
+      if (/limit|slow down/i.test(m)) return "Live run limit reached. Replay a recorded run instead.";
+      if (/longer than/i.test(m)) return "That question is too long. Shorten it a little.";
+      return "The live engine is not reachable. Replay a recorded run instead.";
     }
   }, []);
 
@@ -349,7 +356,8 @@ export default function App() {
     const approved = graph.edges.filter((e) => (status.get(e.id) ?? e.graph) === "approved").length;
     const docs = graph.nodes.filter((n) => n.cls === "Document").length;
     const chunks = graph.nodes.filter((n) => n.cls === "Chunk").length;
-    return { nodes: graph.nodes.length - chunks, approved, docs, chunks };
+    const people = graph.nodes.filter((n) => n.cls === "Person").length;
+    return { nodes: graph.nodes.length - chunks, approved, docs, chunks, people };
   }, [graph, status]);
 
   const current = pos >= 0 ? fs[pos] : undefined;
@@ -441,7 +449,7 @@ export default function App() {
           <div className="intro glass">
             <div className="eyebrow">The anchor</div>
             <h1>One curated graph grounds every answer.</h1>
-            <p>Company, plant and documents in one knowledge graph. Every relation here was approved by an analyst. Models only propose.</p>
+            <p>Company, plant and documents in one knowledge graph. Every relation here is approved. Models only propose.</p>
             <div className="stats">
               <div className="stat"><b>{stats.nodes}</b><span>entities</span></div>
               <div className="stat"><b>{stats.approved}</b><span>approved relations</span></div>
@@ -450,7 +458,7 @@ export default function App() {
             </div>
           </div>
         )}
-        {!sel && !auditOpen && !compareOpen && <Legend mode={mode} view={view} />}
+        {!sel && !auditOpen && !compareOpen && <Legend mode={mode} view={view} people={stats.people} />}
       </div>
       {toast && <Toast text={toast} onDone={() => setToast(null)} />}
       {alertBox && (
@@ -463,7 +471,7 @@ export default function App() {
   );
 }
 
-function Legend({ mode, view }: { mode: GraphMode; view: View }) {
+function Legend({ mode, view, people }: { mode: GraphMode; view: View; people: number }) {
   if (view === "contrast" || view === "roadmap") return null;
   if (mode === "twin" || view === "curate") {
     return (
@@ -472,6 +480,7 @@ function Legend({ mode, view }: { mode: GraphMode; view: View }) {
         <span><i className="sw" style={{ background: "var(--plant)" }} />Plant</span>
         <span><i className="sw sq" style={{ background: "var(--docs)" }} />Documents</span>
         <span><i className="ln" style={{ borderColor: "var(--ink2)", borderTopStyle: "dashed" }} />Proposed</span>
+        {people > 0 && <span className="muted">{people} people not drawn</span>}
       </div>
     );
   }

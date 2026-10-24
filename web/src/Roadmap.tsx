@@ -110,7 +110,7 @@ export default function Roadmap({ steps }: { steps: number }) {
             </dl>
           </div>
         </div>
-        <div className="foot">Today: one model (gemma-4-31b) through a LiteLLM gateway, no guardrails, no ACLs.</div>
+        <div className="foot">Today: one model per run (Mistral Large 4, or Granite 4 H Small via IBM ICA) through a LiteLLM gateway, no guardrails, no ACLs.</div>
       </section>
     </div>
   );
