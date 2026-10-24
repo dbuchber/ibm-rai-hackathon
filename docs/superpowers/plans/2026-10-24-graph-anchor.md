@@ -17,7 +17,8 @@
 - The engine traverses **only** `urn:g:approved`.
 - The pitch must work offline: `web` builds to static files that replay `runs/*.jsonl` without the API.
 - Edge IDs come only from `contracts.ids.edge_id`. Citations join by ID, never by text.
-- Secrets live only in `.env` (gitignored): `OPENROUTER_API_KEY`, `RAI_MODEL` (default `openrouter/google/gemma-4-31b-it`; switch to an IBM Granite model on OpenRouter if one is listed).
+- Secrets live only in `.env` (gitignored, already present in every worktree): `LITELLM_BASE_URL` (BA gateway, `http://localhost:14000/v1`, OpenRouter behind it), `LITELLM_API_KEY`, `RAI_MODEL=openai/gemma-4-31b-it-openrouter`. Call `litellm.completion(model=RAI_MODEL, api_base=LITELLM_BASE_URL, api_key=LITELLM_API_KEY, ...)`. Gateway models: `GET $LITELLM_BASE_URL/models`. Never change the BA gateway config.
+- Commit only on your own branch `stream/<x>` in your worktree `/data/projects/ibm-rai-hackathon-wt/<x>`. Never merge into `main`; the coordinator merges. To pick up other streams' work: `git merge main`.
 - Hosting: `https://rai-hackathon.bbger.at`; repo on Hetzner at `/data/projects/ibm-rai-hackathon`.
 - Do not touch other services on the Hetzner node. Caddy/NPM changes only after the user approves.
 - Deadline: 15:30 feature freeze, pitch at 16:00.
