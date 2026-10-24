@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CreateProposal, Edge, Event, GraphExport, Node, Proposal, RunSummary } from "./contracts";
-import { data, getReviewerCode, setReviewerCode, type Ontology } from "./data";
+import { data, getReviewerCode, HttpError, setReviewerCode, type Ontology } from "./data";
 import { nodeIri, predIri } from "./ids";
 import TraversalGuide from "./TraversalGuide";
 import TryIt, { loadInvite, saveInvite } from "./TryIt";
@@ -257,9 +257,17 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  // a refused write (403) must not look like a silent success
+  const refused = (err: unknown): boolean => {
+    if (!(err instanceof HttpError) || err.status !== 403) return false;
+    setToast(writable ? "Reviewer code missing or wrong." : "Curation is read-only on this server.");
+    return true;
+  };
+
   const decide = async (id: string, d: Decision) => {
     const before = proposals;
-    const p = await data.decide(id, d);
+    let p: Proposal;
+    try { p = await data.decide(id, d); } catch (err) { if (refused(err)) return; throw err; }
     if (p.alert) {
       const rev = p.alert.reverted;
       setReverted(rev);
@@ -298,7 +306,8 @@ export default function App({ active = true, walkthroughStage }: { active?: bool
   };
 
   const create = async (body: CreateProposal) => {
-    const p = await data.createProposal(body);
+    let p: Proposal;
+    try { p = await data.createProposal(body); } catch (err) { if (refused(err)) return; throw err; }
     const full = { ...p, kind: kindOf(p) };
     setProposals((xs) => [full, ...xs.filter((x) => x.id !== p.id)]);
     // let the new element land in the graph before the camera moves to it
